@@ -1,0 +1,29 @@
+PODS:
+  - AEXML (4.1.0)
+  - GzipSwift (3.1.4)
+  - Material (2.6.3):
+    - Material/Core (= 2.6.3)
+  - Material/Core (2.6.3)
+  - RxBluetoothKit (3.0.7):
+    - RxSwift (~> 3.2)
+  - RxSwift (3.4.0)
+  - SVProgressHUD (2.1.2)
+
+DEPENDENCIES:
+  - AEXML (= 4.1.0)
+  - GzipSwift (= 3.1.4)
+  - Material (= 2.6.3)
+  - RxBluetoothKit (= 3.0.7)
+  - SVProgressHUD (= 2.1.2)
+
+SPEC CHECKSUMS:
+  AEXML: 647fbb051280f3fb38a1a7caa62b0344055a851c
+  GzipSwift: 11ddb2bf253b1cd7b60bb169da20f62ac4348769
+  Material: af607a7ec0e9978ef85cf189a3d8ceeeb650400f
+  RxBluetoothKit: edf26cc5a1edbee8eff59cb9d0af88ac4e95c847
+  RxSwift: 3789a1af753002a14edecdb698a2424624296a9c
+  SVProgressHUD: c404a55d78acbeb7ebb78b76d3faf986475a6994
+
+PODFILE CHECKSUM: e19cc4ff383745c0e7991a9520eb40d7876361a3
+
+COCOAPODS: 1.2.1
