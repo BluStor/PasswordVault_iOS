@@ -65,67 +65,67 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        if let delegate = delegate {
-            delegate.reloadData()
-        }
+        delegate?.reloadData()
     }
 
     func didLongPress(longPressGestureRecognizer: UILongPressGestureRecognizer) {
-        if let view = longPressGestureRecognizer.view {
-            if view === tableView {
+        guard let view = longPressGestureRecognizer.view else {
+            return
+        }
+        
+        if view === tableView {
 
-                let point = longPressGestureRecognizer.location(in: tableView)
+            let point = longPressGestureRecognizer.location(in: tableView)
 
-                if let indexPath = tableView.indexPathForRow(at: point) {
-                    if indexPath.row < group.groups.count {
-                        let selectedGroup = group.groups[indexPath.row]
+            if let indexPath = tableView.indexPathForRow(at: point) {
+                if indexPath.row < group.groups.count {
+                    let selectedGroup = group.groups[indexPath.row]
 
-                        let alert = UIAlertController(title: "Group", message: selectedGroup.name, preferredStyle: .actionSheet)
+                    let alert = UIAlertController(title: "Group", message: selectedGroup.name, preferredStyle: .actionSheet)
 
-                        alert.addAction(UIAlertAction(title: "Edit", style: .default, handler: { action in
-                            let editGroupViewController = EditGroupViewController(group: selectedGroup)
-                            editGroupViewController.groupDelegate = self
-                            self.navigationController?.pushViewController(editGroupViewController, animated: true)
-                        }))
+                    alert.addAction(UIAlertAction(title: "Edit", style: .default, handler: { action in
+                        let editGroupViewController = EditGroupViewController(group: selectedGroup)
+                        editGroupViewController.groupDelegate = self
+                        self.navigationController?.pushViewController(editGroupViewController, animated: true)
+                    }))
 
-                        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { action in
-                            if let kdbx = Vault.kdbx {
-                                if kdbx.delete(groupUUID: selectedGroup.uuid) {
-                                    self.reloadData()
-                                }
+                    alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { action in
+                        if let kdbx = Vault.kdbx {
+                            if kdbx.delete(groupUUID: selectedGroup.uuid) {
+                                self.reloadData()
                             }
-                        }))
+                        }
+                    }))
 
-                        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { action in
-                            alert.dismiss(animated: true, completion: nil)
-                        }))
+                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { action in
+                        alert.dismiss(animated: true, completion: nil)
+                    }))
 
-                        present(alert, animated: true)
-                    } else {
-                        let selectedEntry = group.entries[indexPath.row - group.groups.count]
+                    present(alert, animated: true)
+                } else {
+                    let selectedEntry = group.entries[indexPath.row - group.groups.count]
 
-                        let alert = UIAlertController(title: "Group", message: selectedEntry.title, preferredStyle: .actionSheet)
+                    let alert = UIAlertController(title: "Group", message: selectedEntry.title, preferredStyle: .actionSheet)
 
-                        alert.addAction(UIAlertAction(title: "Edit", style: .default, handler: { action in
-                            let editEntryViewController = EditEntryViewController(entry: selectedEntry)
-                            editEntryViewController.groupDelegate = self
-                            self.navigationController?.pushViewController(editEntryViewController, animated: true)
-                        }))
-                        
-                        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { action in
-                            if let kdbx = Vault.kdbx {
-                                if kdbx.delete(entryUUID: selectedEntry.uuid) {
-                                    self.reloadData()
-                                }
+                    alert.addAction(UIAlertAction(title: "Edit", style: .default, handler: { action in
+                        let editEntryViewController = EditEntryViewController(entry: selectedEntry)
+                        editEntryViewController.groupDelegate = self
+                        self.navigationController?.pushViewController(editEntryViewController, animated: true)
+                    }))
+                    
+                    alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { action in
+                        if let kdbx = Vault.kdbx {
+                            if kdbx.delete(entryUUID: selectedEntry.uuid) {
+                                self.reloadData()
                             }
-                        }))
+                        }
+                    }))
 
-                        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { action in
-                            alert.dismiss(animated: true, completion: nil)
-                        }))
+                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { action in
+                        alert.dismiss(animated: true, completion: nil)
+                    }))
 
-                        present(alert, animated: true)
-                    }
+                    present(alert, animated: true)
                 }
             }
         }
@@ -184,11 +184,8 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
 
     func reloadData() {
         if let refreshedGroup = Vault.kdbx?.get(groupUUID: group.uuid) {
-            print("reloadData")
             group = refreshedGroup
             tableView.reloadData()
-        } else {
-            print("reloadData failed")
         }
     }
 }

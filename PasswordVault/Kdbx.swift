@@ -17,10 +17,23 @@ protocol KdbxProtocol {
 }
 
 class Kdbx: KdbxProtocol {
+    
+    enum CompressionType: UInt32 {
+        case none = 0
+        case gzip = 1
+    }
+
+    enum InnerAlgorithm: UInt32 {
+        case none = 0
+        case arcFour = 1
+        case salsa20 = 2
+    }
+
+    enum CipherType {
+        case aes
+    }
 
     static let magicNumbers: [UInt8] = [0x03, 0xD9, 0xA2, 0x9A, 0x67, 0xFB, 0x4B, 0xB5]
-
-    private static let queue = DispatchQueue(label: "kdbxQueue")
 
     private let kdbx: KdbxProtocol
 
@@ -42,80 +55,62 @@ class Kdbx: KdbxProtocol {
     }
 
     func delete(entryUUID: String) -> Bool {
-        return Kdbx.queue.sync {
-            return kdbx.delete(entryUUID: entryUUID)
-        }
+        return kdbx.delete(entryUUID: entryUUID)
     }
 
     func delete(groupUUID: String) -> Bool {
-        return Kdbx.queue.sync {
-            return kdbx.delete(groupUUID: groupUUID)
-        }
+        return kdbx.delete(groupUUID: groupUUID)
     }
 
     func encrypt(compositeKey: [UInt8]) throws -> Data {
-        return try Kdbx.queue.sync {
-            try kdbx.encrypt(compositeKey: compositeKey)
-        }
+        return try kdbx.encrypt(compositeKey: compositeKey)
     }
 
     func encrypt(password: String) throws -> Data {
-        return try Kdbx.queue.sync {
-            try kdbx.encrypt(password: password)
-        }
+        return try kdbx.encrypt(password: password)
     }
 
     func findEntries(title: String) -> [KdbxXml.Entry] {
-        return Kdbx.queue.sync {
-            var entries = Array<KdbxXml.Entry>()
-            entries.append(contentsOf: database.root.group.findEntries(title: title))
-            database.root.group.groups.forEach({ (group) in
-                entries.append(contentsOf: group.findEntries(title: title))
-            })
-            return entries
-        }
+        var entries = Array<KdbxXml.Entry>()
+        entries.append(contentsOf: database.root.group.findEntries(title: title))
+        database.root.group.groups.forEach({ (group) in
+            entries.append(contentsOf: group.findEntries(title: title))
+        })
+        return entries
     }
 
     func get(groupUUID: String) -> KdbxXml.Group? {
-        return Kdbx.queue.sync {
-            if database.root.group.uuid == groupUUID {
-                return database.root.group
-            } else {
-                for group in database.root.group.groups {
-                    if group.uuid == groupUUID {
-                        return group
-                    }
-                    if let foundGroup = group.get(groupUUID: groupUUID) {
-                        return foundGroup
-                    }
+        if database.root.group.uuid == groupUUID {
+            return database.root.group
+        } else {
+            for group in database.root.group.groups {
+                if group.uuid == groupUUID {
+                    return group
+                }
+                if let foundGroup = group.get(groupUUID: groupUUID) {
+                    return foundGroup
                 }
             }
-
-            return nil
         }
+
+        return nil
     }
 
     func get(entryUUID: String) -> KdbxXml.Entry? {
-        return Kdbx.queue.sync {
-            for group in database.root.group.groups {
-                if let foundEntry = group.get(entryUUID: entryUUID) {
-                    return foundEntry
-                }
+        for group in database.root.group.groups {
+            if let foundEntry = group.get(entryUUID: entryUUID) {
+                return foundEntry
             }
-
-            return nil
         }
+
+        return nil
     }
 
     func update(entry: KdbxXml.Entry) -> Bool {
-        return Kdbx.queue.sync {
-            return kdbx.update(entry: entry)
-        }
+        return kdbx.update(entry: entry)
     }
 
     func update(group: KdbxXml.Group) -> Bool {
-        return Kdbx.queue.sync {
-            return kdbx.update(group: group)
-        }
+        return kdbx.update(group: group)
     }
 }

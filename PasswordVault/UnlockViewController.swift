@@ -135,8 +135,6 @@ class UnlockViewController: ScrollViewController {
             } catch {
                 print("\(error)")
             }
-        } else {
-            print("Passwords.kdbx not found.")
         }
     }
 }

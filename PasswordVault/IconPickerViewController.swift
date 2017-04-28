@@ -60,10 +60,6 @@ class IconPickerViewController: UIViewController, UICollectionViewDataSource, UI
         NSLayoutConstraint(item: collectionView, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
     }
 
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 69
     }
@@ -78,9 +74,7 @@ class IconPickerViewController: UIViewController, UICollectionViewDataSource, UI
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let delegate = delegate {
-            delegate.setIconId(indexPath.row)
-            navigationController?.popViewController(animated: true)
-        }
+        delegate?.setIconId(indexPath.row)
+        navigationController?.popViewController(animated: true)
     }
 }

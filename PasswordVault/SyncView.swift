@@ -17,7 +17,7 @@ class SyncView: UIView {
 
         // Status label
 
-        statusLabel.text = "Sycned"
+        statusLabel.text = "Synced"
         statusLabel.textColor = UIColor(hex: 0x80CBC4)
         statusLabel.textAlignment = .center
         statusLabel.font = UIFont.boldSystemFont(ofSize: 16.0)

@@ -12,11 +12,6 @@ class KdbxXml {
         var window: String
         var keystrokeSequence: String
 
-        /*required init(window: String, keystrokeSequence: String) {
-            self.window = window
-            self.keystrokeSequence = keystrokeSequence
-        }*/
-
         static func parse(elem: AEXMLElement) -> Association? {
             guard elem.error == nil else {
                 return nil
@@ -41,12 +36,6 @@ class KdbxXml {
         var enabled: Bool
         var dataTransferObfuscation: Int
         var association: Association?
-
-        /*required init(enabled: Bool, dataTransferObfuscation: Int, association: Association?) {
-            self.enabled = enabled
-            self.dataTransferObfuscation = dataTransferObfuscation
-            self.association = association
-        }*/
 
         static func parse(elem: AEXMLElement) -> AutoType {
             let association = Association.parse(elem: elem["Association"])
@@ -79,12 +68,6 @@ class KdbxXml {
         var compressed: Bool
         var content: String
 
-        /*required init(id: String, compressed: Bool, content: String) {
-            self.id = id
-            self.compressed = compressed
-            self.content = content
-        }*/
-
         static func parse(elem: AEXMLElement) -> Binary {
 
             return Binary(
@@ -98,7 +81,7 @@ class KdbxXml {
             let elem = AEXMLElement(name: "Binary", value: content, attributes: [
                     "ID": id,
                     "Compressed": compressed.xmlString
-            ]
+                ]
             )
             return elem
         }
@@ -108,11 +91,6 @@ class KdbxXml {
 
         var uuid: String
         var deletionTime: Date
-
-        /*required init(uuid: String, deletionTime: Date) {
-            self.uuid = uuid
-            self.deletionTime = deletionTime
-        }*/
 
         static func parse(elem: AEXMLElement) -> DeletedObject {
             return DeletedObject(
@@ -150,29 +128,6 @@ class KdbxXml {
         var isNotesProtected: Bool
         var autoType: AutoType
         var history: [Entry]
-
-        /*required init(
-            uuid: String, iconId: Int, foregroundColor: String, backgroundColor: String, overrideURL: String, tags: String, times: Times, title: String, isTitleProtected: Bool, username: String, isUsernameProtected: Bool, password: String, isPasswordProtected: Bool, url: String, isUrlProtected: Bool, notes: String, isNotesProtected: Bool, autoType: AutoType, history: [Entry]) {
-            self.uuid = uuid
-            self.iconId = iconId
-            self.foregroundColor = foregroundColor
-            self.backgroundColor = backgroundColor
-            self.overrideURL = overrideURL
-            self.tags = tags
-            self.times = times
-            self.title = title
-            self.isTitleProtected = isTitleProtected
-            self.username = username
-            self.isUsernameProtected = isUsernameProtected
-            self.password = password
-            self.isPasswordProtected = isPasswordProtected
-            self.url = url
-            self.isUrlProtected = isUrlProtected
-            self.notes = notes
-            self.isNotesProtected = isNotesProtected
-            self.autoType = autoType
-            self.history = history
-        }*/
 
         static func parse(elem: AEXMLElement) -> Entry {
             let times = Times.parse(elem: elem["Times"])
@@ -288,21 +243,6 @@ class KdbxXml {
         var itemCount: Int {
             return groups.count + entries.count
         }
-
-        /*required init(uuid: String, name: String, notes: String, iconId: Int, times: Times, isExpanded: Bool, defaultAutoTypeSequence: String, enableAutoType: Bool, enableSearching: Bool, lastTopVisibleEntry: String, groups: [Group], entries: [Entry]) {
-            self.uuid = uuid
-            self.name = name
-            self.notes = notes
-            self.iconId = iconId
-            self.times = times
-            self.isExpanded = isExpanded
-            self.defaultAutoTypeSequence = defaultAutoTypeSequence
-            self.enableAutoType = enableAutoType
-            self.enableSearching = enableSearching
-            self.lastTopVisibleEntry = lastTopVisibleEntry
-            self.groups = groups
-            self.entries = entries
-        }*/
 
         static func parse(elem: AEXMLElement) -> Group {
             let times = Times.parse(elem: elem["Times"])
@@ -422,6 +362,7 @@ class KdbxXml {
                     return entry
                 }
             }
+            
             for group in groups {
                 if let foundEntry = group.get(entryUUID: entryUUID) {
                     return foundEntry
@@ -468,11 +409,6 @@ class KdbxXml {
         var meta: Meta
         var root: Root
 
-        /*required init(meta: Meta, root: Root) {
-            self.meta = meta
-            self.root = root
-        }*/
-
         static func parse(elem: AEXMLElement) -> KeePassFile {
             let meta = Meta.parse(elem: elem["Meta"])
             let root = Root.parse(elem: elem["Root"])
@@ -494,14 +430,6 @@ class KdbxXml {
         var password: Bool
         var url: Bool
         var notes: Bool
-
-        /*required init(title: Bool, username: Bool, password: Bool, url: Bool, notes: Bool) {
-            self.title = title
-            self.username = username
-            self.password = password
-            self.url = url
-            self.notes = notes
-        }*/
 
         static func parse(elem: AEXMLElement) -> MemoryProtection {
             return MemoryProtection(
@@ -551,34 +479,6 @@ class KdbxXml {
         var lastTopVisibleGroup: String
         var binaries: [Binary]
         var customData: String
-
-        /*required init(generator: String, headerHash: String, databaseName: String, databaseNameChanged: Date?, databaseDescription: String, databaseDescriptionChanged: Date?, defaultUsername: String, defaultUsernameChanged: Date?, maintenanceHistoryDays: Int?, color: String, masterKeyChanged: Date?, masterKeyChangeRec: Int, masterKeyChangeForce: Int, memoryProtection: MemoryProtection, recycleBinEnabled: Bool, recycleBinUUID: String, recycleBinChanged: Date?, entryTemplatesGroup: String, entryTemplatesGroupChanged: Date?, historyMaxItems: Int, historyMaxSize: Int, lastSelectedGroup: String, lastTopVisibleGroup: String, binaries: [Binary], customData: String) {
-            self.generator = generator
-            self.headerHash = headerHash
-            self.databaseName = databaseName
-            self.databaseNameChanged = databaseNameChanged
-            self.databaseDescription = databaseDescription
-            self.databaseDescriptionChanged = databaseDescriptionChanged
-            self.defaultUsername = defaultUsername
-            self.defaultUsernameChanged = defaultUsernameChanged
-            self.maintenanceHistoryDays = maintenanceHistoryDays
-            self.color = color
-            self.masterKeyChanged = masterKeyChanged
-            self.masterKeyChangeRec = masterKeyChangeRec
-            self.masterKeyChangeForce = masterKeyChangeForce
-            self.memoryProtection = memoryProtection
-            self.recycleBinEnabled = recycleBinEnabled
-            self.recycleBinUUID = recycleBinUUID
-            self.recycleBinChanged = recycleBinChanged
-            self.entryTemplatesGroup = entryTemplatesGroup
-            self.entryTemplatesGroupChanged = entryTemplatesGroupChanged
-            self.historyMaxItems = historyMaxItems
-            self.historyMaxSize = historyMaxSize
-            self.lastSelectedGroup = lastSelectedGroup
-            self.lastTopVisibleGroup = lastTopVisibleGroup
-            self.binaries = binaries
-            self.customData = customData
-        }*/
 
         static func parse(elem: AEXMLElement) -> Meta {
             var binaries = [Binary]()
@@ -659,11 +559,6 @@ class KdbxXml {
         var group: Group
         var deletedObjects: [DeletedObject]
 
-        /*required init(group: Group, deletedObjects: [DeletedObject]) {
-            self.group = group
-            self.deletedObjects = deletedObjects
-        }*/
-
         static func parse(elem: AEXMLElement) -> Root {
             let group = Group.parse(elem: elem["Group"].first!)
 
@@ -698,12 +593,6 @@ class KdbxXml {
         var value: String
         var isProtected: Bool
 
-        /*required init(key: String, value: String, isProtected: Bool) {
-            self.key = key
-            self.value = value
-            self.isProtected = isProtected
-        }*/
-
         static func parse(elem: AEXMLElement) -> Str {
             return Str(
                     key: elem["Key"].string,
@@ -729,16 +618,6 @@ class KdbxXml {
         var expires: Bool
         var usageCount: Int
         var locationChanged: Date?
-
-        /*required init(lastModificationTime: Date?, creationTime: Date?, lastAccessTime: Date?, expiryTime: Date?, expires: Bool, usageCount: Int, locationChanged: Date?) {
-            self.lastModificationTime = lastModificationTime
-            self.creationTime = creationTime
-            self.lastAccessTime = lastAccessTime
-            self.expiryTime = expiryTime
-            self.expires = expires
-            self.usageCount = usageCount
-            self.locationChanged = locationChanged
-        }*/
 
         static func parse(elem: AEXMLElement) -> Times {
             return Times(
@@ -783,16 +662,17 @@ class KdbxXml {
             formatter.locale = Locale(identifier: "en_US_POSIX")
             formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         }
-
     }
 
-    static func parse(data: Data) throws -> KeePassFile {
+    static func parse(data: Data, innerAlgorithm: Kdbx.InnerAlgorithm) throws -> KeePassFile {
         let xmlDoc = try AEXMLDocument(xml: data)
+        // TODO: Unprotect
         return KeePassFile.parse(elem: xmlDoc.root)
     }
 
-    static func xml(keePassFile: KeePassFile) -> String {
+    static func xml(keePassFile: KeePassFile, innerAlgorithm: Kdbx.InnerAlgorithm) -> String {
         let xmlDoc = AEXMLDocument(root: keePassFile.build(), options: AEXMLOptions())
+        // TODO: Protect
         return xmlDoc.xml
     }
 }

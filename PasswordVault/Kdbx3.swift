@@ -72,7 +72,7 @@ class Kdbx3: KdbxProtocol {
 
         let hashedCompositeKey = compositeKey.sha256()
         let transformedCompositeKey = try KdbxCrypto.aesTransform(
-                seed: header.transformSeed,
+                bytes: header.transformSeed,
                 key: hashedCompositeKey,
                 rounds: Int(header.transformRounds)
         )
@@ -148,7 +148,7 @@ class Kdbx3: KdbxProtocol {
             throw KdbxError.databaseWriteError
         }
 
-        let encryptedBytes = try KdbxCrypto.aesEncrypt(key: masterKey, iv: header.encryptionIv, bytes: [UInt8](encData))
+        let encryptedBytes = try KdbxCrypto.aes(operation: .encrypt, bytes: [UInt8](encData), key: masterKey, iv: header.encryptionIv)
         try dataWriteStream.write(Data(bytes: encryptedBytes))
 
         guard let data = dataWriteStream.data else {

@@ -9,14 +9,40 @@ class KdbxCrypto {
 
     static let aesUuid = UUID(uuidString: "31C1F2E6-BF71-4350-BE58-05216AFC5AFF")!
 
-    enum CryptoError: Error {
+    enum Operation: UInt32 {
+        case decrypt
+        case encrypt
 
+        var cc: UInt32 {
+            switch self {
+            case .decrypt:
+                return UInt32(kCCDecrypt)
+            case .encrypt:
+                return UInt32(kCCEncrypt)
+            }
+        }
+    }
+
+    enum CryptoError: Error {
         case dataError
     }
 
-    static func aesDecrypt(key: [UInt8], iv: [UInt8], bytes: [UInt8]) throws -> [UInt8] {
+    static func aes(operation: Operation, bytes: [UInt8], key: [UInt8], iv: [UInt8]) throws -> [UInt8] {
         var result = [UInt8](repeating: 0x0, count: bytes.count)
-        let status = CCCrypt(UInt32(kCCDecrypt), UInt32(kCCAlgorithmAES), UInt32(kCCOptionPKCS7Padding), key, key.count, iv, bytes, bytes.count, &result, result.count, nil)
+
+        let status = CCCrypt(
+            operation.cc,
+            UInt32(kCCAlgorithmAES),
+            UInt32(kCCOptionPKCS7Padding),
+            key,
+            key.count,
+            iv,
+            bytes,
+            bytes.count,
+            &result,
+            result.count,
+            nil
+        )
 
         guard status == Int32(kCCSuccess) else {
             throw KdbxError.decryptionError
@@ -25,18 +51,7 @@ class KdbxCrypto {
         return result
     }
 
-    static func aesEncrypt(key: [UInt8], iv: [UInt8], bytes: [UInt8]) throws -> [UInt8] {
-        var result = [UInt8](repeating: 0x0, count: bytes.count + kCCBlockSizeAES128)
-        let status = CCCrypt(UInt32(kCCEncrypt), UInt32(kCCAlgorithmAES), UInt32(kCCOptionPKCS7Padding), key, key.count, iv, bytes, bytes.count, &result, result.count, nil)
-
-        guard status == Int32(kCCSuccess) else {
-            throw KdbxError.encryptionError
-        }
-
-        return result
-    }
-
-    static func aesTransform(seed: [UInt8], key: [UInt8], rounds: Int) throws -> [UInt8] {
+    static func aesTransform(bytes: [UInt8], key: [UInt8], rounds: Int) throws -> [UInt8] {
         let iv = [UInt8](repeating: 0x0, count: 16)
 
         let cryptor = UnsafeMutablePointer<CCCryptorRef?>.allocate(capacity: 1)
@@ -45,8 +60,8 @@ class KdbxCrypto {
                 UInt32(kCCEncrypt),
                 UInt32(kCCAlgorithmAES),
                 UInt32(kCCOptionECBMode),
-                seed,
-                seed.count,
+                bytes,
+                bytes.count,
                 iv,
                 cryptor
         )

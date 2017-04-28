@@ -7,21 +7,6 @@ import Foundation
 
 class Kdbx3Header {
 
-    enum CompressionType: UInt32 {
-        case none = 0
-        case gzip = 1
-    }
-
-    enum InnerAlgorithm: UInt32 {
-        case none = 0
-        case arcFour = 1
-        case salsa20 = 2
-    }
-
-    enum CipherType {
-        case aes
-    }
-
     enum ReadType: UInt8 {
         case end = 0
         case comment = 1
@@ -52,20 +37,22 @@ class Kdbx3Header {
 
     var magicNumbers: [UInt8]
     var version: Version
-    var cipherType = CipherType.aes
-    var compressionType = CompressionType.none
+    var cipherType = Kdbx.CipherType.aes
+    var compressionType = Kdbx.CompressionType.none
     var masterKeySeed = [UInt8]()
     var transformSeed = [UInt8]()
     var transformRounds: UInt64 = 6000
     var encryptionIv = [UInt8]()
     var protectedStreamKey = [UInt8]()
     var streamStartBytes = [UInt8]()
-    var innerAlgorithm = InnerAlgorithm.none
+    var innerAlgorithm = Kdbx.InnerAlgorithm.none
 
     required init(dataReadStream: DataReadStream) throws {
+        // Verify magic numbers and version
+
         magicNumbers = try dataReadStream.readBytes(size: 8)
 
-        if magicNumbers != Kdbx.magicNumbers {
+        guard magicNumbers == Kdbx.magicNumbers else {
             throw ReadError.unknownMagicNumbers
         }
 
@@ -74,18 +61,18 @@ class Kdbx3Header {
 
         version = Version(major: major, minor: minor)
 
-        if version.major != 3 {
+        guard version.major == 3 else {
             throw ReadError.unknownVersion
         }
 
-        var readType: ReadType? = ReadType.end
+        // Dynamic header
+
         readLoop: repeat {
-            let readTypeValue = try dataReadStream.read() as UInt8
-            readType = ReadType(rawValue: readTypeValue)
+            let readTypeInt = try dataReadStream.read() as UInt8
 
-            let size = Int(try dataReadStream.read() as Int16)
+            if let readType = ReadType(rawValue: readTypeInt) {
+                let size = Int(try dataReadStream.read() as Int16)
 
-            if let readType = readType {
                 switch readType {
                 case .comment:
                     _ = try dataReadStream.readBytes(size: size)
@@ -102,7 +89,7 @@ class Kdbx3Header {
                 case .compressionType:
                     let rawValue = try dataReadStream.read() as UInt32
 
-                    if let c = CompressionType(rawValue: rawValue) {
+                    if let c = Kdbx.CompressionType(rawValue: rawValue) {
                         compressionType = c
                     } else {
                         throw ReadError.unknownCompressionType
@@ -122,7 +109,7 @@ class Kdbx3Header {
                 case .innerAlgorithm:
                     let rawValue = try dataReadStream.read() as UInt32
 
-                    if let algorithm = InnerAlgorithm(rawValue: rawValue) {
+                    if let algorithm = Kdbx.InnerAlgorithm(rawValue: rawValue) {
                         innerAlgorithm = algorithm
                     } else {
                         throw ReadError.unknownInnerAlgorithm
@@ -134,6 +121,6 @@ class Kdbx3Header {
             } else {
                 throw ReadError.unknownReadType
             }
-        } while (readType != .end)
+        } while (true)
     }
 }
