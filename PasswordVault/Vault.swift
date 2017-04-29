@@ -8,6 +8,10 @@ import Foundation
 class Vault {
     static var kdbx: Kdbx?
 
+    static func close() {
+        kdbx = nil
+    }
+
     static func open(data: Data, password: String) throws -> Kdbx {
         kdbx = try Kdbx(data: data, password: password)
         return kdbx!

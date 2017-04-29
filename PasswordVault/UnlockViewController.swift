@@ -6,7 +6,7 @@
 import Material
 import SVProgressHUD
 
-class UnlockViewController: ScrollViewController {
+class UnlockViewController: ScrollViewController, UITextFieldDelegate {
 
     let fabButton = FABButton(image: Icon.check, tintColor: .white)
     var fabButtonBottomConstraint = NSLayoutConstraint()
@@ -15,9 +15,9 @@ class UnlockViewController: ScrollViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         view.backgroundColor = .white
-        
+
         navigationItem.title = "Password Vault"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
@@ -37,10 +37,12 @@ class UnlockViewController: ScrollViewController {
 
         // Password text field
 
+        passwordTextField.delegate = self
         passwordTextField.autocorrectionType = .no
         passwordTextField.autocapitalizationType = .none
         passwordTextField.isSecureTextEntry = true
         passwordTextField.placeholder = "Password"
+        passwordTextField.returnKeyType = .done
         passwordTextField.addTarget(self, action: #selector(didChangeTextField(sender:)), for: .editingChanged)
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
 
@@ -69,6 +71,10 @@ class UnlockViewController: ScrollViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(willHideKeyboard(notification:)), name: .UIKeyboardWillHide, object: nil)
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        Vault.close()
+    }
+
     override func willShowKeyboard(notification: Notification) {
         super.willShowKeyboard(notification: notification)
 
@@ -92,7 +98,7 @@ class UnlockViewController: ScrollViewController {
 
         if let userInfo = notification.userInfo {
             fabButtonBottomConstraint.constant = -20.0
-            
+
             let keyboardAnimationDuration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as! Double
             UIView.animate(withDuration: keyboardAnimationDuration, animations: {
                 self.view.layoutIfNeeded()
@@ -107,6 +113,10 @@ class UnlockViewController: ScrollViewController {
     }
 
     func didTapFloatingActionButton(sender: UIButton) {
+        submit()
+    }
+
+    func submit() {
         if let url = Bundle.main.url(forResource: "Passwords", withExtension: "kdbx") {
             do {
                 let data = try Data(contentsOf: url)
@@ -136,5 +146,12 @@ class UnlockViewController: ScrollViewController {
                 print("\(error)")
             }
         }
+    }
+
+    // MARK: UITextFieldDelegate
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        submit()
+        return true
     }
 }
