@@ -40,7 +40,7 @@ class GroupTableViewCell: UITableViewCell {
         NSLayoutConstraint(item: iconImageView, attribute: .left, relatedBy: .equal, toItem: contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
 
         // Title label
-        
+
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
         contentView.addSubview(titleLabel)

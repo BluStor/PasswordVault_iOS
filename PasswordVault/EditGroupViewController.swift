@@ -82,7 +82,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
     }
 
     // MARK: UITableViewControllerDelegate
-    
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 2
     }
@@ -130,7 +130,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
         case 0:
             let iconPickerViewController = IconPickerViewController()
             iconPickerViewController.delegate = self
-            
+
             navigationController?.pushViewController(iconPickerViewController, animated: true)
         default:
             break

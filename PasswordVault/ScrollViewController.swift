@@ -35,7 +35,7 @@ class ScrollViewController: UIViewController {
         scrollViewBottomConstraint.isActive = true
     }
 
-    func readjustScrollView(additionalHeight:CGFloat = 0.0) {
+    func readjustScrollView(additionalHeight: CGFloat = 0.0) {
         var rect = CGRect(x: 0.0, y: 0.0, width: 0.0, height: additionalHeight)
 
         for view in scrollView.subviews {

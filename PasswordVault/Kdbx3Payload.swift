@@ -83,8 +83,8 @@ class Kdbx3Payload {
 
         // Parse
 
-        let database = try KdbxXml.parse(data: payloadData, innerAlgorithm: header.innerAlgorithm)
-        
+        let database = try KdbxXml.parse(data: payloadData)
+
         self.init(database: database)
     }
 }

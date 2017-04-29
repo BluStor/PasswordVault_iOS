@@ -23,7 +23,7 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
 
     required init(group: KdbxXml.Group) {
         self.group = group
-        
+
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -72,7 +72,7 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
         guard let view = longPressGestureRecognizer.view else {
             return
         }
-        
+
         if view === tableView {
 
             let point = longPressGestureRecognizer.location(in: tableView)
@@ -83,13 +83,13 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
 
                     let alert = UIAlertController(title: "Group", message: selectedGroup.name, preferredStyle: .actionSheet)
 
-                    alert.addAction(UIAlertAction(title: "Edit", style: .default, handler: { action in
+                    alert.addAction(UIAlertAction(title: "Edit", style: .default, handler: { _ in
                         let editGroupViewController = EditGroupViewController(group: selectedGroup)
                         editGroupViewController.groupDelegate = self
                         self.navigationController?.pushViewController(editGroupViewController, animated: true)
                     }))
 
-                    alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { action in
+                    alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
                         if let kdbx = Vault.kdbx {
                             if kdbx.delete(groupUUID: selectedGroup.uuid) {
                                 self.reloadData()
@@ -97,7 +97,7 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
                         }
                     }))
 
-                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { action in
+                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
                         alert.dismiss(animated: true, completion: nil)
                     }))
 
@@ -107,13 +107,13 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
 
                     let alert = UIAlertController(title: "Group", message: selectedEntry.title, preferredStyle: .actionSheet)
 
-                    alert.addAction(UIAlertAction(title: "Edit", style: .default, handler: { action in
+                    alert.addAction(UIAlertAction(title: "Edit", style: .default, handler: { _ in
                         let editEntryViewController = EditEntryViewController(entry: selectedEntry)
                         editEntryViewController.groupDelegate = self
                         self.navigationController?.pushViewController(editEntryViewController, animated: true)
                     }))
-                    
-                    alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { action in
+
+                    alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
                         if let kdbx = Vault.kdbx {
                             if kdbx.delete(entryUUID: selectedEntry.uuid) {
                                 self.reloadData()
@@ -121,7 +121,7 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
                         }
                     }))
 
-                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { action in
+                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
                         alert.dismiss(animated: true, completion: nil)
                     }))
 

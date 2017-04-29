@@ -17,7 +17,7 @@ protocol KdbxProtocol {
 }
 
 class Kdbx: KdbxProtocol {
-    
+
     enum CompressionType: UInt32 {
         case none = 0
         case gzip = 1

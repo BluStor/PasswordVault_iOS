@@ -36,7 +36,7 @@ class Kdbx3: KdbxProtocol {
             return true
         }
 
-        for (index, _) in database.root.group.groups.enumerated() {
+        for index in database.root.group.groups.indices {
             if database.root.group.groups[index].delete(groupUUID: groupUUID) {
                 return true
             }
@@ -50,7 +50,7 @@ class Kdbx3: KdbxProtocol {
             database.root.group.groups.remove(at: index)
         }
 
-        for (index, _) in database.root.group.groups.enumerated() {
+        for index in database.root.group.groups.indices {
             if database.root.group.groups[index].delete(entryUUID: entryUUID) {
                 return true
             }
@@ -166,7 +166,7 @@ class Kdbx3: KdbxProtocol {
         if let index = database.root.group.entries.index(where: { $0.uuid == entry.uuid }) {
             database.root.group.entries[index] = entry
         } else {
-            for (index, _) in database.root.group.groups.enumerated() {
+            for index in database.root.group.groups.indices {
                 if database.root.group.groups[index].update(entry: entry) {
                     return true
                 }
@@ -180,7 +180,7 @@ class Kdbx3: KdbxProtocol {
         if database.root.group.uuid == group.uuid {
             database.root.group = group
         } else {
-            for (index, _) in database.root.group.groups.enumerated() {
+            for index in database.root.group.groups.indices {
                 if database.root.group.groups[index].update(group: group) {
                     return true
                 }

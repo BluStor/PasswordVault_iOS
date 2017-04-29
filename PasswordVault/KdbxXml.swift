@@ -309,7 +309,7 @@ class KdbxXml {
                 return true
             }
 
-            for (index, _) in groups.enumerated() {
+            for index in groups.indices {
                 if groups[index].delete(entryUUID: entryUUID) {
                     return true
                 }
@@ -324,7 +324,7 @@ class KdbxXml {
                 return true
             }
 
-            for (index, _) in groups.enumerated() {
+            for index in groups.indices {
                 if groups[index].delete(groupUUID: groupUUID) {
                     return true
                 }
@@ -357,12 +357,10 @@ class KdbxXml {
         }
 
         func get(entryUUID: String) -> Entry? {
-            for entry in entries {
-                if entry.uuid == entryUUID {
-                    return entry
-                }
+            for entry in entries where entry.uuid == entryUUID {
+                return entry
             }
-            
+
             for group in groups {
                 if let foundEntry = group.get(entryUUID: entryUUID) {
                     return foundEntry
@@ -377,10 +375,8 @@ class KdbxXml {
                 return true
             }
 
-            for (index, _) in groups.enumerated() {
-                if groups[index].update(entry: entry) {
-                    return true
-                }
+            for index in groups.indices  where groups[index].update(entry: entry) {
+                return true
             }
 
             return false
@@ -394,7 +390,7 @@ class KdbxXml {
                 }
             }
 
-            for (index, _) in groups.enumerated() {
+            for index in groups.indices {
                 if groups[index].update(group: group) {
                     return true
                 }
@@ -664,13 +660,13 @@ class KdbxXml {
         }
     }
 
-    static func parse(data: Data, innerAlgorithm: Kdbx.InnerAlgorithm) throws -> KeePassFile {
+    static func parse(data: Data) throws -> KeePassFile {
         let xmlDoc = try AEXMLDocument(xml: data)
         // TODO: Unprotect
         return KeePassFile.parse(elem: xmlDoc.root)
     }
 
-    static func xml(keePassFile: KeePassFile, innerAlgorithm: Kdbx.InnerAlgorithm) -> String {
+    static func xml(keePassFile: KeePassFile) -> String {
         let xmlDoc = AEXMLDocument(root: keePassFile.build(), options: AEXMLOptions())
         // TODO: Protect
         return xmlDoc.xml

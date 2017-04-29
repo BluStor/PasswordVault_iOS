@@ -69,7 +69,7 @@ class IconPickerViewController: UIViewController, UICollectionViewDataSource, UI
 
         let iconName = String(format: "%02d.svg", indexPath.row)
         cell.setIcon(iconName: iconName, tintColor: UIColor(hex: 0xDADADA))
-        
+
         return cell
     }
 
