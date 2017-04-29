@@ -16,6 +16,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
     let titleTextField = TextField()
     let usernameTextField = TextField()
     let passwordTextField = TextField()
+    let unmaskSwitch = Switch()
     let generateButton = RaisedButton()
     let urlTextField = TextField()
     let notesTextField = TextField()
@@ -43,7 +44,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
 
         // Save button
 
-        saveButton.addTarget(self, action: #selector(didTapNavigationBarButton(sender:)), for: .touchUpInside)
+        saveButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
 
         // Table view
 
@@ -61,7 +62,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         groupDelegate?.reloadData()
     }
 
-    func didChangeTextField(sender: TextField) {
+    func didChangeEditing(sender: UIView) {
         switch sender {
         case titleTextField:
             entry.title = titleTextField.text ?? ""
@@ -78,16 +79,12 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         }
     }
 
-    func didTapButton(sender: Button) {
+    func didTouchUpInside(sender: UIView) {
         if sender === generateButton {
             let passwordGeneratorViewController = PasswordGeneratorViewController()
             passwordGeneratorViewController.delegate = self
             navigationController?.pushViewController(passwordGeneratorViewController, animated: true)
-        }
-    }
-
-    func didTapNavigationBarButton(sender: IconButton) {
-        if sender == saveButton {
+        } else if sender == saveButton {
             if validateEntry() {
                 if let kdbx = Vault.kdbx {
                     if kdbx.update(entry: entry) {
@@ -95,6 +92,12 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
                     }
                 }
             }
+        }
+    }
+
+    func didChangeValue(sender: UIView) {
+        if sender == unmaskSwitch {
+            reloadPasswordMask()
         }
     }
 
@@ -108,6 +111,10 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         passwordTextField.text = entry.password
         urlTextField.text = entry.url
         notesTextField.text = entry.notes
+    }
+
+    func reloadPasswordMask() {
+        passwordTextField.isSecureTextEntry = !unmaskSwitch.isOn
     }
 
     func validateEntry() -> Bool {
@@ -136,7 +143,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
     // MARK: UITableViewControllerDelegate
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
+        return 8
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -147,13 +154,12 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         case 0:
             // Icon image view
 
-            let iconWidth = UIScreen.main.bounds.width / 2
-
             iconImageView.contentMode = .scaleAspectFit
             iconImageView.translatesAutoresizingMaskIntoConstraints = false
 
             cell.contentView.addSubview(iconImageView)
-            NSLayoutConstraint(item: iconImageView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: iconWidth).isActive = true
+            NSLayoutConstraint(item: iconImageView, attribute: .width, relatedBy: .lessThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 100.0).isActive = true
+            NSLayoutConstraint(item: iconImageView, attribute: .width, relatedBy: .equal, toItem: iconImageView, attribute: .height, multiplier: 1.0, constant: 0.0).isActive = true
             NSLayoutConstraint(item: iconImageView, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: iconImageView, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: iconImageView, attribute: .centerX, relatedBy: .equal, toItem: cell.contentView, attribute: .centerX, multiplier: 1.0, constant: 0.0).isActive = true
@@ -163,7 +169,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             titleTextField.placeholder = "Title"
             titleTextField.autocapitalizationType = .sentences
             titleTextField.autocorrectionType = .no
-            titleTextField.addTarget(self, action: #selector(didChangeTextField(sender:)), for: .editingChanged)
+            titleTextField.addTarget(self, action: #selector(didChangeEditing(sender:)), for: .editingChanged)
             titleTextField.translatesAutoresizingMaskIntoConstraints = false
 
             cell.contentView.addSubview(titleTextField)
@@ -177,7 +183,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             usernameTextField.placeholder = "Username"
             usernameTextField.autocapitalizationType = .none
             usernameTextField.autocorrectionType = .no
-            usernameTextField.addTarget(self, action: #selector(didChangeTextField(sender:)), for: .editingChanged)
+            usernameTextField.addTarget(self, action: #selector(didChangeEditing(sender:)), for: .editingChanged)
             usernameTextField.translatesAutoresizingMaskIntoConstraints = false
 
             cell.contentView.addSubview(usernameTextField)
@@ -192,7 +198,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             passwordTextField.isSecureTextEntry = true
             passwordTextField.autocapitalizationType = .none
             passwordTextField.autocorrectionType = .no
-            passwordTextField.addTarget(self, action: #selector(didChangeTextField(sender:)), for: .editingChanged)
+            passwordTextField.addTarget(self, action: #selector(didChangeEditing(sender:)), for: .editingChanged)
             passwordTextField.translatesAutoresizingMaskIntoConstraints = false
 
             cell.contentView.addSubview(passwordTextField)
@@ -201,12 +207,35 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             NSLayoutConstraint(item: passwordTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: passwordTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 4:
+            // Unmask switch
+
+            unmaskSwitch.setContentHuggingPriority(UILayoutPriorityRequired, for: .horizontal)
+            unmaskSwitch.addTarget(self, action: #selector(didChangeValue(sender:)), for: .valueChanged)
+            unmaskSwitch.translatesAutoresizingMaskIntoConstraints = false
+
+            cell.contentView.addSubview(unmaskSwitch)
+            NSLayoutConstraint(item: unmaskSwitch, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: unmaskSwitch, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: unmaskSwitch, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+
+            let unmaskLabel = UILabel()
+            unmaskLabel.text = "Unmask password"
+            unmaskLabel.textColor = UIColor(hex: 0x666666)
+            unmaskLabel.font = UIFont.systemFont(ofSize: 14.0)
+            unmaskLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            cell.contentView.addSubview(unmaskLabel)
+            NSLayoutConstraint(item: unmaskLabel, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: unmaskLabel, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: unmaskLabel, attribute: .left, relatedBy: .equal, toItem: unmaskSwitch, attribute: .right, multiplier: 1.0, constant: 15.0).isActive = true
+            NSLayoutConstraint(item: unmaskLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+        case 5:
             // Generate button
 
             generateButton.setTitle("Generate", for: .normal)
             generateButton.pulseColor = UIColor.white
             generateButton.backgroundColor = UIColor(hex: 0x00BCD4)
-            generateButton.addTarget(self, action: #selector(didTapButton(sender:)), for: .touchUpInside)
+            generateButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
             generateButton.translatesAutoresizingMaskIntoConstraints = false
 
             cell.contentView.addSubview(generateButton)
@@ -214,13 +243,13 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             NSLayoutConstraint(item: generateButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: generateButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: generateButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-        case 5:
+        case 6:
             // URL text view
 
             urlTextField.placeholder = "URL"
             urlTextField.autocapitalizationType = .none
             urlTextField.autocorrectionType = .no
-            urlTextField.addTarget(self, action: #selector(didChangeTextField(sender:)), for: .editingChanged)
+            urlTextField.addTarget(self, action: #selector(didChangeEditing(sender:)), for: .editingChanged)
             urlTextField.translatesAutoresizingMaskIntoConstraints = false
 
             cell.contentView.addSubview(urlTextField)
@@ -228,13 +257,13 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             NSLayoutConstraint(item: urlTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: urlTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: urlTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-        case 6:
+        case 7:
             // Notes text view
 
             notesTextField.placeholder = "Notes"
             notesTextField.autocapitalizationType = .sentences
             notesTextField.autocorrectionType = .no
-            notesTextField.addTarget(self, action: #selector(didChangeTextField(sender:)), for: .editingChanged)
+            notesTextField.addTarget(self, action: #selector(didChangeEditing(sender:)), for: .editingChanged)
             notesTextField.translatesAutoresizingMaskIntoConstraints = false
 
             cell.contentView.addSubview(notesTextField)
@@ -256,6 +285,9 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             iconPickerViewController.delegate = self
 
             navigationController?.pushViewController(iconPickerViewController, animated: true)
+        case 4:
+            unmaskSwitch.toggle()
+            reloadPasswordMask()
         default:
             break
         }
