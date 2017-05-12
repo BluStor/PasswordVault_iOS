@@ -12,25 +12,20 @@ protocol KdbxProtocol {
     func delete(groupUUID: String) -> Bool
     func encrypt(compositeKey: [UInt8]) throws -> Data
     func encrypt(password: String) throws -> Data
+    func unprotect() throws
     func update(entry: KdbxXml.Entry) -> Bool
     func update(group: KdbxXml.Group) -> Bool
 }
 
-class Kdbx: KdbxProtocol {
-
-    enum CompressionType: UInt32 {
-        case none = 0
-        case gzip = 1
-    }
-
-    enum InnerAlgorithm: UInt32 {
-        case none = 0
-        case arcFour = 1
-        case salsa20 = 2
-    }
+class Kdbx {
 
     enum CipherType {
         case aes
+    }
+
+    enum InnerAlgorithm {
+        case none
+        case salsa20
     }
 
     static let magicNumbers: [UInt8] = [0x03, 0xD9, 0xA2, 0x9A, 0x67, 0xFB, 0x4B, 0xB5]
@@ -104,6 +99,10 @@ class Kdbx: KdbxProtocol {
         }
 
         return nil
+    }
+
+    func unprotect() throws {
+        try kdbx.unprotect()
     }
 
     func update(entry: KdbxXml.Entry) -> Bool {

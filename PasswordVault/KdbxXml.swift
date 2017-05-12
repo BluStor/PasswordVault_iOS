@@ -18,8 +18,8 @@ class KdbxXml {
             }
 
             return Association(
-                    window: elem["Window"].string,
-                    keystrokeSequence: elem["KeystrokeSequence"].string
+                window: elem["Window"].string,
+                keystrokeSequence: elem["KeystrokeSequence"].string
             )
         }
 
@@ -41,9 +41,9 @@ class KdbxXml {
             let association = Association.parse(elem: elem["Association"])
 
             return AutoType(
-                    enabled: elem["Enabled"].string == "True",
-                    dataTransferObfuscation: elem["DataTransferObfuscation"].int!,
-                    association: association
+                enabled: elem["Enabled"].string == "True",
+                dataTransferObfuscation: elem["DataTransferObfuscation"].int!,
+                association: association
             )
         }
 
@@ -71,9 +71,9 @@ class KdbxXml {
         static func parse(elem: AEXMLElement) -> Binary {
 
             return Binary(
-                    id: elem.attributes["ID"]!,
-                    compressed: elem.attributes["Compressed"]!.xmlBool,
-                    content: elem.string
+                id: elem.attributes["ID"]!,
+                compressed: elem.attributes["Compressed"]!.xmlBool,
+                content: elem.string
             )
         }
 
@@ -94,8 +94,8 @@ class KdbxXml {
 
         static func parse(elem: AEXMLElement) -> DeletedObject {
             return DeletedObject(
-                    uuid: elem["UUID"].string,
-                    deletionTime: elem["DeletionTime"].string.xmlDate!
+                uuid: elem["UUID"].string,
+                deletionTime: elem["DeletionTime"].string.xmlDate!
             )
         }
 
@@ -178,25 +178,25 @@ class KdbxXml {
             }
 
             return Entry(
-                    uuid: elem["UUID"].string,
-                    iconId: elem["IconID"].int!,
-                    foregroundColor: elem["ForegroundColor"].string,
-                    backgroundColor: elem["BackgroundColor"].string,
-                    overrideURL: elem["OverrideURL"].string,
-                    tags: elem["Tags"].string,
-                    times: times,
-                    title: title,
-                    isTitleProtected: isTitleProtected,
-                    username: username,
-                    isUsernameProtected: isUsernameProtected,
-                    password: password,
-                    isPasswordProtected: isPasswordProtected,
-                    url: url,
-                    isUrlProtected: isUrlProtected,
-                    notes: notes,
-                    isNotesProtected: isNotesProtected,
-                    autoType: autoType,
-                    history: history
+                uuid: elem["UUID"].string,
+                iconId: elem["IconID"].int!,
+                foregroundColor: elem["ForegroundColor"].string,
+                backgroundColor: elem["BackgroundColor"].string,
+                overrideURL: elem["OverrideURL"].string,
+                tags: elem["Tags"].string,
+                times: times,
+                title: title,
+                isTitleProtected: isTitleProtected,
+                username: username,
+                isUsernameProtected: isUsernameProtected,
+                password: password,
+                isPasswordProtected: isPasswordProtected,
+                url: url,
+                isUrlProtected: isUrlProtected,
+                notes: notes,
+                isNotesProtected: isNotesProtected,
+                autoType: autoType,
+                history: history
             )
         }
 
@@ -222,6 +222,60 @@ class KdbxXml {
             }
 
             return elem
+        }
+
+        mutating func unprotect(streamCipher: KdbxStreamCipher) throws {
+            if isTitleProtected {
+                title = try streamCipher.unprotect(string: title)
+                isTitleProtected = false
+            }
+            if isUsernameProtected {
+                username = try streamCipher.unprotect(string: username)
+                isUsernameProtected = false
+            }
+            if isPasswordProtected {
+                password = try streamCipher.unprotect(string: password)
+                isPasswordProtected = false
+            }
+            if isUrlProtected {
+                url = try streamCipher.unprotect(string: url)
+                isUrlProtected = false
+            }
+            if isNotesProtected {
+                notes = try streamCipher.unprotect(string: notes)
+                isNotesProtected = false
+            }
+
+            for index in history.indices {
+                try history[index].unprotect(streamCipher: streamCipher)
+            }
+        }
+
+        mutating func protect(streamCipher: KdbxStreamCipher, memoryProtection: MemoryProtection) throws {
+            if !isTitleProtected && memoryProtection.isTitleProtected {
+                title = try streamCipher.protect(string: title)
+                isTitleProtected = true
+            }
+            if !isUsernameProtected && memoryProtection.isUsernameProtected {
+                username = try streamCipher.protect(string: username)
+                isUsernameProtected = true
+            }
+            if !isPasswordProtected && memoryProtection.isPasswordProtected {
+                password = try streamCipher.protect(string: password)
+                isPasswordProtected = true
+            }
+            if !isUrlProtected && memoryProtection.isUrlProtected {
+                url = try streamCipher.protect(string: url)
+                isUrlProtected = true
+            }
+            if !isNotesProtected && memoryProtection.isNotesProtected {
+                notes = try streamCipher.protect(string: notes)
+                isNotesProtected = true
+            }
+
+            for index in history.indices {
+                try history[index].protect(streamCipher: streamCipher, memoryProtection: memoryProtection)
+            }
         }
     }
 
@@ -264,18 +318,18 @@ class KdbxXml {
             }
 
             return Group(
-                    uuid: elem["UUID"].string,
-                    name: elem["Name"].string,
-                    notes: elem["Notes"].string,
-                    iconId: elem["IconID"].int!,
-                    times: times,
-                    isExpanded: elem["IsExpanded"].string == "True",
-                    defaultAutoTypeSequence: elem["DefaultAutoTypeSequence"].string,
-                    enableAutoType: elem["EnableAutoType"].string == "True",
-                    enableSearching: elem["EnableSearching"].string == "True",
-                    lastTopVisibleEntry: elem["LastTopVisibleEntry"].string,
-                    groups: groups,
-                    entries: entries
+                uuid: elem["UUID"].string,
+                name: elem["Name"].string,
+                notes: elem["Notes"].string,
+                iconId: elem["IconID"].int!,
+                times: times,
+                isExpanded: elem["IsExpanded"].string == "True",
+                defaultAutoTypeSequence: elem["DefaultAutoTypeSequence"].string,
+                enableAutoType: elem["EnableAutoType"].string == "True",
+                enableSearching: elem["EnableSearching"].string == "True",
+                lastTopVisibleEntry: elem["LastTopVisibleEntry"].string,
+                groups: groups,
+                entries: entries
             )
         }
 
@@ -369,6 +423,26 @@ class KdbxXml {
             return nil
         }
 
+        mutating func protect(streamCipher: KdbxStreamCipher, memoryProtection: MemoryProtection) throws {
+            for index in entries.indices {
+                try entries[index].protect(streamCipher: streamCipher, memoryProtection: memoryProtection)
+            }
+
+            for index in groups.indices {
+                try groups[index].protect(streamCipher: streamCipher, memoryProtection: memoryProtection)
+            }
+        }
+
+        mutating func unprotect(streamCipher: KdbxStreamCipher) throws {
+            for index in entries.indices {
+                try entries[index].unprotect(streamCipher: streamCipher)
+            }
+
+            for index in groups.indices {
+                try groups[index].unprotect(streamCipher: streamCipher)
+            }
+        }
+
         mutating func update(entry: Entry) -> Bool {
             if let index = entries.index(where: { $0.uuid == entry.uuid }) {
                 entries[index] = entry
@@ -417,33 +491,45 @@ class KdbxXml {
             elem.addChild(root.build())
             return elem
         }
+
+        mutating func protect(streamCipher: KdbxStreamCipher, memoryProtection: MemoryProtection) throws {
+            for index in root.group.groups.indices {
+                try root.group.groups[index].protect(streamCipher: streamCipher, memoryProtection: memoryProtection)
+            }
+        }
+
+        mutating func unprotect(streamCipher: KdbxStreamCipher) throws {
+            for index in root.group.groups.indices {
+                try root.group.groups[index].unprotect(streamCipher: streamCipher)
+            }
+        }
     }
 
     struct MemoryProtection {
 
-        var title: Bool
-        var username: Bool
-        var password: Bool
-        var url: Bool
-        var notes: Bool
+        var isTitleProtected: Bool
+        var isUsernameProtected: Bool
+        var isPasswordProtected: Bool
+        var isUrlProtected: Bool
+        var isNotesProtected: Bool
 
         static func parse(elem: AEXMLElement) -> MemoryProtection {
             return MemoryProtection(
-                    title: elem["ProtectTitle"].string == "True",
-                    username: elem["ProtectUserName"].string == "True",
-                    password: elem["ProtectPassword"].string == "True",
-                    url: elem["ProtectURL"].string == "True",
-                    notes: elem["ProtectNotes"].string == "True"
+                isTitleProtected: elem["ProtectTitle"].string == "True",
+                isUsernameProtected: elem["ProtectUserName"].string == "True",
+                isPasswordProtected: elem["ProtectPassword"].string == "True",
+                isUrlProtected: elem["ProtectURL"].string == "True",
+                isNotesProtected: elem["ProtectNotes"].string == "True"
             )
         }
 
         func build() -> AEXMLElement {
             let elem = AEXMLElement(name: "MemoryProtection")
-            elem.addChild(name: "ProtectTitle", value: title.xmlString, attributes: [:])
-            elem.addChild(name: "ProtectUserName", value: username.xmlString, attributes: [:])
-            elem.addChild(name: "ProtectPassword", value: password.xmlString, attributes: [:])
-            elem.addChild(name: "ProtectURL", value: url.xmlString, attributes: [:])
-            elem.addChild(name: "ProtectNotes", value: notes.xmlString, attributes: [:])
+            elem.addChild(name: "ProtectTitle", value: isTitleProtected.xmlString, attributes: [:])
+            elem.addChild(name: "ProtectUserName", value: isUsernameProtected.xmlString, attributes: [:])
+            elem.addChild(name: "ProtectPassword", value: isPasswordProtected.xmlString, attributes: [:])
+            elem.addChild(name: "ProtectURL", value: isUrlProtected.xmlString, attributes: [:])
+            elem.addChild(name: "ProtectNotes", value: isNotesProtected.xmlString, attributes: [:])
             return elem
         }
     }
@@ -486,31 +572,31 @@ class KdbxXml {
             }
 
             return Meta(
-                    generator: elem["Generator"].string,
-                    headerHash: elem["HeaderHash"].string,
-                    databaseName: elem["DatabaseName"].string,
-                    databaseNameChanged: elem["DatabaseNameChanged"].string.xmlDate,
-                    databaseDescription: elem["DatabaseDescription"].string,
-                    databaseDescriptionChanged: elem["DatabaseDescriptionChanged"].string.xmlDate,
-                    defaultUsername: elem["DefaultUserName"].string,
-                    defaultUsernameChanged: elem["DefaultUserNameChanged"].string.xmlDate,
-                    maintenanceHistoryDays: elem["MaintenenceHistoryDays"].int,
-                    color: elem["Color"].string,
-                    masterKeyChanged: elem["MasterKeyChanged"].string.xmlDate,
-                    masterKeyChangeRec: elem["MasterKeyChangeRec"].int!,
-                    masterKeyChangeForce: elem["MasterKeyChangeForce"].int!,
-                    memoryProtection: MemoryProtection.parse(elem: elem["MemoryProtection"]),
-                    recycleBinEnabled: elem["RecycleBinEnabled"].string == "True",
-                    recycleBinUUID: elem["RecycleBinUUID"].string,
-                    recycleBinChanged: elem["RecycleBinChanged"].string.xmlDate,
-                    entryTemplatesGroup: elem["EntryTemplatesGroup"].string,
-                    entryTemplatesGroupChanged: elem["EntryTemplatesGroupChanged"].string.xmlDate,
-                    historyMaxItems: elem["HistoryMaxItems"].int!,
-                    historyMaxSize: elem["HistoryMaxSize"].int!,
-                    lastSelectedGroup: elem["LastSelectedGroup"].string,
-                    lastTopVisibleGroup: elem["LastTopVisibleGroup"].string,
-                    binaries: binaries,
-                    customData: elem["CustomData"].string
+                generator: elem["Generator"].string,
+                headerHash: elem["HeaderHash"].string,
+                databaseName: elem["DatabaseName"].string,
+                databaseNameChanged: elem["DatabaseNameChanged"].string.xmlDate,
+                databaseDescription: elem["DatabaseDescription"].string,
+                databaseDescriptionChanged: elem["DatabaseDescriptionChanged"].string.xmlDate,
+                defaultUsername: elem["DefaultUserName"].string,
+                defaultUsernameChanged: elem["DefaultUserNameChanged"].string.xmlDate,
+                maintenanceHistoryDays: elem["MaintenenceHistoryDays"].int,
+                color: elem["Color"].string,
+                masterKeyChanged: elem["MasterKeyChanged"].string.xmlDate,
+                masterKeyChangeRec: elem["MasterKeyChangeRec"].int!,
+                masterKeyChangeForce: elem["MasterKeyChangeForce"].int!,
+                memoryProtection: MemoryProtection.parse(elem: elem["MemoryProtection"]),
+                recycleBinEnabled: elem["RecycleBinEnabled"].string == "True",
+                recycleBinUUID: elem["RecycleBinUUID"].string,
+                recycleBinChanged: elem["RecycleBinChanged"].string.xmlDate,
+                entryTemplatesGroup: elem["EntryTemplatesGroup"].string,
+                entryTemplatesGroupChanged: elem["EntryTemplatesGroupChanged"].string.xmlDate,
+                historyMaxItems: elem["HistoryMaxItems"].int!,
+                historyMaxSize: elem["HistoryMaxSize"].int!,
+                lastSelectedGroup: elem["LastSelectedGroup"].string,
+                lastTopVisibleGroup: elem["LastTopVisibleGroup"].string,
+                binaries: binaries,
+                customData: elem["CustomData"].string
             )
         }
 
@@ -591,9 +677,9 @@ class KdbxXml {
 
         static func parse(elem: AEXMLElement) -> Str {
             return Str(
-                    key: elem["Key"].string,
-                    value: elem["Value"].string,
-                    isProtected: elem["IsProtected"].string.xmlBool
+                key: elem["Key"].string,
+                value: elem["Value"].string,
+                isProtected: elem["Value"].attributes["Protected"]?.xmlBool ?? false
             )
         }
 
@@ -617,13 +703,13 @@ class KdbxXml {
 
         static func parse(elem: AEXMLElement) -> Times {
             return Times(
-                    lastModificationTime: elem["LastModificationTime"].string.xmlDate,
-                    creationTime: elem["CreationTime"].string.xmlDate,
-                    lastAccessTime: elem["LastAccessTime"].string.xmlDate,
-                    expiryTime: elem["ExpiryTime"].string.xmlDate,
-                    expires: elem["Expires"].string == "True",
-                    usageCount: elem["UsageCount"].int!,
-                    locationChanged: elem["LocationChanged"].string.xmlDate
+                lastModificationTime: elem["LastModificationTime"].string.xmlDate,
+                creationTime: elem["CreationTime"].string.xmlDate,
+                lastAccessTime: elem["LastAccessTime"].string.xmlDate,
+                expiryTime: elem["ExpiryTime"].string.xmlDate,
+                expires: elem["Expires"].string == "True",
+                usageCount: elem["UsageCount"].int!,
+                locationChanged: elem["LocationChanged"].string.xmlDate
             )
         }
 
@@ -662,13 +748,6 @@ class KdbxXml {
 
     static func parse(data: Data) throws -> KeePassFile {
         let xmlDoc = try AEXMLDocument(xml: data)
-        // TODO: Unprotect
         return KeePassFile.parse(elem: xmlDoc.root)
-    }
-
-    static func xml(keePassFile: KeePassFile) -> String {
-        let xmlDoc = AEXMLDocument(root: keePassFile.build(), options: AEXMLOptions())
-        // TODO: Protect
-        return xmlDoc.xml
     }
 }

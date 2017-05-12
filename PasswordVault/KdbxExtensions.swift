@@ -12,7 +12,7 @@ extension Bool {
     }
 }
 
-extension Collection where Iterator.Element == UInt8 {
+extension Array where Iterator.Element == UInt8 {
 
     static func random(size: Int) -> [UInt8] {
         var randomBytes = [UInt8](repeating: 0x0, count: size)
@@ -25,6 +25,12 @@ extension Collection where Iterator.Element == UInt8 {
         return randomBytes
     }
 
+    var hexString: String {
+        return self.map {
+            String(format: "%02x", $0)
+            }.joined()
+    }
+
     func sha256() -> [UInt8] {
         let bytes = [UInt8](self)
 
@@ -34,12 +40,6 @@ extension Collection where Iterator.Element == UInt8 {
         CC_SHA256(bytes, UInt32(bytes.count), &hash)
 
         return hash
-    }
-
-    var hexString: String {
-        return self.map {
-            String(format: "%02x", $0)
-        }.joined()
     }
 }
 
@@ -61,16 +61,18 @@ extension Int {
 
 extension String {
 
-    subscript(range: Range<Int>) -> String {
-        let range = Range(
-                uncheckedBounds: (
-                        lower: max(0, min(self.characters.count, range.lowerBound)),
-                        upper: min(self.characters.count, max(0, range.upperBound))
-                )
-        )
-        let start = index(startIndex, offsetBy: range.lowerBound)
-        let end = index(start, offsetBy: range.upperBound - range.lowerBound)
-        return self[Range(start..<end)]
+    func base64Encoded() -> [UInt8]? {
+        if let data = self.data(using: .utf8) {
+            return [UInt8](data)
+        }
+        return nil
+    }
+
+    func base64Decoded() -> [UInt8]? {
+        if let data = Data(base64Encoded: self) {
+            return [UInt8](data)
+        }
+        return nil
     }
 
     func sha256() -> [UInt8] {

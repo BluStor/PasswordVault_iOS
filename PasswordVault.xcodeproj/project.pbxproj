@@ -42,9 +42,11 @@
 		A1B287F11EAF39010006B341 /* Kdbx4.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B287EF1EAF39010006B341 /* Kdbx4.swift */; };
 		A1B287F21EAF39010006B341 /* Kdbx4Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B287F01EAF39010006B341 /* Kdbx4Header.swift */; };
 		A1B287F41EAF39EF0006B341 /* Kdbx4Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B287F31EAF39EF0006B341 /* Kdbx4Payload.swift */; };
+		A1BC9E581EB78AF300DF3387 /* Salsa20.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BC9E571EB78AF300DF3387 /* Salsa20.swift */; };
 		A1BF3A961EAC443100CB306C /* KdbxExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BF3A951EAC443100CB306C /* KdbxExtensions.swift */; };
+		A1D148F11EBBD5F90089DF3B /* GKBluetoothCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D148F01EBBD5F90089DF3B /* GKBluetoothCard.swift */; };
+		A1D148F51EBBDC0F0089DF3B /* GKResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D148F41EBBDC0F0089DF3B /* GKResponse.swift */; };
 		A1F1747C1EADC64300FC49BD /* KdbxXml.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F1747B1EADC64300FC49BD /* KdbxXml.swift */; };
-		A1F1747E1EADFC1500FC49BD /* Passwords.kdbx in Resources */ = {isa = PBXBuildFile; fileRef = A1F1747D1EADFC1500FC49BD /* Passwords.kdbx */; };
 		A1FD86911EA8B368008F382B /* Kdbx3Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FD86901EA8B368008F382B /* Kdbx3Payload.swift */; };
 		B033691603AB183C66F8A278 /* Pods_PasswordVaultTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7308D5E89D596E9CEAA4ECD2 /* Pods_PasswordVaultTests.framework */; };
 		C97F2204F9C13B7B0AF085D4 /* Pods_PasswordVault.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E61E282155225B1C80679A95 /* Pods_PasswordVault.framework */; };
@@ -113,9 +115,11 @@
 		A1B287EF1EAF39010006B341 /* Kdbx4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx4.swift; sourceTree = "<group>"; };
 		A1B287F01EAF39010006B341 /* Kdbx4Header.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx4Header.swift; sourceTree = "<group>"; };
 		A1B287F31EAF39EF0006B341 /* Kdbx4Payload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx4Payload.swift; sourceTree = "<group>"; };
+		A1BC9E571EB78AF300DF3387 /* Salsa20.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Salsa20.swift; sourceTree = "<group>"; };
 		A1BF3A951EAC443100CB306C /* KdbxExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KdbxExtensions.swift; sourceTree = "<group>"; };
+		A1D148F01EBBD5F90089DF3B /* GKBluetoothCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GKBluetoothCard.swift; sourceTree = "<group>"; };
+		A1D148F41EBBDC0F0089DF3B /* GKResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GKResponse.swift; sourceTree = "<group>"; };
 		A1F1747B1EADC64300FC49BD /* KdbxXml.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KdbxXml.swift; sourceTree = "<group>"; };
-		A1F1747D1EADFC1500FC49BD /* Passwords.kdbx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Passwords.kdbx; sourceTree = "<group>"; };
 		A1FD86901EA8B368008F382B /* Kdbx3Payload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx3Payload.swift; sourceTree = "<group>"; };
 		A571D4FA530494217C3790B6 /* Pods_PasswordVaultUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PasswordVaultUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A916743BCAF1E736CD018ECA /* Pods-PasswordVaultTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PasswordVaultTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PasswordVaultTests/Pods-PasswordVaultTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -155,7 +159,7 @@
 		A10CFD111EA890DF006EFDB6 /* Kdbx */ = {
 			isa = PBXGroup;
 			children = (
-				A10CFD1C1EA89115006EFDB6 /* DataStream.swift */,
+				A1BC9E571EB78AF300DF3387 /* Salsa20.swift */,
 				A1B287ED1EAF357F0006B341 /* Kdbx.swift */,
 				A115AADB1EAC6E85006F2675 /* KdbxCrypto.swift */,
 				A10CFD141EA890FE006EFDB6 /* KdbxError.swift */,
@@ -196,6 +200,8 @@
 		A1525FD51EA7387700B580A7 /* PasswordVault */ = {
 			isa = PBXGroup;
 			children = (
+				A10CFD1C1EA89115006EFDB6 /* DataStream.swift */,
+				A1D148EF1EBBD5C20089DF3B /* Gatekeeper */,
 				A1525FE21EA7387700B580A7 /* Info.plist */,
 				A15260091EA7398800B580A7 /* PasswordVault-Bridging-Header.h */,
 				A1525FD61EA7387700B580A7 /* AppDelegate.swift */,
@@ -290,9 +296,17 @@
 		A1C7D85A1EA812A0004943EA /* Passwords */ = {
 			isa = PBXGroup;
 			children = (
-				A1F1747D1EADFC1500FC49BD /* Passwords.kdbx */,
 			);
 			name = Passwords;
+			sourceTree = "<group>";
+		};
+		A1D148EF1EBBD5C20089DF3B /* Gatekeeper */ = {
+			isa = PBXGroup;
+			children = (
+				A1D148F01EBBD5F90089DF3B /* GKBluetoothCard.swift */,
+				A1D148F41EBBDC0F0089DF3B /* GKResponse.swift */,
+			);
+			name = Gatekeeper;
 			sourceTree = "<group>";
 		};
 		FE1604C74B10D111B7E1FF5A /* Pods */ = {
@@ -429,7 +443,6 @@
 			files = (
 				A1525FE11EA7387700B580A7 /* LaunchScreen.storyboard in Resources */,
 				A1525FDE1EA7387700B580A7 /* Assets.xcassets in Resources */,
-				A1F1747E1EADFC1500FC49BD /* Passwords.kdbx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -477,7 +490,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		4A99AF819C5E52BA2644075B /* [CP] Embed Pods Frameworks */ = {
@@ -507,7 +520,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		87E17B6C9DFEA80B9AA0E6B5 /* [CP] Copy Pods Resources */ = {
@@ -567,7 +580,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		EF10293AF3B91B16583CF94D /* [CP] Embed Pods Frameworks */ = {
@@ -595,6 +608,7 @@
 				A15B1A1A1EB01C150068328E /* Theme.swift in Sources */,
 				A18E88D61EB1ECDE004D1E91 /* SyncView.swift in Sources */,
 				A10CFD171EA890FE006EFDB6 /* Kdbx3.swift in Sources */,
+				A1D148F51EBBDC0F0089DF3B /* GKResponse.swift in Sources */,
 				A15B1A091EB0026E0068328E /* EditGroupViewController.swift in Sources */,
 				A10CFD181EA890FE006EFDB6 /* Kdbx3Header.swift in Sources */,
 				A1B287EE1EAF357F0006B341 /* Kdbx.swift in Sources */,
@@ -606,8 +620,10 @@
 				A15B1A111EB002CB0068328E /* SettingsViewController.swift in Sources */,
 				A115AADC1EAC6E85006F2675 /* KdbxCrypto.swift in Sources */,
 				A15B1A0F1EB002BF0068328E /* PasswordGeneratorViewController.swift in Sources */,
+				A1BC9E581EB78AF300DF3387 /* Salsa20.swift in Sources */,
 				A1FD86911EA8B368008F382B /* Kdbx3Payload.swift in Sources */,
 				A15B1A051EB0023C0068328E /* CreateViewController.swift in Sources */,
+				A1D148F11EBBD5F90089DF3B /* GKBluetoothCard.swift in Sources */,
 				A12723DB1EB1A27200247C85 /* ScrollViewController.swift in Sources */,
 				A18E88D31EB1DD10004D1E91 /* GroupTableViewCell.swift in Sources */,
 				A10CFD1E1EA89115006EFDB6 /* DataStream.swift in Sources */,

@@ -10,16 +10,6 @@ class GroupTableViewCell: UITableViewCell {
     let titleLabel = UILabel()
     let descriptionLabel = UILabel()
 
-    override var isHighlighted: Bool {
-        didSet {
-            if isHighlighted {
-                backgroundColor = UIColor(hex: 0xEFEFEF)
-            } else {
-                backgroundColor = nil
-            }
-        }
-    }
-
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

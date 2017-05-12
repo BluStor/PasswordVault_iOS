@@ -42,6 +42,7 @@ extension UIColor {
 }
 
 extension UIImage {
+
     func tint(image: UIImage, color: UIColor) -> UIImage {
         let ciImage = CIImage(image: image)
         let filter = CIFilter(name: "CIMultiplyCompositing")!

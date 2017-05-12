@@ -135,9 +135,10 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
         if indexPath.row < group.groups.count {
             let cellGroup = group.groups[indexPath.row]
 
-            let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath) as! GroupTableViewCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath) as? GroupTableViewCell else {
+                return UITableViewCell()
+            }
 
-            cell.selectionStyle = .none
             cell.titleLabel.text = cellGroup.name
             cell.descriptionLabel.text = String(format: "%d items", cellGroup.itemCount)
 
@@ -148,9 +149,10 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
         } else {
             let entry = group.entries[indexPath.row - group.groups.count]
 
-            let cell = tableView.dequeueReusableCell(withIdentifier: "entry", for: indexPath) as! EntryTableViewCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "entry", for: indexPath) as? EntryTableViewCell else {
+                return UITableViewCell()
+            }
 
-            cell.selectionStyle = .none
             cell.titleLabel.text = entry.title
 
             let iconName = String(format: "%02d", entry.iconId)
@@ -176,6 +178,8 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
             editEntryViewController.groupDelegate = self
             navigationController?.pushViewController(editEntryViewController, animated: true)
         }
+
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

@@ -7,6 +7,16 @@ import Foundation
 
 class Kdbx3Header {
 
+    enum CompressionType: UInt32 {
+        case none = 0
+        case gzip = 1
+    }
+
+    enum InnerAlgorithm: UInt32 {
+        case none = 0
+        case salsa20 = 2
+    }
+
     enum ReadType: UInt8 {
         case end = 0
         case comment = 1
@@ -38,14 +48,14 @@ class Kdbx3Header {
     var magicNumbers: [UInt8]
     var version: Version
     var cipherType = Kdbx.CipherType.aes
-    var compressionType = Kdbx.CompressionType.none
+    var compressionType = CompressionType.none
     var masterKeySeed = [UInt8]()
     var transformSeed = [UInt8]()
     var transformRounds: UInt64 = 6000
     var encryptionIv = [UInt8]()
     var protectedStreamKey = [UInt8]()
     var streamStartBytes = [UInt8]()
-    var innerAlgorithm = Kdbx.InnerAlgorithm.none
+    var innerAlgorithm = InnerAlgorithm.none
 
     required init(dataReadStream: DataReadStream) throws {
         // Verify magic numbers and version
@@ -81,7 +91,7 @@ class Kdbx3Header {
 
                     let cipherUuid = UUID(uuid: (b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]))
 
-                    if cipherUuid == KdbxCrypto.aesUuid {
+                    if cipherUuid == KdbxCrypto.aesUUID {
                         cipherType = .aes
                     } else {
                         throw ReadError.unknownCipherUuid
@@ -89,8 +99,8 @@ class Kdbx3Header {
                 case .compressionType:
                     let rawValue = try dataReadStream.read() as UInt32
 
-                    if let c = Kdbx.CompressionType(rawValue: rawValue) {
-                        compressionType = c
+                    if let ct = CompressionType(rawValue: rawValue) {
+                        compressionType = ct
                     } else {
                         throw ReadError.unknownCompressionType
                     }
@@ -109,7 +119,7 @@ class Kdbx3Header {
                 case .innerAlgorithm:
                     let rawValue = try dataReadStream.read() as UInt32
 
-                    if let algorithm = Kdbx.InnerAlgorithm(rawValue: rawValue) {
+                    if let algorithm = InnerAlgorithm(rawValue: rawValue) {
                         innerAlgorithm = algorithm
                     } else {
                         throw ReadError.unknownInnerAlgorithm

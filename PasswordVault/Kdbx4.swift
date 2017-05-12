@@ -46,6 +46,10 @@ class Kdbx4: KdbxProtocol {
         return try encrypt(compositeKey: password.sha256())
     }
 
+    func unprotect() {
+        fatalError("Not implemented.")
+    }
+
     func update(entry: KdbxXml.Entry) -> Bool {
         return false
     }

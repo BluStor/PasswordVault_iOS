@@ -88,9 +88,9 @@ class Kdbx3: KdbxProtocol {
         try dataWriteStream.write(Kdbx3Header.ReadType.cipherUuid.rawValue)
         switch header.cipherType {
         case .aes:
-            let data = KdbxCrypto.aesUuid.data
+            let data = KdbxCrypto.aesUUID.data
             try dataWriteStream.write(UInt16(data.count))
-            try dataWriteStream.write(KdbxCrypto.aesUuid.data)
+            try dataWriteStream.write(KdbxCrypto.aesUUID.data)
         }
 
         try dataWriteStream.write(Kdbx3Header.ReadType.compressionType.rawValue)
@@ -160,6 +160,26 @@ class Kdbx3: KdbxProtocol {
 
     func encrypt(password: String) throws -> Data {
         return try encrypt(compositeKey: password.sha256())
+    }
+
+    func unprotect() throws {
+        let streamCipher: KdbxStreamCipher
+        switch header.innerAlgorithm {
+        case .none:
+            return
+        case .salsa20:
+            let iv = [0xE8, 0x30, 0x09, 0x4B, 0x97, 0x20, 0x5D, 0x2A] as [UInt8]
+            let salsaKey = header.protectedStreamKey.sha256()
+            streamCipher = Salsa20(key: salsaKey, iv: iv)
+        }
+
+        for index in database.root.group.entries.indices {
+            try database.root.group.entries[index].unprotect(streamCipher: streamCipher)
+        }
+
+        for index in database.root.group.groups.indices {
+            try database.root.group.groups[index].unprotect(streamCipher: streamCipher)
+        }
     }
 
     func update(entry: KdbxXml.Entry) -> Bool {

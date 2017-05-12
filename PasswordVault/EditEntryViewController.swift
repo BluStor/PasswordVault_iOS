@@ -85,13 +85,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             passwordGeneratorViewController.delegate = self
             navigationController?.pushViewController(passwordGeneratorViewController, animated: true)
         } else if sender == saveButton {
-            if validateEntry() {
-                if let kdbx = Vault.kdbx {
-                    if kdbx.update(entry: entry) {
-                        navigationController?.popViewController(animated: true)
-                    }
-                }
-            }
+            save()
         }
     }
 
@@ -117,12 +111,17 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         passwordTextField.isSecureTextEntry = !unmaskSwitch.isOn
     }
 
+    func save() {
+        if validateEntry() {
+            if let kdbx = Vault.kdbx {
+                if kdbx.update(entry: entry) {
+                    navigationController?.popViewController(animated: true)
+                }
+            }
+        }
+    }
+
     func validateEntry() -> Bool {
-        entry.title = titleTextField.text ?? ""
-        entry.username = usernameTextField.text ?? ""
-        entry.password = passwordTextField.text ?? ""
-        entry.url = urlTextField.text ?? ""
-        entry.notes = notesTextField.text ?? ""
         return true
     }
 
@@ -194,6 +193,8 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         case 3:
             // Password text view
 
+            passwordTextField.detailLabel.layer.borderWidth = 1.0
+            passwordTextField.detailLabel.layer.borderColor = UIColor.random().cgColor
             passwordTextField.placeholder = "Password"
             passwordTextField.isSecureTextEntry = true
             passwordTextField.autocapitalizationType = .none

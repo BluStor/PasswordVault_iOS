@@ -5,9 +5,14 @@
 
 import Foundation
 
+protocol KdbxStreamCipher {
+    func unprotect(string: String) throws -> String
+    func protect(string: String) throws -> String
+}
+
 class KdbxCrypto {
 
-    static let aesUuid = UUID(uuidString: "31C1F2E6-BF71-4350-BE58-05216AFC5AFF")!
+    public static let aesUUID = UUID(uuidString: "31C1F2E6-BF71-4350-BE58-05216AFC5AFF")!
 
     enum Operation: UInt32 {
         case decrypt
@@ -25,6 +30,7 @@ class KdbxCrypto {
 
     enum CryptoError: Error {
         case dataError
+        case initializationError
     }
 
     static func aes(operation: Operation, bytes: [UInt8], key: [UInt8], iv: [UInt8]) throws -> [UInt8] {

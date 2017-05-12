@@ -117,6 +117,22 @@ class UnlockViewController: ScrollViewController, UITextFieldDelegate {
     }
 
     func submit() {
+        print("listPeripherals")
+        GKBluetoothCard.listPeripherals(timeout: 10.0, singleResult: true) { (peripherals, error) in
+            guard let peripheral = peripherals.first else {
+                print("No peripherals found.")
+                return
+            }
+
+            let bluetoothCard = GKBluetoothCard(peripheral: peripheral)
+            bluetoothCard.get(path: "/passwordvault/db.kdbx", completion: { (result, error) in
+                print(error ?? "No error.")
+                print(result ?? "No result.")
+            })
+        }
+    }
+
+    func test() {
         if let url = Bundle.main.url(forResource: "Passwords", withExtension: "kdbx") {
             do {
                 let data = try Data(contentsOf: url)
@@ -134,6 +150,7 @@ class UnlockViewController: ScrollViewController, UITextFieldDelegate {
                             self.navigationController?.pushViewController(groupViewController, animated: true)
                         }
                     } catch {
+                        print(error)
                         DispatchQueue.main.async {
                             self.passwordTextField.detail = "Incorrect password."
                             self.passwordTextField.isErrorRevealed = true
@@ -145,6 +162,8 @@ class UnlockViewController: ScrollViewController, UITextFieldDelegate {
             } catch {
                 print("\(error)")
             }
+        } else {
+            print("unable to find database file")
         }
     }
 

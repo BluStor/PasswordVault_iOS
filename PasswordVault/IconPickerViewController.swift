@@ -65,7 +65,9 @@ class IconPickerViewController: UIViewController, UICollectionViewDataSource, UI
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! IconPickerCollectionViewCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? IconPickerCollectionViewCell else {
+            return UICollectionViewCell()
+        }
 
         let iconName = String(format: "%02d.svg", indexPath.row)
         cell.setIcon(iconName: iconName, tintColor: UIColor(hex: 0xDADADA))
