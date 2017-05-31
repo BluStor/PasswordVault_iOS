@@ -104,6 +104,8 @@ class GKCard {
                     }
                 })
 
+                usleep(10000)
+
                 offset += chunkSize
             } while offset < data.count
 
