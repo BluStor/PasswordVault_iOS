@@ -238,7 +238,6 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             copyButton.setTitle("Copy", for: .normal)
             copyButton.pulseColor = UIColor.white
             copyButton.backgroundColor = UIColor(hex: 0x00BCD4)
-            copyButton.setTitleColor(UIColor(hex: 0x999999), for: .normal)
             copyButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
             copyButton.translatesAutoresizingMaskIntoConstraints = false
 
@@ -253,6 +252,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             generateButton.setTitle("Generate", for: .normal)
             generateButton.pulseColor = UIColor.white
             generateButton.backgroundColor = UIColor(hex: 0xEAEAEA)
+            generateButton.setTitleColor(UIColor(hex: 0x999999), for: .normal)
             generateButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
             generateButton.translatesAutoresizingMaskIntoConstraints = false
 

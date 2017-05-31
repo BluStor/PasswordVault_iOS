@@ -8,7 +8,7 @@ import SwiftyBluetooth
 
 class ChooseCardViewController: UITableViewController {
 
-    struct ScannedPeripheral {
+    struct ScannedCard {
         let peripheral: Peripheral
         let advertisementData: [String:Any]
         let rssi: Int?
@@ -22,7 +22,7 @@ class ChooseCardViewController: UITableViewController {
         }
     }
 
-    var scannedPeripherals = [ScannedPeripheral]()
+    var scannedCards = [ScannedCard]()
 
     let lockImageView = UIImageView(image: UIImage(named: "lock"))
     let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .gray)
@@ -41,7 +41,7 @@ class ChooseCardViewController: UITableViewController {
         tableView.separatorStyle = .none
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 200.0
-        tableView.register(ScannedPeripheralTableViewCell.self, forCellReuseIdentifier: "scannedPeripheral")
+        tableView.register(ScannedCardTableViewCell.self, forCellReuseIdentifier: "scannedCard")
 
         // Lock image view
 
@@ -70,9 +70,9 @@ class ChooseCardViewController: UITableViewController {
             case .scanStopped:
                 print("scan stopped")
             case .scanResult(let peripheral, let advertisementData, let rssi):
-                let scannedPeripheral = ScannedPeripheral(peripheral: peripheral, advertisementData: advertisementData, rssi: rssi)
+                let scannedPeripheral = ScannedCard(peripheral: peripheral, advertisementData: advertisementData, rssi: rssi)
 
-                self.scannedPeripherals.append(scannedPeripheral)
+                self.scannedCards.append(scannedPeripheral)
                 self.tableView.reloadData()
             }
         }
@@ -91,6 +91,7 @@ class ChooseCardViewController: UITableViewController {
 
             switch indexPath.row {
             case 0:
+                cell.selectionStyle = .none
                 cell.contentView.addSubview(lockImageView)
                 NSLayoutConstraint(item: lockImageView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 150.0).isActive = true
                 NSLayoutConstraint(item: lockImageView, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
@@ -98,6 +99,7 @@ class ChooseCardViewController: UITableViewController {
                 NSLayoutConstraint(item: lockImageView, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
                 NSLayoutConstraint(item: lockImageView, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
             case 1:
+                cell.selectionStyle = .none
                 cell.contentView.addSubview(activityIndicatorView)
                 NSLayoutConstraint(item: activityIndicatorView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50.0).isActive = true
                 NSLayoutConstraint(item: activityIndicatorView, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
@@ -109,9 +111,9 @@ class ChooseCardViewController: UITableViewController {
 
             return cell
         case 1:
-            let scannedPeripheral = scannedPeripherals[indexPath.row]
+            let scannedPeripheral = scannedCards[indexPath.row]
 
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "scannedPeripheral") as? ScannedPeripheralTableViewCell else {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "scannedCard") as? ScannedCardTableViewCell else {
                 return UITableViewCell()
             }
 
@@ -139,7 +141,7 @@ class ChooseCardViewController: UITableViewController {
         case 0:
             return 2
         case 1:
-            return scannedPeripherals.count
+            return scannedCards.count
         default:
             return 0
         }
@@ -152,7 +154,7 @@ class ChooseCardViewController: UITableViewController {
         case 0:
             return
         case 1:
-            let scannedPeripheral = scannedPeripherals[indexPath.row]
+            let scannedPeripheral = scannedCards[indexPath.row]
 
             Vault.cardUUID = scannedPeripheral.peripheral.identifier
 

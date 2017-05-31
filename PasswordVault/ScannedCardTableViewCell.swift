@@ -1,11 +1,11 @@
 //
-//  ScannedPeripheralTableViewCell.swift
+//  ScannedCardTableViewCell.swift
 //  PasswordVault
 //
 
 import UIKit
 
-class ScannedPeripheralTableViewCell: UITableViewCell {
+class ScannedCardTableViewCell: UITableViewCell {
 
     let nameLabel = UILabel()
     let descriptionLabel = UILabel()
@@ -20,6 +20,7 @@ class ScannedPeripheralTableViewCell: UITableViewCell {
         // Title label
 
         nameLabel.numberOfLines = 0
+        nameLabel.textAlignment = .center
         nameLabel.font = UIFont.systemFont(ofSize: 22.0)
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
 
@@ -31,6 +32,7 @@ class ScannedPeripheralTableViewCell: UITableViewCell {
         // Description label
 
         descriptionLabel.numberOfLines = 0
+        descriptionLabel.textAlignment = .center
         descriptionLabel.textColor = UIColor(hex: 0xacacac)
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
 

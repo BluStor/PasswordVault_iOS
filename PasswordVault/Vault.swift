@@ -3,7 +3,6 @@
 //  PasswordVault
 //
 
-import Foundation
 import Signals
 
 class Vault {
