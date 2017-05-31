@@ -6,10 +6,11 @@
 import Signals
 
 class Vault {
-    enum Status {
-        case synced
-        case syncInProgress
-        case syncFailed
+    enum SyncStatus {
+        case complete
+        case encrypting
+        case failed
+        case transferring
     }
 
     static let dbPath = "/passwordvault/db.kdbx"
@@ -36,7 +37,7 @@ class Vault {
             }
         }
     }
-    static let onStatus = Signal<Vault.Status>(retainLastData: true)
+    static let syncStatus = Signal<Vault.SyncStatus>(retainLastData: true)
 
     static func close() {
         kdbx = nil
@@ -44,18 +45,18 @@ class Vault {
 
     static func create(password: String) {
         kdbx = Kdbx(password: password)
-        Vault.onStatus.fire(Vault.Status.synced)
+        Vault.syncStatus.fire(.complete)
     }
 
     static func open(encryptedData: Data, password: String) throws -> Kdbx {
         kdbx = try Kdbx(encryptedData: encryptedData, password: password)
-        Vault.onStatus.fire(Vault.Status.synced)
+        Vault.syncStatus.fire(.complete)
         return kdbx!
     }
 
     static func open(encryptedData: Data, compositeKey: [UInt8]) throws -> Kdbx {
         kdbx = try Kdbx(encryptedData: encryptedData, compositeKey: compositeKey)
-        Vault.onStatus.fire(Vault.Status.synced)
+        Vault.syncStatus.fire(.complete)
         return kdbx!
     }
 
@@ -71,6 +72,8 @@ class Vault {
                 return
             }
 
+            syncStatus.fire(.encrypting)
+
             let encryptedData: Data
             do {
                 encryptedData = try kdbx.encrypt()
@@ -85,7 +88,7 @@ class Vault {
                     return
                 }
 
-                onStatus.fire(Vault.Status.syncInProgress)
+                syncStatus.fire(.transferring)
 
                 card.connect()
                 .then {
@@ -96,15 +99,15 @@ class Vault {
                 }
                 .always {
                     card.disconnect().then {}
-                    onStatus.fire(Vault.Status.synced)
+                    syncStatus.fire(.complete)
                 }
                 .catch { error in
-                    onStatus.fire(Vault.Status.syncFailed)
+                    syncStatus.fire(.failed)
                 }
             }
             .catch { error in
                 print(error)
-                onStatus.fire(Vault.Status.syncFailed)
+                syncStatus.fire(.failed)
             }
         }
     }

@@ -41,17 +41,20 @@ class SyncView: UIView {
 
         // Signals
 
-        Vault.onStatus.subscribePast(on: self) { status in
+        Vault.syncStatus.subscribePast(on: self) { status in
             DispatchQueue.main.async {
                 switch status {
-                case .synced:
+                case .complete:
                     self.statusLabel.text = "Synced"
                     self.statusLabel.textColor = UIColor(hex: 0x80CBC4)
-                case .syncFailed:
+                case .encrypting:
+                    self.statusLabel.text = "Encrypting ..."
+                    self.statusLabel.textColor = UIColor(hex: 0xFFCC80)
+                case .failed:
                     self.statusLabel.text = "Failed"
                     self.statusLabel.textColor = UIColor(hex: 0xD50000)
-                case .syncInProgress:
-                    self.statusLabel.text = "Saving ..."
+                case .transferring:
+                    self.statusLabel.text = "Transferring ..."
                     self.statusLabel.textColor = UIColor(hex: 0xFFCC80)
                 }
             }
