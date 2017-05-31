@@ -33,42 +33,42 @@ class Kdbx3Payload {
             decryptedBytes = try KdbxCrypto.aes(operation: .decrypt, bytes: encryptedBytes, key: masterKey, iv: header.encryptionIv)
         }
 
-        let dataReadStream = DataReadStream(data: Data(bytes: decryptedBytes))
+        let readStream = DataReadStream(data: Data(bytes: decryptedBytes))
 
         // Verify stream start bytes
 
-        let streamStartBytes = try dataReadStream.readBytes(size: header.streamStartBytes.count)
+        let streamStartBytes = try readStream.readBytes(size: header.streamStartBytes.count)
 
         if streamStartBytes != header.streamStartBytes {
-            throw KdbxError.databaseReadError
+            throw KdbxError.decryptionFailed
         }
 
         // Read payload block (block 0 is XML)
 
         var payloadBytes = [UInt8]()
         repeat {
-            let id = try dataReadStream.read() as UInt32
-            let hash = try dataReadStream.readBytes(size: 32)
-            let size = try dataReadStream.read() as UInt32
+            let id = try readStream.read() as UInt32
+            let hash = try readStream.readBytes(size: 32)
+            let size = try readStream.read() as UInt32
 
             guard size > 0 else {
-                throw KdbxError.databaseReadError
+                throw KdbxError.decryptionFailed
             }
 
-            let bytes = try dataReadStream.readBytes(size: Int(size))
+            let bytes = try readStream.readBytes(size: Int(size))
 
             guard bytes.sha256() == hash else {
-                throw KdbxError.databaseReadError
+                throw KdbxError.decryptionFailed
             }
 
             if id == 0 {
                 payloadBytes.append(contentsOf: bytes)
                 break
             }
-        } while (dataReadStream.hasBytesAvailable)
+        } while (readStream.hasBytesAvailable)
 
         guard !payloadBytes.isEmpty else {
-            throw KdbxError.databaseReadError
+            throw KdbxError.decryptionFailed
         }
 
         // Decompress
@@ -83,7 +83,20 @@ class Kdbx3Payload {
 
         // Parse
 
-        let database = try KdbxXml.parse(data: payloadData)
+        var database = try KdbxXml.parse(data: payloadData)
+
+        // Unprotect
+
+        switch header.innerAlgorithm {
+        case .none:
+            break
+        case .salsa20:
+            let salsaKey = header.protectedStreamKey.sha256()
+            let iv = [0xE8, 0x30, 0x09, 0x4B, 0x97, 0x20, 0x5D, 0x2A] as [UInt8]
+
+            let streamCipher = Salsa20(key: salsaKey, iv: iv)
+            try database.unprotect(streamCipher: streamCipher)
+        }
 
         self.init(database: database)
     }

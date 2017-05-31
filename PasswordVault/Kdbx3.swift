@@ -7,61 +7,60 @@ import Foundation
 
 class Kdbx3: KdbxProtocol {
 
-    internal let header: Kdbx3Header
-    internal var database: KdbxXml.KeePassFile
+    private var header: Kdbx3Header
+    var database: KdbxXml.KeePassFile
+    var transformationRounds: Int {
+        get {
+            return Int(header.transformRounds)
+        }
+        set {
+            header.transformRounds = UInt64(newValue)
+        }
+    }
 
     required init(header: Kdbx3Header, database: KdbxXml.KeePassFile) {
         self.header = header
         self.database = database
     }
 
-    convenience init(data: Data, compositeKey: [UInt8]) throws {
-        let dataReadStream = DataReadStream(data: data)
+    convenience init(encryptedData: Data, compositeKey: [UInt8]) throws {
+        let readStream = DataReadStream(data: encryptedData)
 
         do {
-            let header = try Kdbx3Header(dataReadStream: dataReadStream)
+            let header = try Kdbx3Header(readStream: readStream)
 
-            let encryptedBytes = try dataReadStream.readBytes(size: dataReadStream.bytesAvailable)
+            let encryptedBytes = try readStream.readBytes(size: readStream.bytesAvailable)
             let payload = try Kdbx3Payload(encryptedBytes: encryptedBytes, compositeKey: compositeKey, header: header)
 
             self.init(header: header, database: payload.database)
         } catch Kdbx3Header.ReadError.unknownVersion {
-            throw KdbxError.databaseVersionUnsupportedError
+            throw KdbxError.databaseVersionUnsupported
         }
     }
 
-    func delete(groupUUID: String) -> Bool {
+    func delete(groupUUID: String) {
         if let index = database.root.group.groups.index(where: { $0.uuid == groupUUID }) {
             database.root.group.groups.remove(at: index)
-            return true
-        }
-
-        for index in database.root.group.groups.indices {
-            if database.root.group.groups[index].delete(groupUUID: groupUUID) {
-                return true
+        } else {
+            for index in database.root.group.groups.indices {
+                database.root.group.groups[index].delete(groupUUID: groupUUID)
             }
         }
-
-        return false
     }
 
-    func delete(entryUUID: String) -> Bool {
+    func delete(entryUUID: String) {
         if let index = database.root.group.entries.index(where: { $0.uuid == entryUUID }) {
-            database.root.group.groups.remove(at: index)
-        }
-
-        for index in database.root.group.groups.indices {
-            if database.root.group.groups[index].delete(entryUUID: entryUUID) {
-                return true
+            database.root.group.entries.remove(at: index)
+        } else {
+            for index in database.root.group.groups.indices {
+                database.root.group.groups[index].delete(entryUUID: entryUUID)
             }
         }
-
-        return false
     }
 
     func encrypt(compositeKey: [UInt8]) throws -> Data {
-        guard let xmlData = database.build().xml.data(using: .utf8) else {
-            throw KdbxError.databaseWriteError
+        guard let xmlData = database.build().xmlCompact.data(using: .utf8) else {
+            throw KdbxError.encryptionFailed
         }
 
         header.masterKeySeed = [UInt8].random(size: 32)
@@ -72,62 +71,62 @@ class Kdbx3: KdbxProtocol {
 
         let hashedCompositeKey = compositeKey.sha256()
         let transformedCompositeKey = try KdbxCrypto.aesTransform(
-                bytes: header.transformSeed,
-                key: hashedCompositeKey,
-                rounds: Int(header.transformRounds)
+            bytes: header.transformSeed,
+            key: hashedCompositeKey,
+            rounds: Int(header.transformRounds)
         )
         let transformedCompositeKeyHashed = transformedCompositeKey.sha256()
         let masterKey = (header.masterKeySeed + transformedCompositeKeyHashed).sha256()
 
-        let dataWriteStream = DataWriteStream()
+        let writeStream = DataWriteStream()
 
-        try dataWriteStream.write(Data(bytes: Kdbx.magicNumbers))
-        try dataWriteStream.write(UInt16(1))
-        try dataWriteStream.write(UInt16(3))
+        try writeStream.write(Data(bytes: Kdbx.magicNumbers))
+        try writeStream.write(UInt16(1))
+        try writeStream.write(UInt16(3))
 
-        try dataWriteStream.write(Kdbx3Header.ReadType.cipherUuid.rawValue)
+        try writeStream.write(Kdbx3Header.ReadType.cipherUuid.rawValue)
         switch header.cipherType {
         case .aes:
             let data = KdbxCrypto.aesUUID.data
-            try dataWriteStream.write(UInt16(data.count))
-            try dataWriteStream.write(KdbxCrypto.aesUUID.data)
+            try writeStream.write(UInt16(data.count))
+            try writeStream.write(KdbxCrypto.aesUUID.data)
         }
 
-        try dataWriteStream.write(Kdbx3Header.ReadType.compressionType.rawValue)
-        try dataWriteStream.write(UInt16(4))
-        try dataWriteStream.write(header.compressionType.rawValue)
+        try writeStream.write(Kdbx3Header.ReadType.compressionType.rawValue)
+        try writeStream.write(UInt16(4))
+        try writeStream.write(header.compressionType.rawValue)
 
-        try dataWriteStream.write(Kdbx3Header.ReadType.masterKeySeed.rawValue)
-        try dataWriteStream.write(UInt16(header.masterKeySeed.count))
-        try dataWriteStream.write(Data(bytes: header.masterKeySeed))
+        try writeStream.write(Kdbx3Header.ReadType.masterKeySeed.rawValue)
+        try writeStream.write(UInt16(header.masterKeySeed.count))
+        try writeStream.write(Data(bytes: header.masterKeySeed))
 
-        try dataWriteStream.write(Kdbx3Header.ReadType.transformSeed.rawValue)
-        try dataWriteStream.write(UInt16(header.transformSeed.count))
-        try dataWriteStream.write(Data(bytes: header.transformSeed))
+        try writeStream.write(Kdbx3Header.ReadType.transformSeed.rawValue)
+        try writeStream.write(UInt16(header.transformSeed.count))
+        try writeStream.write(Data(bytes: header.transformSeed))
 
-        try dataWriteStream.write(Kdbx3Header.ReadType.transformRounds.rawValue)
-        try dataWriteStream.write(UInt16(8))
-        try dataWriteStream.write(header.transformRounds)
+        try writeStream.write(Kdbx3Header.ReadType.transformRounds.rawValue)
+        try writeStream.write(UInt16(8))
+        try writeStream.write(header.transformRounds)
 
-        try dataWriteStream.write(Kdbx3Header.ReadType.encryptionIv.rawValue)
-        try dataWriteStream.write(UInt16(header.encryptionIv.count))
-        try dataWriteStream.write(Data(bytes: header.encryptionIv))
+        try writeStream.write(Kdbx3Header.ReadType.encryptionIv.rawValue)
+        try writeStream.write(UInt16(header.encryptionIv.count))
+        try writeStream.write(Data(bytes: header.encryptionIv))
 
-        try dataWriteStream.write(Kdbx3Header.ReadType.protectedStreamKey.rawValue)
-        try dataWriteStream.write(UInt16(header.protectedStreamKey.count))
-        try dataWriteStream.write(Data(bytes: header.protectedStreamKey))
+        try writeStream.write(Kdbx3Header.ReadType.protectedStreamKey.rawValue)
+        try writeStream.write(UInt16(header.protectedStreamKey.count))
+        try writeStream.write(Data(bytes: header.protectedStreamKey))
 
-        try dataWriteStream.write(Kdbx3Header.ReadType.streamStartBytes.rawValue)
-        try dataWriteStream.write(UInt16(header.streamStartBytes.count))
-        try dataWriteStream.write(Data(bytes: header.streamStartBytes))
+        try writeStream.write(Kdbx3Header.ReadType.streamStartBytes.rawValue)
+        try writeStream.write(UInt16(header.streamStartBytes.count))
+        try writeStream.write(Data(bytes: header.streamStartBytes))
 
-        try dataWriteStream.write(Kdbx3Header.ReadType.innerAlgorithm.rawValue)
-        try dataWriteStream.write(UInt16(4))
-        try dataWriteStream.write(header.innerAlgorithm.rawValue)
+        try writeStream.write(Kdbx3Header.ReadType.innerAlgorithm.rawValue)
+        try writeStream.write(UInt16(4))
+        try writeStream.write(header.innerAlgorithm.rawValue)
 
-        try dataWriteStream.write(Kdbx3Header.ReadType.end.rawValue)
-        try dataWriteStream.write(UInt16(4))
-        try dataWriteStream.write(Data(bytes: [UInt8](repeating: 0x0, count: 4)))
+        try writeStream.write(Kdbx3Header.ReadType.end.rawValue)
+        try writeStream.write(UInt16(4))
+        try writeStream.write(Data(bytes: [UInt8](repeating: 0x0, count: 4)))
 
         let payloadData: Data
         switch header.compressionType {
@@ -137,76 +136,41 @@ class Kdbx3: KdbxProtocol {
             payloadData = try xmlData.gzipped()
         }
 
-        let encDataWriteStream = DataWriteStream()
-        try encDataWriteStream.write(Data(bytes: header.streamStartBytes))
-        try encDataWriteStream.write(UInt32(0))
-        try encDataWriteStream.write(Data(bytes: [UInt8](payloadData).sha256()))
-        try encDataWriteStream.write(UInt32(payloadData.count))
-        try encDataWriteStream.write(payloadData)
+        let encWriteStream = DataWriteStream()
+        try encWriteStream.write(Data(bytes: header.streamStartBytes))
+        try encWriteStream.write(UInt32(0))
+        try encWriteStream.write(Data(bytes: [UInt8](payloadData).sha256()))
+        try encWriteStream.write(UInt32(payloadData.count))
+        try encWriteStream.write(payloadData)
 
-        guard let encData = encDataWriteStream.data else {
-            throw KdbxError.databaseWriteError
-        }
+        let encryptedBytes = try KdbxCrypto.aes(operation: .encrypt, bytes: [UInt8](encWriteStream.data), key: masterKey, iv: header.encryptionIv)
+        try writeStream.write(Data(bytes: encryptedBytes))
 
-        let encryptedBytes = try KdbxCrypto.aes(operation: .encrypt, bytes: [UInt8](encData), key: masterKey, iv: header.encryptionIv)
-        try dataWriteStream.write(Data(bytes: encryptedBytes))
-
-        guard let data = dataWriteStream.data else {
-            throw KdbxError.databaseWriteError
-        }
-
-        return data
+        return writeStream.data
     }
 
-    func encrypt(password: String) throws -> Data {
-        return try encrypt(compositeKey: password.sha256())
-    }
-
-    func unprotect() throws {
-        let streamCipher: KdbxStreamCipher
-        switch header.innerAlgorithm {
-        case .none:
-            return
-        case .salsa20:
-            let iv = [0xE8, 0x30, 0x09, 0x4B, 0x97, 0x20, 0x5D, 0x2A] as [UInt8]
-            let salsaKey = header.protectedStreamKey.sha256()
-            streamCipher = Salsa20(key: salsaKey, iv: iv)
-        }
-
-        for index in database.root.group.entries.indices {
-            try database.root.group.entries[index].unprotect(streamCipher: streamCipher)
-        }
-
-        for index in database.root.group.groups.indices {
-            try database.root.group.groups[index].unprotect(streamCipher: streamCipher)
-        }
-    }
-
-    func update(entry: KdbxXml.Entry) -> Bool {
+    func update(entry: KdbxXml.Entry) {
         if let index = database.root.group.entries.index(where: { $0.uuid == entry.uuid }) {
             database.root.group.entries[index] = entry
         } else {
             for index in database.root.group.groups.indices {
-                if database.root.group.groups[index].update(entry: entry) {
-                    return true
-                }
+                database.root.group.groups[index].update(entry: entry)
             }
         }
-
-        return false
     }
 
-    func update(group: KdbxXml.Group) -> Bool {
+    func update(group: KdbxXml.Group) {
         if database.root.group.uuid == group.uuid {
+            print("update group replacing root group")
             database.root.group = group
         } else {
-            for index in database.root.group.groups.indices {
-                if database.root.group.groups[index].update(group: group) {
-                    return true
+            if let index = database.root.group.groups.index(where: { $0.uuid == group.uuid }) {
+                database.root.group.groups[index] = group
+            } else {
+                for index in database.root.group.groups.indices {
+                    database.root.group.groups[index].update(group: group)
                 }
             }
         }
-
-        return false
     }
 }

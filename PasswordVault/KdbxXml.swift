@@ -34,7 +34,7 @@ class KdbxXml {
     struct AutoType {
 
         var enabled: Bool
-        var dataTransferObfuscation: Int
+        var dataTransferObfuscation: Int?
         var association: Association?
 
         static func parse(elem: AEXMLElement) -> AutoType {
@@ -42,7 +42,7 @@ class KdbxXml {
 
             return AutoType(
                 enabled: elem["Enabled"].string == "True",
-                dataTransferObfuscation: elem["DataTransferObfuscation"].int!,
+                dataTransferObfuscation: elem["DataTransferObfuscation"].int,
                 association: association
             )
         }
@@ -50,7 +50,7 @@ class KdbxXml {
         func build() -> AEXMLElement {
             let elem = AEXMLElement(name: "AutoType")
             elem.addChild(name: "Enabled", value: enabled.xmlString, attributes: [:])
-            elem.addChild(name: "DataTransferObfuscation", value: dataTransferObfuscation.xmlString, attributes: [:])
+            elem.addChild(name: "DataTransferObfuscation", value: dataTransferObfuscation?.xmlString, attributes: [:])
 
             if let association = association {
                 elem.addChild(association.build())
@@ -116,64 +116,27 @@ class KdbxXml {
         var overrideURL: String
         var tags: String
         var times: Times
-        var title: String
-        var isTitleProtected: Bool
-        var username: String
-        var isUsernameProtected: Bool
-        var password: String
-        var isPasswordProtected: Bool
-        var url: String
-        var isUrlProtected: Bool
-        var notes: String
-        var isNotesProtected: Bool
         var autoType: AutoType
-        var history: [Entry]
+        var strings: [Str]
+        var histories: [Entry]
 
         static func parse(elem: AEXMLElement) -> Entry {
             let times = Times.parse(elem: elem["Times"])
             let autoType = AutoType.parse(elem: elem["AutoType"])
 
-            var history = [Entry]()
+            var histories = [Entry]()
             if let children = elem["History"]["Entry"].all {
                 for elem in children {
                     let entry = Entry.parse(elem: elem)
-                    history.append(entry)
+                    histories.append(entry)
                 }
             }
 
-            var title = ""
-            var isTitleProtected = false
-            var username = ""
-            var isUsernameProtected = false
-            var password = ""
-            var isPasswordProtected = false
-            var url = ""
-            var isUrlProtected = false
-            var notes = ""
-            var isNotesProtected = false
-
+            var strings = [Str]()
             if let children = elem["String"].all {
                 for elem in children {
                     let str = Str.parse(elem: elem)
-                    switch str.key {
-                    case "Title":
-                        title = str.value
-                        isTitleProtected = str.isProtected
-                    case "UserName":
-                        username = str.value
-                        isUsernameProtected = str.isProtected
-                    case "Password":
-                        password = str.value
-                        isPasswordProtected = str.isProtected
-                    case "URL":
-                        url = str.value
-                        isUrlProtected = str.isProtected
-                    case "Notes":
-                        notes = str.value
-                        isNotesProtected = str.isProtected
-                    default:
-                        break
-                    }
+                    strings.append(str)
                 }
             }
 
@@ -185,18 +148,9 @@ class KdbxXml {
                 overrideURL: elem["OverrideURL"].string,
                 tags: elem["Tags"].string,
                 times: times,
-                title: title,
-                isTitleProtected: isTitleProtected,
-                username: username,
-                isUsernameProtected: isUsernameProtected,
-                password: password,
-                isPasswordProtected: isPasswordProtected,
-                url: url,
-                isUrlProtected: isUrlProtected,
-                notes: notes,
-                isNotesProtected: isNotesProtected,
                 autoType: autoType,
-                history: history
+                strings: strings,
+                histories: histories
             )
         }
 
@@ -209,72 +163,40 @@ class KdbxXml {
             elem.addChild(name: "OverrideURL", value: overrideURL, attributes: [:])
             elem.addChild(name: "Tags", value: tags, attributes: [:])
             elem.addChild(times.build())
-            elem.addChild(Str(key: "Title", value: title, isProtected: isTitleProtected).build())
-            elem.addChild(Str(key: "UserName", value: username, isProtected: isUsernameProtected).build())
-            elem.addChild(Str(key: "Password", value: password, isProtected: isPasswordProtected).build())
-            elem.addChild(Str(key: "URL", value: url, isProtected: isUrlProtected).build())
-            elem.addChild(Str(key: "Notes", value: notes, isProtected: isNotesProtected).build())
-            elem.addChild(autoType.build())
+
+            for str in strings {
+                elem.addChild(str.build())
+            }
 
             let historyElem = elem.addChild(name: "History")
-            for entry in history {
+            for entry in histories {
                 historyElem.addChild(entry.build())
             }
+            elem.addChild(historyElem)
 
             return elem
         }
 
-        mutating func unprotect(streamCipher: KdbxStreamCipher) throws {
-            if isTitleProtected {
-                title = try streamCipher.unprotect(string: title)
-                isTitleProtected = false
-            }
-            if isUsernameProtected {
-                username = try streamCipher.unprotect(string: username)
-                isUsernameProtected = false
-            }
-            if isPasswordProtected {
-                password = try streamCipher.unprotect(string: password)
-                isPasswordProtected = false
-            }
-            if isUrlProtected {
-                url = try streamCipher.unprotect(string: url)
-                isUrlProtected = false
-            }
-            if isNotesProtected {
-                notes = try streamCipher.unprotect(string: notes)
-                isNotesProtected = false
+        func getStr(key: String) -> Str? {
+            guard let str = strings.first(where: { $0.key == key }) else {
+                return nil
             }
 
-            for index in history.indices {
-                try history[index].unprotect(streamCipher: streamCipher)
+            return str
+        }
+
+        mutating func setStr(key: String, value: String, isProtected: Bool) {
+            if let i = strings.index(where: { $0.key == key }) {
+                strings[i].value = value
+                strings[i].isProtected = isProtected
+            } else {
+                strings.append(Str(key: key, value: value, isProtected: isProtected))
             }
         }
 
-        mutating func protect(streamCipher: KdbxStreamCipher, memoryProtection: MemoryProtection) throws {
-            if !isTitleProtected && memoryProtection.isTitleProtected {
-                title = try streamCipher.protect(string: title)
-                isTitleProtected = true
-            }
-            if !isUsernameProtected && memoryProtection.isUsernameProtected {
-                username = try streamCipher.protect(string: username)
-                isUsernameProtected = true
-            }
-            if !isPasswordProtected && memoryProtection.isPasswordProtected {
-                password = try streamCipher.protect(string: password)
-                isPasswordProtected = true
-            }
-            if !isUrlProtected && memoryProtection.isUrlProtected {
-                url = try streamCipher.protect(string: url)
-                isUrlProtected = true
-            }
-            if !isNotesProtected && memoryProtection.isNotesProtected {
-                notes = try streamCipher.protect(string: notes)
-                isNotesProtected = true
-            }
-
-            for index in history.indices {
-                try history[index].protect(streamCipher: streamCipher, memoryProtection: memoryProtection)
+        mutating func unprotect(streamCipher: KdbxStreamCipher) throws {
+            for i in strings.indices where strings[i].isProtected {
+                strings[i].value = try streamCipher.unprotect(string: strings[i].value)
             }
         }
     }
@@ -333,6 +255,26 @@ class KdbxXml {
             )
         }
 
+        mutating func add(groupUUID: String, entry: Entry) {
+            if uuid == groupUUID {
+                entries.append(entry)
+            } else {
+                for index in groups.indices {
+                    groups[index].add(groupUUID: groupUUID, entry: entry)
+                }
+            }
+        }
+
+        mutating func add(groupUUID: String, group: Group) {
+            if uuid == groupUUID {
+                groups.append(group)
+            } else {
+                for index in groups.indices {
+                    groups[index].add(groupUUID: groupUUID, group: group)
+                }
+            }
+        }
+
         func build() -> AEXMLElement {
             let elem = AEXMLElement(name: "Group")
             elem.addChild(name: "UUID", value: uuid, attributes: [:])
@@ -357,42 +299,46 @@ class KdbxXml {
             return elem
         }
 
-        mutating func delete(entryUUID: String) -> Bool {
+        mutating func delete(entryUUID: String) {
             if let index = entries.index(where: { $0.uuid == entryUUID}) {
                 entries.remove(at: index)
-                return true
-            }
-
-            for index in groups.indices {
-                if groups[index].delete(entryUUID: entryUUID) {
-                    return true
+                return
+            } else {
+                for index in groups.indices {
+                    groups[index].delete(entryUUID: entryUUID)
                 }
             }
-
-            return false
         }
 
-        mutating func delete(groupUUID: String) -> Bool {
+        mutating func delete(groupUUID: String) {
             if let index = groups.index(where: { $0.uuid == groupUUID}) {
                 groups.remove(at: index)
-                return true
-            }
-
-            for index in groups.indices {
-                if groups[index].delete(groupUUID: groupUUID) {
-                    return true
+                return
+            } else {
+                for index in groups.indices {
+                    groups[index].delete(groupUUID: groupUUID)
                 }
             }
-
-            return false
         }
 
         func findEntries(title: String) -> [Entry] {
             var foundEntries = [Entry]()
-            foundEntries.append(contentsOf: entries.filter({ $0.title.lowercased() == title.lowercased() }))
+            let lowercasedTitle = title.lowercased()
+
+            let filteredEntries = entries.filter { (entry) -> Bool in
+                if let title = entry.getStr(key: "Title")?.value {
+                    return title.lowercased() == lowercasedTitle
+                } else {
+                    return false
+                }
+            }
+
+            foundEntries.append(contentsOf: filteredEntries)
+
             groups.forEach { (group) in
                 foundEntries.append(contentsOf: group.findEntries(title: title))
             }
+
             return foundEntries
         }
 
@@ -423,54 +369,38 @@ class KdbxXml {
             return nil
         }
 
-        mutating func protect(streamCipher: KdbxStreamCipher, memoryProtection: MemoryProtection) throws {
-            for index in entries.indices {
-                try entries[index].protect(streamCipher: streamCipher, memoryProtection: memoryProtection)
-            }
-
-            for index in groups.indices {
-                try groups[index].protect(streamCipher: streamCipher, memoryProtection: memoryProtection)
-            }
-        }
-
         mutating func unprotect(streamCipher: KdbxStreamCipher) throws {
-            for index in entries.indices {
-                try entries[index].unprotect(streamCipher: streamCipher)
+            for i in entries.indices {
+                try entries[i].unprotect(streamCipher: streamCipher)
             }
 
-            for index in groups.indices {
-                try groups[index].unprotect(streamCipher: streamCipher)
+            for i in groups.indices {
+                try groups[i].unprotect(streamCipher: streamCipher)
             }
         }
 
-        mutating func update(entry: Entry) -> Bool {
-            if let index = entries.index(where: { $0.uuid == entry.uuid }) {
-                entries[index] = entry
-                return true
-            }
-
-            for index in groups.indices  where groups[index].update(entry: entry) {
-                return true
-            }
-
-            return false
-        }
-
-        mutating func update(group: Group) -> Bool {
+        mutating func update(group: Group) {
             if let index = groups.index(where: { $0.uuid == group.uuid }) {
-                if groups[index].uuid == group.uuid {
-                    groups[index] = group
-                    return true
+                print("update group replacing entry at \(index) on '\(groups[index].name)'")
+                groups[index] = group
+            } else {
+                for index in groups.indices {
+                    print("update group checking subgroup \(index) of '\(groups[index].name)'")
+                    groups[index].update(group: group)
                 }
             }
+        }
 
-            for index in groups.indices {
-                if groups[index].update(group: group) {
-                    return true
+        mutating func update(entry: Entry) {
+            if let index = entries.index(where: { $0.uuid == entry.uuid }) {
+                print("update entry replacing entry at \(index) on '\(name)'")
+                entries[index] = entry
+            } else {
+                for index in groups.indices {
+                    print("update entry checking subgroup \(index) of '\(name)'")
+                    groups[index].update(entry: entry)
                 }
             }
-
-            return false
         }
     }
 
@@ -492,15 +422,13 @@ class KdbxXml {
             return elem
         }
 
-        mutating func protect(streamCipher: KdbxStreamCipher, memoryProtection: MemoryProtection) throws {
-            for index in root.group.groups.indices {
-                try root.group.groups[index].protect(streamCipher: streamCipher, memoryProtection: memoryProtection)
-            }
-        }
-
         mutating func unprotect(streamCipher: KdbxStreamCipher) throws {
-            for index in root.group.groups.indices {
-                try root.group.groups[index].unprotect(streamCipher: streamCipher)
+            for i in root.group.entries.indices {
+                try root.group.entries[i].unprotect(streamCipher: streamCipher)
+            }
+
+            for i in root.group.groups.indices {
+                try root.group.groups[i].unprotect(streamCipher: streamCipher)
             }
         }
     }

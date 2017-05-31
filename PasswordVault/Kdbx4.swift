@@ -7,54 +7,54 @@ import Foundation
 
 class Kdbx4: KdbxProtocol {
 
-    internal let database: KdbxXml.KeePassFile
-    internal let header: Kdbx4Header
+    private var header: Kdbx4Header
+    var database: KdbxXml.KeePassFile
+    var transformationRounds: Int {
+        get {
+            return Int(header.transformRounds)
+        }
+        set {
+            header.transformRounds = UInt64(newValue)
+        }
+    }
 
     required init(database: KdbxXml.KeePassFile, header: Kdbx4Header) {
         self.database = database
         self.header = header
     }
 
-    convenience init(data: Data, compositeKey: [UInt8]) throws {
-        let dataReadStream = DataReadStream(data: data)
+    convenience init(encryptedData: Data, compositeKey: [UInt8]) throws {
+        let readStream = DataReadStream(data: encryptedData)
 
         do {
-            let header = try Kdbx4Header(dataReadStream: dataReadStream)
+            let header = try Kdbx4Header(readStream: readStream)
 
-            let encryptedBytes = try dataReadStream.readBytes(size: dataReadStream.bytesAvailable)
+            let encryptedBytes = try readStream.readBytes(size: readStream.bytesAvailable)
             let payload = try Kdbx4Payload(encryptedBytes: encryptedBytes, compositeKey: compositeKey, header: header)
 
             self.init(database: payload.database, header: header)
         } catch Kdbx4Header.ReadError.unknownVersion {
-            throw KdbxError.databaseVersionUnsupportedError
+            throw KdbxError.databaseVersionUnsupported
         }
     }
 
-    func delete(groupUUID: String) -> Bool {
-        return false
+    func delete(groupUUID: String) {
+        fatalError("Not implemented.")
     }
 
-    func delete(entryUUID: String) -> Bool {
-        return false
+    func delete(entryUUID: String) {
+        fatalError("Not implemented.")
     }
 
     func encrypt(compositeKey: [UInt8]) throws -> Data {
         fatalError("Not implemented.")
     }
 
-    func encrypt(password: String) throws -> Data {
-        return try encrypt(compositeKey: password.sha256())
-    }
-
-    func unprotect() {
+    func update(entry: KdbxXml.Entry) {
         fatalError("Not implemented.")
     }
 
-    func update(entry: KdbxXml.Entry) -> Bool {
-        return false
-    }
-
-    func update(group: KdbxXml.Group) -> Bool {
-        return false
+    func update(group: KdbxXml.Group) {
+        fatalError("Not implemented.")
     }
 }

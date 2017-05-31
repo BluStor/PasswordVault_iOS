@@ -18,9 +18,7 @@ extension Array where Iterator.Element == UInt8 {
         var randomBytes = [UInt8](repeating: 0x0, count: size)
         let result = SecRandomCopyBytes(kSecRandomDefault, size, &randomBytes)
 
-        if result != errSecSuccess {
-            fatalError("Unable to generate random bytes.")
-        }
+        assert(result == errSecSuccess)
 
         return randomBytes
     }
@@ -28,7 +26,7 @@ extension Array where Iterator.Element == UInt8 {
     var hexString: String {
         return self.map {
             String(format: "%02x", $0)
-            }.joined()
+        }.joined()
     }
 
     func sha256() -> [UInt8] {

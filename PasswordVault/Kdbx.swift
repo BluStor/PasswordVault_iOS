@@ -5,16 +5,21 @@
 
 import Foundation
 
-protocol KdbxProtocol {
+enum KdbxError: Error {
+    case databaseVersionUnsupported
+    case decryptionFailed
+    case encryptionFailed
+}
 
-    var database: KdbxXml.KeePassFile { get }
-    func delete(entryUUID: String) -> Bool
-    func delete(groupUUID: String) -> Bool
+protocol KdbxProtocol {
+    var database: KdbxXml.KeePassFile { get set }
+    var transformationRounds: Int { get set }
+
+    func delete(entryUUID: String)
+    func delete(groupUUID: String)
     func encrypt(compositeKey: [UInt8]) throws -> Data
-    func encrypt(password: String) throws -> Data
-    func unprotect() throws
-    func update(entry: KdbxXml.Entry) -> Bool
-    func update(group: KdbxXml.Group) -> Bool
+    func update(entry: KdbxXml.Entry)
+    func update(group: KdbxXml.Group)
 }
 
 class Kdbx {
@@ -30,47 +35,154 @@ class Kdbx {
 
     static let magicNumbers: [UInt8] = [0x03, 0xD9, 0xA2, 0x9A, 0x67, 0xFB, 0x4B, 0xB5]
 
-    private let kdbx: KdbxProtocol
+    private var kdbx: KdbxProtocol
+    private var compositeKey: [UInt8]
 
-    internal var database: KdbxXml.KeePassFile {
+    var database: KdbxXml.KeePassFile {
         return kdbx.database
     }
 
-    required init(data: Data, compositeKey: [UInt8]) throws {
-        do {
-            // TODO: KDBX4 support
-            kdbx = try Kdbx4(data: data, compositeKey: compositeKey)
-        } catch (KdbxError.databaseVersionUnsupportedError) {
-            kdbx = try Kdbx3(data: data, compositeKey: compositeKey)
+    var transformationRounds: Int {
+        get {
+            return kdbx.transformationRounds
+        }
+        set {
+            kdbx.transformationRounds = newValue
         }
     }
 
-    convenience init(data: Data, password: String) throws {
-        try self.init(data: data, compositeKey: password.sha256())
+    required init(encryptedData: Data, compositeKey: [UInt8]) throws {
+        self.compositeKey = compositeKey
+
+        do {
+            kdbx = try Kdbx4(encryptedData: encryptedData, compositeKey: compositeKey)
+        } catch KdbxError.databaseVersionUnsupported {
+            kdbx = try Kdbx3(encryptedData: encryptedData, compositeKey: compositeKey)
+        }
     }
 
-    func delete(entryUUID: String) -> Bool {
-        return kdbx.delete(entryUUID: entryUUID)
+    required init(compositeKey: [UInt8]) {
+        let header = Kdbx3Header()
+
+        let memoryProtection = KdbxXml.MemoryProtection(
+            isTitleProtected: false,
+            isUsernameProtected: false,
+            isPasswordProtected: false,
+            isUrlProtected: false,
+            isNotesProtected: false
+        )
+
+        let meta = KdbxXml.Meta(
+            generator: "PasswordVault",
+            headerHash: "",
+            databaseName: "Passwords",
+            databaseNameChanged: nil,
+            databaseDescription: "",
+            databaseDescriptionChanged: nil,
+            defaultUsername: "",
+            defaultUsernameChanged: nil,
+            maintenanceHistoryDays: nil,
+            color: "",
+            masterKeyChanged: nil,
+            masterKeyChangeRec: -1,
+            masterKeyChangeForce: -1,
+            memoryProtection: memoryProtection,
+            recycleBinEnabled: false,
+            recycleBinUUID: "",
+            recycleBinChanged: nil,
+            entryTemplatesGroup: "",
+            entryTemplatesGroupChanged: nil,
+            historyMaxItems: 10,
+            historyMaxSize: 6291456,
+            lastSelectedGroup: "",
+            lastTopVisibleGroup: "",
+            binaries: [],
+            customData: ""
+        )
+
+        let now = Date()
+
+        let times = KdbxXml.Times(
+            lastModificationTime: now,
+            creationTime: now,
+            lastAccessTime: now,
+            expiryTime: now,
+            expires: false,
+            usageCount: 0,
+            locationChanged: nil
+        )
+
+        let group = KdbxXml.Group(
+            uuid: UUID().uuidString,
+            name: "PasswordVault",
+            notes: "",
+            iconId: 49,
+            times: times,
+            isExpanded: true,
+            defaultAutoTypeSequence: "{USERNAME}{TAB}{PASSWORD}",
+            enableAutoType: false,
+            enableSearching: true,
+            lastTopVisibleEntry: "",
+            groups: [],
+            entries: []
+        )
+
+        let root = KdbxXml.Root(group: group, deletedObjects: [])
+        let database = KdbxXml.KeePassFile(meta: meta, root: root)
+
+        self.kdbx = Kdbx3(header: header, database: database)
+        self.compositeKey = compositeKey
     }
 
-    func delete(groupUUID: String) -> Bool {
-        return kdbx.delete(groupUUID: groupUUID)
+    convenience init(encryptedData: Data, password: String) throws {
+        try self.init(encryptedData: encryptedData, compositeKey: password.sha256())
     }
 
-    func encrypt(compositeKey: [UInt8]) throws -> Data {
+    convenience init(password: String) {
+        self.init(compositeKey: password.sha256())
+    }
+
+    func add(groupUUID: String, entry: KdbxXml.Entry) {
+        if kdbx.database.root.group.uuid == groupUUID {
+            kdbx.database.root.group.entries.append(entry)
+        } else {
+            for index in kdbx.database.root.group.groups.indices {
+                kdbx.database.root.group.groups[index].add(groupUUID: groupUUID, entry: entry)
+            }
+        }
+    }
+
+    func add(groupUUID: String, group: KdbxXml.Group) {
+        if kdbx.database.root.group.uuid == groupUUID {
+            kdbx.database.root.group.groups.append(group)
+        } else {
+            for index in kdbx.database.root.group.groups.indices {
+                kdbx.database.root.group.groups[index].add(groupUUID: groupUUID, group: group)
+            }
+        }
+    }
+
+    func delete(entryUUID: String) {
+        kdbx.delete(entryUUID: entryUUID)
+    }
+
+    func delete(groupUUID: String) {
+        kdbx.delete(groupUUID: groupUUID)
+    }
+
+    func encrypt() throws -> Data {
         return try kdbx.encrypt(compositeKey: compositeKey)
-    }
-
-    func encrypt(password: String) throws -> Data {
-        return try kdbx.encrypt(password: password)
     }
 
     func findEntries(title: String) -> [KdbxXml.Entry] {
         var entries = Array<KdbxXml.Entry>()
+
         entries.append(contentsOf: database.root.group.findEntries(title: title))
+
         database.root.group.groups.forEach({ (group) in
             entries.append(contentsOf: group.findEntries(title: title))
         })
+        
         return entries
     }
 
@@ -101,15 +213,15 @@ class Kdbx {
         return nil
     }
 
-    func unprotect() throws {
-        try kdbx.unprotect()
+    func setPassword(_ password: String) {
+        compositeKey = password.sha256()
     }
 
-    func update(entry: KdbxXml.Entry) -> Bool {
-        return kdbx.update(entry: entry)
+    func update(entry: KdbxXml.Entry) {
+        kdbx.update(entry: entry)
     }
 
-    func update(group: KdbxXml.Group) -> Bool {
-        return kdbx.update(group: group)
+    func update(group: KdbxXml.Group) {
+        kdbx.update(group: group)
     }
 }

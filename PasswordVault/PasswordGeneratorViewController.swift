@@ -4,7 +4,6 @@
 //
 
 import Material
-import UIKit
 
 protocol PasswordGeneratorViewControllerDelegate: NSObjectProtocol {
     func setPassword(_ password: String)
@@ -33,7 +32,7 @@ class PasswordGeneratorViewController: UITableViewController {
     let slider = UISlider()
 
     override func viewDidLoad() {
-        view.backgroundColor = .white
+        view.backgroundColor = Theme.Base.viewBackgroundColor
 
         navigationItem.title = "Generate password"
         navigationItem.backButton.tintColor = .white

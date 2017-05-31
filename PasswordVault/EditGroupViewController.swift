@@ -4,13 +4,13 @@
 //
 
 import Material
-import UIKit
 
 class EditGroupViewController: UITableViewController, IconPickerViewControllerDelegate {
 
     weak var groupDelegate: GroupViewControllerDelegate?
 
     var group: KdbxXml.Group
+
     let saveButton = IconButton(title: "Save", titleColor: .white)
     let iconImageView = UIImageView()
     let nameTextField = TextField()
@@ -28,7 +28,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
+        view.backgroundColor = Theme.Base.viewBackgroundColor
 
         navigationItem.title = "Edit group"
         navigationItem.backButton.tintColor = .white
@@ -38,7 +38,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
 
         // Save button
 
-        saveButton.addTarget(self, action: #selector(didTapNavigationBarButton(sender:)), for: .touchUpInside)
+        saveButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
 
         // Table view
 
@@ -56,13 +56,12 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
         groupDelegate?.reloadData()
     }
 
-    func didTapNavigationBarButton(sender: IconButton) {
-        if sender == saveButton {
-            if let kdbx = Vault.kdbx {
-                if kdbx.update(group: group) {
-                    navigationController?.popViewController(animated: true)
-                }
-            }
+    func didTouchUpInside(sender: IconButton) {
+        switch sender {
+        case saveButton:
+            save()
+        default:
+            break
         }
     }
 
@@ -74,6 +73,23 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
         nameTextField.text = group.name
     }
 
+    func save() {
+        if validate() {
+            group.name = nameTextField.text ?? ""
+
+            if let kdbx = Vault.kdbx {
+                kdbx.update(group: group)
+                Vault.save()
+                navigationController?.popViewController(animated: true)
+            }
+        }
+    }
+
+    func validate() -> Bool {
+        let name = nameTextField.text ?? ""
+        return name.characters.count > 0
+    }
+
     // MARK: IconPickerViewControllerDelegate
 
     func setIconId(_ iconId: Int) {
@@ -81,7 +97,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
         reloadData()
     }
 
-    // MARK: UITableViewControllerDelegate
+    // MARK: UITableViewDataSource
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 2
@@ -124,6 +140,8 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
 
         return cell
     }
+
+    // MARK: UITableViewDelegate
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {

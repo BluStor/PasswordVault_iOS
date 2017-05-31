@@ -17,16 +17,17 @@ class Kdbx4Header {
 
     var magicNumbers: [UInt8]
     var version: Version
+    var transformRounds: UInt64 = 8000
 
-    required init(dataReadStream: DataReadStream) throws {
-        magicNumbers = try dataReadStream.readBytes(size: 8)
+    required init(readStream: DataReadStream) throws {
+        magicNumbers = try readStream.readBytes(size: 8)
 
         if magicNumbers != Kdbx.magicNumbers {
             throw ReadError.unknownMagicNumbers
         }
 
-        let minor = try dataReadStream.read() as UInt16
-        let major = try dataReadStream.read() as UInt16
+        let minor = try readStream.read() as UInt16
+        let major = try readStream.read() as UInt16
 
         version = Version(major: major, minor: minor)
 

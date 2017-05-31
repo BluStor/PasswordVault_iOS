@@ -3,37 +3,52 @@
 //  PasswordVault
 //
 
+import AEXML
+import Hydra
 import Material
 import SVProgressHUD
 
-class UnlockViewController: ScrollViewController, UITextFieldDelegate {
+class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
-    let fabButton = FABButton(image: Icon.check, tintColor: .white)
-    var fabButtonBottomConstraint = NSLayoutConstraint()
-    let passwordTextField = ErrorTextField()
-    let vaultImageView = UIImageView(image: UIImage(named: "Vault"))
+    enum UnlockError: Error {
+        case scanFoundNothing
+    }
+
+    let moreButton = IconButton(image: Icon.moreVertical, tintColor: UIColor.white)
+    let passwordTextField = TextField()
+    let lockImageView = UIImageView(image: UIImage(named: "lock"))
+    let openButton = RaisedButton()
+    let newDatabaseButton = RaisedButton()
+    let chooseCardButton = RaisedButton()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
+        view.backgroundColor = Theme.Base.viewBackgroundColor
 
         navigationItem.title = "Password Vault"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white
+        navigationItem.rightViews = [moreButton]
 
-        // Vault image view
+        // More button
 
-        vaultImageView.clipsToBounds = true
-        vaultImageView.contentMode = .scaleAspectFill
-        vaultImageView.translatesAutoresizingMaskIntoConstraints = false
+        moreButton.pulseColor = UIColor(hex: 0xa0e0ff)
+        moreButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
 
-        view.addSubview(vaultImageView)
-        NSLayoutConstraint(item: vaultImageView, attribute: .height, relatedBy: .lessThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 200.0).isActive = true
-        NSLayoutConstraint(item: vaultImageView, attribute: .width, relatedBy: .equal, toItem: scrollView, attribute: .width, multiplier: 1.0, constant: 0.0).isActive = true
-        NSLayoutConstraint(item: vaultImageView, attribute: .left, relatedBy: .equal, toItem: scrollView, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
-        NSLayoutConstraint(item: vaultImageView, attribute: .right, relatedBy: .equal, toItem: scrollView, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
+        // Table view
+
+        tableView.bounces = false
+        tableView.separatorStyle = .none
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 200.0
+
+        // Lock image view
+
+        lockImageView.clipsToBounds = true
+        lockImageView.contentMode = .scaleAspectFit
+        lockImageView.translatesAutoresizingMaskIntoConstraints = false
 
         // Password text field
 
@@ -42,135 +57,220 @@ class UnlockViewController: ScrollViewController, UITextFieldDelegate {
         passwordTextField.autocapitalizationType = .none
         passwordTextField.isSecureTextEntry = true
         passwordTextField.placeholder = "Password"
-        passwordTextField.returnKeyType = .done
-        passwordTextField.addTarget(self, action: #selector(didChangeTextField(sender:)), for: .editingChanged)
+        passwordTextField.returnKeyType = .next
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
 
-        view.addSubview(passwordTextField)
-        NSLayoutConstraint(item: passwordTextField, attribute: .top, relatedBy: .equal, toItem: vaultImageView, attribute: .bottom, multiplier: 1.0, constant: 35.0).isActive = true
-        NSLayoutConstraint(item: passwordTextField, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1.0, constant: 20.0).isActive = true
-        NSLayoutConstraint(item: passwordTextField, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1.0, constant: -20.0).isActive = true
+        // Open button
 
-        // Floating action button
+        openButton.setTitle("Open", for: .normal)
+        openButton.pulseColor = UIColor.white
+        openButton.backgroundColor = UIColor(hex: 0x00BCD4)
+        openButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
+        openButton.translatesAutoresizingMaskIntoConstraints = false
 
-        fabButton.backgroundColor = Theme.UnlockView.flaotingActionButtonTintColor
-        fabButton.addTarget(self, action: #selector(didTapFloatingActionButton(sender:)), for: .touchUpInside)
-        fabButton.translatesAutoresizingMaskIntoConstraints = false
+        // New database button
 
-        view.addSubview(fabButton)
-        NSLayoutConstraint(item: fabButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 60.0).isActive = true
-        NSLayoutConstraint(item: fabButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 60.0).isActive = true
-        NSLayoutConstraint(item: fabButton, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1.0, constant: -20.0).isActive = true
+        newDatabaseButton.setTitle("New database", for: .normal)
+        newDatabaseButton.pulseColor = UIColor.white
+        newDatabaseButton.backgroundColor = UIColor(hex: 0xEAEAEA)
+        newDatabaseButton.setTitleColor(UIColor(hex: 0x999999), for: .normal)
+        newDatabaseButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
+        newDatabaseButton.translatesAutoresizingMaskIntoConstraints = false
 
-        fabButtonBottomConstraint = NSLayoutConstraint(item: fabButton, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: -20.0)
-        fabButtonBottomConstraint.isActive = true
+        // Choose card button
 
-        // Notifications
+        chooseCardButton.setTitle("Choose card", for: .normal)
+        chooseCardButton.pulseColor = UIColor.white
+        chooseCardButton.backgroundColor = UIColor(hex: 0xEAEAEA)
+        chooseCardButton.setTitleColor(UIColor(hex: 0x999999), for: .normal)
+        chooseCardButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
+        chooseCardButton.translatesAutoresizingMaskIntoConstraints = false
 
-        NotificationCenter.default.addObserver(self, selector: #selector(willShowKeyboard(notification:)), name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(willHideKeyboard(notification:)), name: .UIKeyboardWillHide, object: nil)
+        // Bluetooth check
+
+        bluetoothCheck()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         Vault.close()
     }
 
-    override func willShowKeyboard(notification: Notification) {
-        super.willShowKeyboard(notification: notification)
+    func bluetoothCheck() {
+        GKCard.checkBluetoothState()
+        .catch { error in
+            let alertController = UIAlertController(title: "Bluetooth", message: "Bluetooth is not enabled. Enable it in your device's Settings app.", preferredStyle: .alert)
 
-        if let userInfo = notification.userInfo {
-            let keyboardSize = userInfo[UIKeyboardFrameBeginUserInfoKey] as! CGRect
-            fabButtonBottomConstraint.constant = -keyboardSize.height - 20.0
+            alertController.addAction(UIAlertAction(title: "Done", style: .default, handler: { _ in
+                alertController.dismiss(animated: true, completion: nil)
+            }))
 
-            if UIDevice.current.orientation.isLandscape {
-                scrollView.contentOffset = CGPoint(x: 0.0, y: max(passwordTextField.frame.origin.y - 35.0, 0.0))
+            self.present(alertController, animated: true, completion: nil)
+        }
+    }
+
+    func didTouchUpInside(sender: UIView) {
+        switch sender {
+        case moreButton:
+            let alertController = UIAlertController(title: "Menu", message: nil, preferredStyle: .actionSheet)
+
+            alertController.addAction(UIAlertAction(title: "About", style: .default, handler: { _ in
+                let aboutViewController = AboutViewController()
+                self.navigationController?.pushViewController(aboutViewController, animated: true)
+            }))
+
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+                alertController.dismiss(animated: true, completion: nil)
+            }))
+
+            present(alertController, animated: true, completion: nil)
+        case openButton:
+            open()
+        case newDatabaseButton:
+            let createViewController = CreateViewController()
+            navigationController?.setViewControllers([createViewController], animated: true)
+        case chooseCardButton:
+            let chooseCardViewController = ChooseCardViewController()
+            navigationController?.setViewControllers([chooseCardViewController], animated: true)
+        default:
+            break
+        }
+    }
+
+    func showError(_ error: Error) {
+        let message: String
+        switch error {
+        case GKCard.CardError.bluetoothNotPoweredOn:
+            message = "Bluetooth is not enabled. Enable it in your device's Settings app."
+        case GKCard.CardError.cardNotPaired:
+            message = "Card is not paired. Please put the card in pairing mode and try again."
+        case GKCard.CardError.fileNotFound:
+            message = "No database found on card."
+        case UnlockError.scanFoundNothing:
+            message = "Unable to find card. Make sure it is turned on."
+        case KdbxError.decryptionFailed:
+            message = "Invalid password."
+        case KdbxCrypto.CryptoError.dataError:
+            message = "Data error while decrypting."
+        default:
+            message = "\(error)"
+        }
+
+        DispatchQueue.main.async {
+            SVProgressHUD.dismiss()
+
+            let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+
+            alertController.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (_) in
+                alertController.dismiss(animated: true, completion: nil)
+            }))
+
+            self.present(alertController, animated: true, completion: nil)
+        }
+    }
+
+    func open() {
+        let password = self.passwordTextField.text ?? ""
+        self.passwordTextField.text = ""
+
+        SVProgressHUD.show(withStatus: "Connecting")
+
+        guard let cardUUID = Vault.cardUUID else {
+            return
+        }
+
+        guard let card = GKCard(uuid: cardUUID) else {
+            return
+        }
+
+        card.connect()
+        .then {
+            DispatchQueue.main.async {
+                SVProgressHUD.setStatus("Transferring")
+            }
+        }
+        .then {
+            card.get(path: Vault.dbPath)
+        }
+        .then { data in
+            DispatchQueue.main.async {
+                SVProgressHUD.setStatus("Decrypting")
             }
 
-            let keyboardAnimationDuration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as! Double
-            UIView.animate(withDuration: keyboardAnimationDuration, animations: {
-                self.view.layoutIfNeeded()
-            })
-        }
-    }
+            card.disconnect().then {}
 
-    override func willHideKeyboard(notification: Notification) {
-        super.willHideKeyboard(notification: notification)
-
-        if let userInfo = notification.userInfo {
-            fabButtonBottomConstraint.constant = -20.0
-
-            let keyboardAnimationDuration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as! Double
-            UIView.animate(withDuration: keyboardAnimationDuration, animations: {
-                self.view.layoutIfNeeded()
-            })
-        }
-    }
-
-    func didChangeTextField(sender: UITextField) {
-        if sender === passwordTextField {
-            passwordTextField.isErrorRevealed = false
-        }
-    }
-
-    func didTapFloatingActionButton(sender: UIButton) {
-        submit()
-    }
-
-    func submit() {
-        print("listPeripherals")
-        GKBluetoothCard.listPeripherals(timeout: 10.0, singleResult: true) { (peripherals, error) in
-            guard let peripheral = peripherals.first else {
-                print("No peripherals found.")
-                return
-            }
-
-            let bluetoothCard = GKBluetoothCard(peripheral: peripheral)
-            bluetoothCard.get(path: "/passwordvault/db.kdbx", completion: { (result, error) in
-                print(error ?? "No error.")
-                print(result ?? "No result.")
-            })
-        }
-    }
-
-    func test() {
-        if let url = Bundle.main.url(forResource: "Passwords", withExtension: "kdbx") {
             do {
-                let data = try Data(contentsOf: url)
-                let password = passwordTextField.text ?? ""
+                let kdbx = try Vault.open(encryptedData: data, password: password)
 
-                passwordTextField.text = ""
-
-                SVProgressHUD.show(withStatus: "Opening")
-                DispatchQueue.global(qos: .background).async {
-                    do {
-                        let kdbx = try Vault.open(data: data, password: password)
-
-                        DispatchQueue.main.async {
-                            let groupViewController = GroupViewController(group: kdbx.database.root.group)
-                            self.navigationController?.pushViewController(groupViewController, animated: true)
-                        }
-                    } catch {
-                        print(error)
-                        DispatchQueue.main.async {
-                            self.passwordTextField.detail = "Incorrect password."
-                            self.passwordTextField.isErrorRevealed = true
-                        }
-                    }
-
+                DispatchQueue.main.async {
                     SVProgressHUD.dismiss()
+
+                    let groupViewController = GroupViewController(group: kdbx.database.root.group)
+                    self.navigationController?.pushViewController(groupViewController, animated: true)
                 }
             } catch {
-                print("\(error)")
+                self.showError(error)
             }
-        } else {
-            print("unable to find database file")
         }
+        .catch { error in
+            card.disconnect().then {}
+            self.showError(error)
+        }
+    }
+
+    // MARK: UITableViewDataSource
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 5
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        cell.selectionStyle = .none
+
+        switch indexPath.row {
+        case 0:
+            cell.contentView.addSubview(lockImageView)
+            NSLayoutConstraint(item: lockImageView, attribute: .height, relatedBy: .lessThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 150.0).isActive = true
+            NSLayoutConstraint(item: lockImageView, attribute: .width, relatedBy: .equal, toItem: cell.contentView, attribute: .width, multiplier: 1.0, constant: 0.0).isActive = true
+            NSLayoutConstraint(item: lockImageView, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: lockImageView, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
+            NSLayoutConstraint(item: lockImageView, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
+            NSLayoutConstraint(item: lockImageView, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
+        case 1:
+            cell.contentView.addSubview(passwordTextField)
+            NSLayoutConstraint(item: passwordTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 30.0).isActive = true
+            NSLayoutConstraint(item: passwordTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: passwordTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: passwordTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+        case 2:
+            cell.contentView.addSubview(openButton)
+            NSLayoutConstraint(item: openButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: openButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: openButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: openButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+        case 3:
+            cell.contentView.addSubview(newDatabaseButton)
+            NSLayoutConstraint(item: newDatabaseButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: newDatabaseButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: newDatabaseButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: newDatabaseButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+        case 4:
+            cell.contentView.addSubview(chooseCardButton)
+            NSLayoutConstraint(item: chooseCardButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: chooseCardButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: chooseCardButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: chooseCardButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+        default:
+            break
+        }
+
+        return cell
     }
 
     // MARK: UITextFieldDelegate
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        submit()
+        open()
         return true
     }
 }

@@ -5,11 +5,6 @@
 
 import Foundation
 
-protocol KdbxStreamCipher {
-    func unprotect(string: String) throws -> String
-    func protect(string: String) throws -> String
-}
-
 class KdbxCrypto {
 
     public static let aesUUID = UUID(uuidString: "31C1F2E6-BF71-4350-BE58-05216AFC5AFF")!
@@ -30,11 +25,12 @@ class KdbxCrypto {
 
     enum CryptoError: Error {
         case dataError
-        case initializationError
     }
 
     static func aes(operation: Operation, bytes: [UInt8], key: [UInt8], iv: [UInt8]) throws -> [UInt8] {
-        var result = [UInt8](repeating: 0x0, count: bytes.count)
+        var result = [UInt8](repeating: 0x0, count: bytes.count + kCCBlockSizeAES128)
+
+        print("aes: \(operation)")
 
         let status = CCCrypt(
             operation.cc,
@@ -51,28 +47,33 @@ class KdbxCrypto {
         )
 
         guard status == Int32(kCCSuccess) else {
-            throw KdbxError.decryptionError
+            switch operation {
+            case .decrypt:
+                throw KdbxError.decryptionFailed
+            case .encrypt:
+                throw KdbxError.encryptionFailed
+            }
         }
 
         return result
     }
 
     static func aesTransform(bytes: [UInt8], key: [UInt8], rounds: Int) throws -> [UInt8] {
-        let iv = [UInt8](repeating: 0x0, count: 16)
-
         let cryptor = UnsafeMutablePointer<CCCryptorRef?>.allocate(capacity: 1)
 
         CCCryptorCreate(
-                UInt32(kCCEncrypt),
-                UInt32(kCCAlgorithmAES),
-                UInt32(kCCOptionECBMode),
-                bytes,
-                bytes.count,
-                iv,
-                cryptor
+            UInt32(kCCEncrypt),
+            UInt32(kCCAlgorithmAES),
+            UInt32(kCCOptionECBMode),
+            bytes,
+            kCCKeySizeAES256,
+            nil,
+            cryptor
         )
 
         var transformedKey = key
+
+        print("aesTransform: \(rounds) rounds")
 
         for _ in 0..<rounds {
             let status = CCCryptorUpdate(cryptor.pointee, transformedKey, transformedKey.count, &transformedKey, transformedKey.count, nil)
@@ -81,6 +82,8 @@ class KdbxCrypto {
                 throw CryptoError.dataError
             }
         }
+
+        print("aesTransform: complete")
 
         return transformedKey
     }

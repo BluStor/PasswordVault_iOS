@@ -5,6 +5,11 @@
 
 import Foundation
 
+protocol KdbxStreamCipher {
+    func unprotect(string: String) throws -> String
+    func protect(string: String) throws -> String
+}
+
 class Salsa20: KdbxStreamCipher {
 
     private static let sigma = [UInt8]("expand 32-byte k".utf8)
@@ -143,7 +148,7 @@ class Salsa20: KdbxStreamCipher {
             }
         }
 
-        let byteArray = Array(bytePtr)
+        let byteArray = [UInt8](bytePtr)
         output[outputOffset] = byteArray[0]
         output[outputOffset + 1] = byteArray[1]
         output[outputOffset + 2] = byteArray[2]

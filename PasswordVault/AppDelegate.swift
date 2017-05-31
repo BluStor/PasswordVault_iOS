@@ -3,9 +3,9 @@
 //  PasswordVault
 //
 
+import IQKeyboardManagerSwift
 import Material
 import SVProgressHUD
-import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -25,19 +25,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SVProgressHUD.setDefaultMaskType(.custom)
         SVProgressHUD.setFadeInAnimationDuration(0.0)
         SVProgressHUD.setMaximumDismissTimeInterval(2.0)
-        SVProgressHUD.setOffsetFromCenter(UIOffset(horizontal: 0.0, vertical: 120.0))
+
+        // Keyboard manager
+
+        IQKeyboardManager.sharedManager().enable = true
 
         // Window
 
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        let unlockViewController = UnlockViewController()
+        let navigationController: NavigationController
+        if Vault.cardUUID == nil {
+            let chooseCardViewController = ChooseCardViewController()
+            navigationController = NavigationController(rootViewController: chooseCardViewController)
+        } else {
+            let unlockViewController = UnlockViewController()
+            navigationController = NavigationController(rootViewController: unlockViewController)
+        }
 
-        let navigationController = NavigationController(rootViewController: unlockViewController)
         navigationController.navigationBar.tintColor = Theme.Base.navigationBarTintColor
         navigationController.navigationBar.barTintColor = Theme.Base.navigationBarBarTintColor
-
-        navigationController.view.removeGestureRecognizer(navigationController.interactivePopGestureRecognizer!)
 
         window!.rootViewController = navigationController
         window!.makeKeyAndVisible()

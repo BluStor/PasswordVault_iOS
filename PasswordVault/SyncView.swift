@@ -17,8 +17,6 @@ class SyncView: UIView {
 
         // Status label
 
-        statusLabel.text = "Synced"
-        statusLabel.textColor = UIColor(hex: 0x80CBC4)
         statusLabel.textAlignment = .center
         statusLabel.font = UIFont.boldSystemFont(ofSize: 16.0)
         statusLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -40,5 +38,23 @@ class SyncView: UIView {
         NSLayoutConstraint(item: bottomBorder, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
         NSLayoutConstraint(item: bottomBorder, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
         NSLayoutConstraint(item: bottomBorder, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
+
+        // Signals
+
+        Vault.onStatus.subscribePast(on: self) { status in
+            DispatchQueue.main.async {
+                switch status {
+                case .synced:
+                    self.statusLabel.text = "Synced"
+                    self.statusLabel.textColor = UIColor(hex: 0x80CBC4)
+                case .syncFailed:
+                    self.statusLabel.text = "Failed"
+                    self.statusLabel.textColor = UIColor(hex: 0xD50000)
+                case .syncInProgress:
+                    self.statusLabel.text = "Saving ..."
+                    self.statusLabel.textColor = UIColor(hex: 0xFFCC80)
+                }
+            }
+        }
     }
 }

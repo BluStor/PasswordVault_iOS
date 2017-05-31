@@ -10,17 +10,14 @@
 		004368D6C044C4CC38FF195D /* Pods_PasswordVaultUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A571D4FA530494217C3790B6 /* Pods_PasswordVaultUITests.framework */; };
 		A10CFD171EA890FE006EFDB6 /* Kdbx3.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10CFD121EA890FE006EFDB6 /* Kdbx3.swift */; };
 		A10CFD181EA890FE006EFDB6 /* Kdbx3Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10CFD131EA890FE006EFDB6 /* Kdbx3Header.swift */; };
-		A10CFD191EA890FE006EFDB6 /* KdbxError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10CFD141EA890FE006EFDB6 /* KdbxError.swift */; };
 		A10CFD1E1EA89115006EFDB6 /* DataStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10CFD1C1EA89115006EFDB6 /* DataStream.swift */; };
 		A115AADC1EAC6E85006F2675 /* KdbxCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = A115AADB1EAC6E85006F2675 /* KdbxCrypto.swift */; };
-		A12723DB1EB1A27200247C85 /* ScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12723DA1EB1A27200247C85 /* ScrollViewController.swift */; };
 		A12723DF1EB1B9D000247C85 /* IconPickerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12723DE1EB1B9D000247C85 /* IconPickerCollectionViewCell.swift */; };
 		A1525FD71EA7387700B580A7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1525FD61EA7387700B580A7 /* AppDelegate.swift */; };
 		A1525FDE1EA7387700B580A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1525FDD1EA7387700B580A7 /* Assets.xcassets */; };
 		A1525FE11EA7387700B580A7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1525FDF1EA7387700B580A7 /* LaunchScreen.storyboard */; };
 		A1525FEC1EA7387700B580A7 /* PasswordVaultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1525FEB1EA7387700B580A7 /* PasswordVaultTests.swift */; };
 		A1525FF71EA7387700B580A7 /* PasswordVaultUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1525FF61EA7387700B580A7 /* PasswordVaultUITests.swift */; };
-		A15B19FD1EAFFD2D0068328E /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15B19FC1EAFFD2D0068328E /* SplashViewController.swift */; };
 		A15B19FF1EB002080068328E /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15B19FE1EB002080068328E /* AboutViewController.swift */; };
 		A15B1A011EB002140068328E /* AddEntryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15B1A001EB002140068328E /* AddEntryViewController.swift */; };
 		A15B1A031EB002280068328E /* AddGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15B1A021EB002280068328E /* AddGroupViewController.swift */; };
@@ -30,11 +27,11 @@
 		A15B1A0B1EB002870068328E /* GroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15B1A0A1EB002870068328E /* GroupViewController.swift */; };
 		A15B1A0D1EB0029A0068328E /* IconPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15B1A0C1EB0029A0068328E /* IconPickerViewController.swift */; };
 		A15B1A0F1EB002BF0068328E /* PasswordGeneratorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15B1A0E1EB002BF0068328E /* PasswordGeneratorViewController.swift */; };
-		A15B1A111EB002CB0068328E /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15B1A101EB002CB0068328E /* SettingsViewController.swift */; };
 		A15B1A131EB002D80068328E /* UnlockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15B1A121EB002D80068328E /* UnlockViewController.swift */; };
 		A15B1A181EB01AED0068328E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15B1A171EB01AED0068328E /* Extensions.swift */; };
 		A15B1A1A1EB01C150068328E /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15B1A191EB01C150068328E /* Theme.swift */; };
 		A15B1A481EB07FAB0068328E /* Vault.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15B1A471EB07FAB0068328E /* Vault.swift */; };
+		A175E45F1ECD6EF0002DF419 /* GKCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A175E45E1ECD6EF0002DF419 /* GKCard.swift */; };
 		A18E88D31EB1DD10004D1E91 /* GroupTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18E88D21EB1DD10004D1E91 /* GroupTableViewCell.swift */; };
 		A18E88D61EB1ECDE004D1E91 /* SyncView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18E88D51EB1ECDE004D1E91 /* SyncView.swift */; };
 		A18E88D81EB1F0E2004D1E91 /* EntryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18E88D71EB1F0E2004D1E91 /* EntryTableViewCell.swift */; };
@@ -42,10 +39,13 @@
 		A1B287F11EAF39010006B341 /* Kdbx4.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B287EF1EAF39010006B341 /* Kdbx4.swift */; };
 		A1B287F21EAF39010006B341 /* Kdbx4Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B287F01EAF39010006B341 /* Kdbx4Header.swift */; };
 		A1B287F41EAF39EF0006B341 /* Kdbx4Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B287F31EAF39EF0006B341 /* Kdbx4Payload.swift */; };
-		A1BC9E581EB78AF300DF3387 /* Salsa20.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BC9E571EB78AF300DF3387 /* Salsa20.swift */; };
+		A1BC9E581EB78AF300DF3387 /* KdbxStreamCiphers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BC9E571EB78AF300DF3387 /* KdbxStreamCiphers.swift */; };
 		A1BF3A961EAC443100CB306C /* KdbxExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BF3A951EAC443100CB306C /* KdbxExtensions.swift */; };
-		A1D148F11EBBD5F90089DF3B /* GKBluetoothCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D148F01EBBD5F90089DF3B /* GKBluetoothCard.swift */; };
-		A1D148F51EBBDC0F0089DF3B /* GKResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1D148F41EBBDC0F0089DF3B /* GKResponse.swift */; };
+		A1DBBA441EDEB89F0099A9B8 /* ChooseCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBBA431EDEB89F0099A9B8 /* ChooseCardViewController.swift */; };
+		A1DBBA461EDEB9170099A9B8 /* ScannedPeripheralTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBBA451EDEB9170099A9B8 /* ScannedPeripheralTableViewCell.swift */; };
+		A1DBBA481EDEE28B0099A9B8 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBBA471EDEE28B0099A9B8 /* SearchView.swift */; };
+		A1E2E7801ED458E2005C2D02 /* AboutTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E2E77F1ED458E2005C2D02 /* AboutTableViewCell.swift */; };
+		A1E2E7821ED467C1005C2D02 /* DatabaseSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E2E7811ED467C1005C2D02 /* DatabaseSettingsViewController.swift */; };
 		A1F1747C1EADC64300FC49BD /* KdbxXml.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F1747B1EADC64300FC49BD /* KdbxXml.swift */; };
 		A1FD86911EA8B368008F382B /* Kdbx3Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FD86901EA8B368008F382B /* Kdbx3Payload.swift */; };
 		B033691603AB183C66F8A278 /* Pods_PasswordVaultTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7308D5E89D596E9CEAA4ECD2 /* Pods_PasswordVaultTests.framework */; };
@@ -76,10 +76,8 @@
 		77EC5FF53369F9C60CA7F160 /* Pods-PasswordVault.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PasswordVault.release.xcconfig"; path = "Pods/Target Support Files/Pods-PasswordVault/Pods-PasswordVault.release.xcconfig"; sourceTree = "<group>"; };
 		A10CFD121EA890FE006EFDB6 /* Kdbx3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx3.swift; sourceTree = "<group>"; };
 		A10CFD131EA890FE006EFDB6 /* Kdbx3Header.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx3Header.swift; sourceTree = "<group>"; };
-		A10CFD141EA890FE006EFDB6 /* KdbxError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KdbxError.swift; sourceTree = "<group>"; };
 		A10CFD1C1EA89115006EFDB6 /* DataStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStream.swift; sourceTree = "<group>"; };
 		A115AADB1EAC6E85006F2675 /* KdbxCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KdbxCrypto.swift; sourceTree = "<group>"; };
-		A12723DA1EB1A27200247C85 /* ScrollViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollViewController.swift; sourceTree = "<group>"; };
 		A12723DE1EB1B9D000247C85 /* IconPickerCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconPickerCollectionViewCell.swift; sourceTree = "<group>"; };
 		A1525FD31EA7387700B580A7 /* PasswordVault.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PasswordVault.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1525FD61EA7387700B580A7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -93,7 +91,6 @@
 		A1525FF61EA7387700B580A7 /* PasswordVaultUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordVaultUITests.swift; sourceTree = "<group>"; };
 		A1525FF81EA7387700B580A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A15260091EA7398800B580A7 /* PasswordVault-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PasswordVault-Bridging-Header.h"; sourceTree = "<group>"; };
-		A15B19FC1EAFFD2D0068328E /* SplashViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		A15B19FE1EB002080068328E /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		A15B1A001EB002140068328E /* AddEntryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddEntryViewController.swift; sourceTree = "<group>"; };
 		A15B1A021EB002280068328E /* AddGroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddGroupViewController.swift; sourceTree = "<group>"; };
@@ -103,11 +100,11 @@
 		A15B1A0A1EB002870068328E /* GroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupViewController.swift; sourceTree = "<group>"; };
 		A15B1A0C1EB0029A0068328E /* IconPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconPickerViewController.swift; sourceTree = "<group>"; };
 		A15B1A0E1EB002BF0068328E /* PasswordGeneratorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordGeneratorViewController.swift; sourceTree = "<group>"; };
-		A15B1A101EB002CB0068328E /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		A15B1A121EB002D80068328E /* UnlockViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnlockViewController.swift; sourceTree = "<group>"; };
 		A15B1A171EB01AED0068328E /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		A15B1A191EB01C150068328E /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		A15B1A471EB07FAB0068328E /* Vault.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vault.swift; sourceTree = "<group>"; };
+		A175E45E1ECD6EF0002DF419 /* GKCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GKCard.swift; sourceTree = "<group>"; };
 		A18E88D21EB1DD10004D1E91 /* GroupTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupTableViewCell.swift; sourceTree = "<group>"; };
 		A18E88D51EB1ECDE004D1E91 /* SyncView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncView.swift; sourceTree = "<group>"; };
 		A18E88D71EB1F0E2004D1E91 /* EntryTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntryTableViewCell.swift; sourceTree = "<group>"; };
@@ -115,10 +112,13 @@
 		A1B287EF1EAF39010006B341 /* Kdbx4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx4.swift; sourceTree = "<group>"; };
 		A1B287F01EAF39010006B341 /* Kdbx4Header.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx4Header.swift; sourceTree = "<group>"; };
 		A1B287F31EAF39EF0006B341 /* Kdbx4Payload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx4Payload.swift; sourceTree = "<group>"; };
-		A1BC9E571EB78AF300DF3387 /* Salsa20.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Salsa20.swift; sourceTree = "<group>"; };
+		A1BC9E571EB78AF300DF3387 /* KdbxStreamCiphers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KdbxStreamCiphers.swift; sourceTree = "<group>"; };
 		A1BF3A951EAC443100CB306C /* KdbxExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KdbxExtensions.swift; sourceTree = "<group>"; };
-		A1D148F01EBBD5F90089DF3B /* GKBluetoothCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GKBluetoothCard.swift; sourceTree = "<group>"; };
-		A1D148F41EBBDC0F0089DF3B /* GKResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GKResponse.swift; sourceTree = "<group>"; };
+		A1DBBA431EDEB89F0099A9B8 /* ChooseCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseCardViewController.swift; sourceTree = "<group>"; };
+		A1DBBA451EDEB9170099A9B8 /* ScannedPeripheralTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannedPeripheralTableViewCell.swift; sourceTree = "<group>"; };
+		A1DBBA471EDEE28B0099A9B8 /* SearchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		A1E2E77F1ED458E2005C2D02 /* AboutTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutTableViewCell.swift; sourceTree = "<group>"; };
+		A1E2E7811ED467C1005C2D02 /* DatabaseSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseSettingsViewController.swift; sourceTree = "<group>"; };
 		A1F1747B1EADC64300FC49BD /* KdbxXml.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KdbxXml.swift; sourceTree = "<group>"; };
 		A1FD86901EA8B368008F382B /* Kdbx3Payload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx3Payload.swift; sourceTree = "<group>"; };
 		A571D4FA530494217C3790B6 /* Pods_PasswordVaultUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PasswordVaultUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -159,11 +159,10 @@
 		A10CFD111EA890DF006EFDB6 /* Kdbx */ = {
 			isa = PBXGroup;
 			children = (
-				A1BC9E571EB78AF300DF3387 /* Salsa20.swift */,
 				A1B287ED1EAF357F0006B341 /* Kdbx.swift */,
 				A115AADB1EAC6E85006F2675 /* KdbxCrypto.swift */,
-				A10CFD141EA890FE006EFDB6 /* KdbxError.swift */,
 				A1BF3A951EAC443100CB306C /* KdbxExtensions.swift */,
+				A1BC9E571EB78AF300DF3387 /* KdbxStreamCiphers.swift */,
 				A1F1747B1EADC64300FC49BD /* KdbxXml.swift */,
 				A10CFD121EA890FE006EFDB6 /* Kdbx3.swift */,
 				A10CFD131EA890FE006EFDB6 /* Kdbx3Header.swift */,
@@ -201,19 +200,18 @@
 			isa = PBXGroup;
 			children = (
 				A10CFD1C1EA89115006EFDB6 /* DataStream.swift */,
-				A1D148EF1EBBD5C20089DF3B /* Gatekeeper */,
 				A1525FE21EA7387700B580A7 /* Info.plist */,
 				A15260091EA7398800B580A7 /* PasswordVault-Bridging-Header.h */,
 				A1525FD61EA7387700B580A7 /* AppDelegate.swift */,
 				A15B1A171EB01AED0068328E /* Extensions.swift */,
 				A15B1A191EB01C150068328E /* Theme.swift */,
 				A15B1A471EB07FAB0068328E /* Vault.swift */,
+				A1D148EF1EBBD5C20089DF3B /* Gatekeeper */,
 				A10CFD111EA890DF006EFDB6 /* Kdbx */,
 				A15B1A401EB02E3F0068328E /* UICollectionViewCell */,
 				A18E88D11EB1DCDE004D1E91 /* UITableViewCell */,
 				A18E88D41EB1ECD1004D1E91 /* UIView */,
 				A15B19FB1EAFFD140068328E /* UIViewController */,
-				A1C7D85A1EA812A0004943EA /* Passwords */,
 				A1525FDD1EA7387700B580A7 /* Assets.xcassets */,
 				A1525FDF1EA7387700B580A7 /* LaunchScreen.storyboard */,
 			);
@@ -254,15 +252,14 @@
 				A15B19FE1EB002080068328E /* AboutViewController.swift */,
 				A15B1A001EB002140068328E /* AddEntryViewController.swift */,
 				A15B1A021EB002280068328E /* AddGroupViewController.swift */,
+				A1DBBA431EDEB89F0099A9B8 /* ChooseCardViewController.swift */,
 				A15B1A041EB0023C0068328E /* CreateViewController.swift */,
+				A1E2E7811ED467C1005C2D02 /* DatabaseSettingsViewController.swift */,
 				A15B1A061EB002520068328E /* EditEntryViewController.swift */,
 				A15B1A081EB0026E0068328E /* EditGroupViewController.swift */,
 				A15B1A0A1EB002870068328E /* GroupViewController.swift */,
 				A15B1A0C1EB0029A0068328E /* IconPickerViewController.swift */,
 				A15B1A0E1EB002BF0068328E /* PasswordGeneratorViewController.swift */,
-				A12723DA1EB1A27200247C85 /* ScrollViewController.swift */,
-				A15B1A101EB002CB0068328E /* SettingsViewController.swift */,
-				A15B19FC1EAFFD2D0068328E /* SplashViewController.swift */,
 				A15B1A121EB002D80068328E /* UnlockViewController.swift */,
 			);
 			name = UIViewController;
@@ -279,8 +276,10 @@
 		A18E88D11EB1DCDE004D1E91 /* UITableViewCell */ = {
 			isa = PBXGroup;
 			children = (
+				A1E2E77F1ED458E2005C2D02 /* AboutTableViewCell.swift */,
 				A18E88D21EB1DD10004D1E91 /* GroupTableViewCell.swift */,
 				A18E88D71EB1F0E2004D1E91 /* EntryTableViewCell.swift */,
+				A1DBBA451EDEB9170099A9B8 /* ScannedPeripheralTableViewCell.swift */,
 			);
 			name = UITableViewCell;
 			sourceTree = "<group>";
@@ -289,22 +288,15 @@
 			isa = PBXGroup;
 			children = (
 				A18E88D51EB1ECDE004D1E91 /* SyncView.swift */,
+				A1DBBA471EDEE28B0099A9B8 /* SearchView.swift */,
 			);
 			name = UIView;
-			sourceTree = "<group>";
-		};
-		A1C7D85A1EA812A0004943EA /* Passwords */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Passwords;
 			sourceTree = "<group>";
 		};
 		A1D148EF1EBBD5C20089DF3B /* Gatekeeper */ = {
 			isa = PBXGroup;
 			children = (
-				A1D148F01EBBD5F90089DF3B /* GKBluetoothCard.swift */,
-				A1D148F41EBBDC0F0089DF3B /* GKResponse.swift */,
+				A175E45E1ECD6EF0002DF419 /* GKCard.swift */,
 			);
 			name = Gatekeeper;
 			sourceTree = "<group>";
@@ -490,7 +482,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		4A99AF819C5E52BA2644075B /* [CP] Embed Pods Frameworks */ = {
@@ -520,7 +512,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		87E17B6C9DFEA80B9AA0E6B5 /* [CP] Copy Pods Resources */ = {
@@ -580,7 +572,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		EF10293AF3B91B16583CF94D /* [CP] Embed Pods Frameworks */ = {
@@ -608,32 +600,32 @@
 				A15B1A1A1EB01C150068328E /* Theme.swift in Sources */,
 				A18E88D61EB1ECDE004D1E91 /* SyncView.swift in Sources */,
 				A10CFD171EA890FE006EFDB6 /* Kdbx3.swift in Sources */,
-				A1D148F51EBBDC0F0089DF3B /* GKResponse.swift in Sources */,
 				A15B1A091EB0026E0068328E /* EditGroupViewController.swift in Sources */,
 				A10CFD181EA890FE006EFDB6 /* Kdbx3Header.swift in Sources */,
 				A1B287EE1EAF357F0006B341 /* Kdbx.swift in Sources */,
 				A1B287F21EAF39010006B341 /* Kdbx4Header.swift in Sources */,
 				A1B287F41EAF39EF0006B341 /* Kdbx4Payload.swift in Sources */,
 				A12723DF1EB1B9D000247C85 /* IconPickerCollectionViewCell.swift in Sources */,
+				A1E2E7801ED458E2005C2D02 /* AboutTableViewCell.swift in Sources */,
 				A1B287F11EAF39010006B341 /* Kdbx4.swift in Sources */,
 				A15B1A0D1EB0029A0068328E /* IconPickerViewController.swift in Sources */,
-				A15B1A111EB002CB0068328E /* SettingsViewController.swift in Sources */,
 				A115AADC1EAC6E85006F2675 /* KdbxCrypto.swift in Sources */,
 				A15B1A0F1EB002BF0068328E /* PasswordGeneratorViewController.swift in Sources */,
-				A1BC9E581EB78AF300DF3387 /* Salsa20.swift in Sources */,
+				A1BC9E581EB78AF300DF3387 /* KdbxStreamCiphers.swift in Sources */,
 				A1FD86911EA8B368008F382B /* Kdbx3Payload.swift in Sources */,
 				A15B1A051EB0023C0068328E /* CreateViewController.swift in Sources */,
-				A1D148F11EBBD5F90089DF3B /* GKBluetoothCard.swift in Sources */,
-				A12723DB1EB1A27200247C85 /* ScrollViewController.swift in Sources */,
 				A18E88D31EB1DD10004D1E91 /* GroupTableViewCell.swift in Sources */,
 				A10CFD1E1EA89115006EFDB6 /* DataStream.swift in Sources */,
 				A15B1A011EB002140068328E /* AddEntryViewController.swift in Sources */,
-				A15B19FD1EAFFD2D0068328E /* SplashViewController.swift in Sources */,
 				A18E88D81EB1F0E2004D1E91 /* EntryTableViewCell.swift in Sources */,
 				A1BF3A961EAC443100CB306C /* KdbxExtensions.swift in Sources */,
+				A1DBBA441EDEB89F0099A9B8 /* ChooseCardViewController.swift in Sources */,
 				A15B1A0B1EB002870068328E /* GroupViewController.swift in Sources */,
+				A1DBBA461EDEB9170099A9B8 /* ScannedPeripheralTableViewCell.swift in Sources */,
+				A175E45F1ECD6EF0002DF419 /* GKCard.swift in Sources */,
+				A1E2E7821ED467C1005C2D02 /* DatabaseSettingsViewController.swift in Sources */,
 				A1525FD71EA7387700B580A7 /* AppDelegate.swift in Sources */,
-				A10CFD191EA890FE006EFDB6 /* KdbxError.swift in Sources */,
+				A1DBBA481EDEE28B0099A9B8 /* SearchView.swift in Sources */,
 				A15B19FF1EB002080068328E /* AboutViewController.swift in Sources */,
 				A15B1A181EB01AED0068328E /* Extensions.swift in Sources */,
 				A15B1A131EB002D80068328E /* UnlockViewController.swift in Sources */,

@@ -4,19 +4,20 @@
 //
 
 import Material
-import UIKit
 
 class EditEntryViewController: UITableViewController, IconPickerViewControllerDelegate, PasswordGeneratorViewControllerDelegate {
 
     weak var groupDelegate: GroupViewControllerDelegate?
 
     var entry: KdbxXml.Entry
+
     let saveButton = IconButton(title: "Save", titleColor: .white)
     let iconImageView = UIImageView()
     let titleTextField = TextField()
     let usernameTextField = TextField()
     let passwordTextField = TextField()
     let unmaskSwitch = Switch()
+    let unmaskLabel = UILabel()
     let generateButton = RaisedButton()
     let urlTextField = TextField()
     let notesTextField = TextField()
@@ -34,7 +35,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
+        view.backgroundColor = Theme.Base.viewBackgroundColor
 
         navigationItem.title = "Edit entry"
         navigationItem.backButton.tintColor = .white
@@ -62,36 +63,42 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         groupDelegate?.reloadData()
     }
 
-    func didChangeEditing(sender: UIView) {
+    func didTouchUpInside(sender: UIView) {
         switch sender {
-        case titleTextField:
-            entry.title = titleTextField.text ?? ""
-        case usernameTextField:
-            entry.username = usernameTextField.text ?? ""
-        case passwordTextField:
-            entry.password = passwordTextField.text ?? ""
-        case urlTextField:
-            entry.url = urlTextField.text ?? ""
-        case notesTextField:
-            entry.notes = notesTextField.text ?? ""
+        case generateButton:
+            let passwordGeneratorViewController = PasswordGeneratorViewController()
+            passwordGeneratorViewController.delegate = self
+            navigationController?.pushViewController(passwordGeneratorViewController, animated: true)
+        case saveButton:
+            save()
         default:
             break
         }
     }
 
-    func didTouchUpInside(sender: UIView) {
-        if sender === generateButton {
-            let passwordGeneratorViewController = PasswordGeneratorViewController()
-            passwordGeneratorViewController.delegate = self
-            navigationController?.pushViewController(passwordGeneratorViewController, animated: true)
-        } else if sender == saveButton {
-            save()
+    func didChangeEditing(sender: UIView) {
+        switch sender {
+        case titleTextField:
+            entry.setStr(key: "Title", value: titleTextField.text ?? "", isProtected: false)
+        case usernameTextField:
+            entry.setStr(key: "UserName", value: usernameTextField.text ?? "", isProtected: false)
+        case passwordTextField:
+            entry.setStr(key: "Password", value: passwordTextField.text ?? "", isProtected: false)
+        case urlTextField:
+            entry.setStr(key: "Url", value: urlTextField.text ?? "", isProtected: false)
+        case notesTextField:
+            entry.setStr(key: "Notes", value: notesTextField.text ?? "", isProtected: false)
+        default:
+            break
         }
     }
 
     func didChangeValue(sender: UIView) {
-        if sender == unmaskSwitch {
-            reloadPasswordMask()
+        switch sender {
+        case unmaskSwitch:
+            passwordTextField.isSecureTextEntry = !unmaskSwitch.isOn
+        default:
+            break
         }
     }
 
@@ -100,24 +107,21 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         let iconImage = UIImage(named: iconName)?.tint(with: UIColor(hex: 0xDADADA))
         iconImageView.image = iconImage
 
-        titleTextField.text = entry.title
-        usernameTextField.text = entry.username
-        passwordTextField.text = entry.password
-        urlTextField.text = entry.url
-        notesTextField.text = entry.notes
-    }
-
-    func reloadPasswordMask() {
-        passwordTextField.isSecureTextEntry = !unmaskSwitch.isOn
+        titleTextField.text = entry.getStr(key: "Title")?.value
+        usernameTextField.text = entry.getStr(key: "UserName")?.value
+        passwordTextField.text = entry.getStr(key: "Password")?.value
+        urlTextField.text = entry.getStr(key: "Url")?.value
+        notesTextField.text = entry.getStr(key: "Notes")?.value
     }
 
     func save() {
         if validateEntry() {
             if let kdbx = Vault.kdbx {
-                if kdbx.update(entry: entry) {
-                    navigationController?.popViewController(animated: true)
-                }
+                kdbx.update(entry: entry)
+                Vault.save()
             }
+
+            navigationController?.popViewController(animated: true)
         }
     }
 
@@ -135,15 +139,11 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
     // MARK: PasswordGeneratorViewControllerDelegate
 
     func setPassword(_ password: String) {
-        entry.password = password
+        entry.setStr(key: "Password", value: password, isProtected: false)
         reloadData()
     }
 
-    // MARK: UITableViewControllerDelegate
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 8
-    }
+    // MARK: UITableViewDataSource
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
@@ -193,9 +193,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         case 3:
             // Password text view
 
-            passwordTextField.detailLabel.layer.borderWidth = 1.0
-            passwordTextField.detailLabel.layer.borderColor = UIColor.random().cgColor
-            passwordTextField.placeholder = "Password"
+            passwordTextField.placeholder = "New password"
             passwordTextField.isSecureTextEntry = true
             passwordTextField.autocapitalizationType = .none
             passwordTextField.autocorrectionType = .no
@@ -219,7 +217,6 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             NSLayoutConstraint(item: unmaskSwitch, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: unmaskSwitch, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
 
-            let unmaskLabel = UILabel()
             unmaskLabel.text = "Unmask password"
             unmaskLabel.textColor = UIColor(hex: 0x666666)
             unmaskLabel.font = UIFont.systemFont(ofSize: 14.0)
@@ -279,6 +276,12 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         return cell
     }
 
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 8
+    }
+
+    // MARK: UITableViewControllerDelegate
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
@@ -288,7 +291,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             navigationController?.pushViewController(iconPickerViewController, animated: true)
         case 4:
             unmaskSwitch.toggle()
-            reloadPasswordMask()
+            passwordTextField.isSecureTextEntry = !unmaskSwitch.isOn
         default:
             break
         }

@@ -147,8 +147,12 @@ public class DataWriteStream {
         self.outputStream.close()
     }
 
-    public var data: Data? {
-        return self.outputStream.property(forKey: .dataWrittenToMemoryStreamKey) as? Data
+    public var data: Data {
+        guard let data = self.outputStream.property(forKey: .dataWrittenToMemoryStreamKey) as? Data else {
+            return Data()
+        }
+
+        return data
     }
 
     public func writeBytes<T>(value: T) throws {
