@@ -37,7 +37,9 @@ class Vault {
             }
         }
     }
+
     static let syncStatus = Signal<Vault.SyncStatus>(retainLastData: true)
+    static let syncQueue = DispatchQueue(label: "vaultSync")
 
     static func close() {
         kdbx = nil
@@ -61,7 +63,7 @@ class Vault {
     }
 
     static func save() {
-        DispatchQueue.global(qos: .background).async {
+        Vault.syncQueue.async {
             guard let kdbx = kdbx else {
                 print("database not found")
                 return
