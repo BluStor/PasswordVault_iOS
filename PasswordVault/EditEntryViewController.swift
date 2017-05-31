@@ -4,6 +4,7 @@
 //
 
 import Material
+import SVProgressHUD
 
 class EditEntryViewController: UITableViewController, IconPickerViewControllerDelegate, PasswordGeneratorViewControllerDelegate {
 
@@ -18,6 +19,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
     let passwordTextField = TextField()
     let unmaskSwitch = Switch()
     let unmaskLabel = UILabel()
+    let copyButton = RaisedButton()
     let generateButton = RaisedButton()
     let urlTextField = TextField()
     let notesTextField = TextField()
@@ -65,6 +67,9 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
 
     func didTouchUpInside(sender: UIView) {
         switch sender {
+        case copyButton:
+            UIPasteboard.general.string = passwordTextField.text
+            SVProgressHUD.showSuccess(withStatus: "Password copied")
         case generateButton:
             let passwordGeneratorViewController = PasswordGeneratorViewController()
             passwordGeneratorViewController.delegate = self
@@ -228,11 +233,26 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             NSLayoutConstraint(item: unmaskLabel, attribute: .left, relatedBy: .equal, toItem: unmaskSwitch, attribute: .right, multiplier: 1.0, constant: 15.0).isActive = true
             NSLayoutConstraint(item: unmaskLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 5:
+            // Copy button
+
+            copyButton.setTitle("Copy", for: .normal)
+            copyButton.pulseColor = UIColor.white
+            copyButton.backgroundColor = UIColor(hex: 0x00BCD4)
+            copyButton.setTitleColor(UIColor(hex: 0x999999), for: .normal)
+            copyButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
+            copyButton.translatesAutoresizingMaskIntoConstraints = false
+
+            cell.contentView.addSubview(copyButton)
+            NSLayoutConstraint(item: copyButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: copyButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: copyButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: copyButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+        case 6:
             // Generate button
 
             generateButton.setTitle("Generate", for: .normal)
             generateButton.pulseColor = UIColor.white
-            generateButton.backgroundColor = UIColor(hex: 0x00BCD4)
+            generateButton.backgroundColor = UIColor(hex: 0xEAEAEA)
             generateButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
             generateButton.translatesAutoresizingMaskIntoConstraints = false
 
@@ -241,7 +261,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             NSLayoutConstraint(item: generateButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: generateButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: generateButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-        case 6:
+        case 7:
             // URL text view
 
             urlTextField.placeholder = "URL"
@@ -255,7 +275,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             NSLayoutConstraint(item: urlTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: urlTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: urlTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-        case 7:
+        case 8:
             // Notes text view
 
             notesTextField.placeholder = "Notes"
@@ -277,7 +297,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 8
+        return 9
     }
 
     // MARK: UITableViewControllerDelegate
