@@ -128,7 +128,9 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
                         alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
                             if let kdbx = Vault.kdbx {
                                 kdbx.delete(groupUUID: selectedGroup.uuid)
+
                                 self.reloadData()
+                                Vault.save()
                             }
                         }))
 
@@ -157,7 +159,9 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
                         alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
                             if let kdbx = Vault.kdbx {
                                 kdbx.delete(entryUUID: selectedEntry.uuid)
+
                                 self.reloadData()
+                                Vault.save()
                             }
                         }))
 
