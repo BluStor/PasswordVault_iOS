@@ -65,7 +65,6 @@ class SyncView: UIView {
                 case .complete:
                     self.statusLabel.text = "Synced"
                     self.statusLabel.textColor = UIColor(hex: 0x80CBC4)
-                    self.retryButton.removeFromSuperview()
                 case .encrypting:
                     self.statusLabel.text = "Encrypting ..."
                     self.statusLabel.textColor = UIColor(hex: 0xFFCC80)
@@ -84,6 +83,7 @@ class SyncView: UIView {
     func didTouchUpInside(sender: UIView) {
         switch sender {
         case retryButton:
+            self.retryButton.removeFromSuperview()
             Vault.save()
         default:
             break
