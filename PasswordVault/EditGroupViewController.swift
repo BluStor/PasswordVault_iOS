@@ -67,7 +67,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
 
     func reloadData() {
         let iconName = String(format: "%02d", group.iconId)
-        let iconImage = UIImage(named: iconName)?.tint(with: UIColor(hex: 0xDADADA))
+        let iconImage = UIImage(named: iconName)?.tint(with: UIColor(hex: 0xFFCC80))
         iconImageView.image = iconImage
 
         nameTextField.text = group.name
