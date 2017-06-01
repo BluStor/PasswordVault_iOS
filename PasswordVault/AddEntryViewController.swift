@@ -250,7 +250,8 @@ class AddEntryViewController: UITableViewController, IconPickerViewControllerDel
 
             generateButton.setTitle("Generate", for: .normal)
             generateButton.pulseColor = UIColor.white
-            generateButton.backgroundColor = UIColor(hex: 0x00BCD4)
+            generateButton.backgroundColor = UIColor(hex: 0xEAEAEA)
+            generateButton.setTitleColor(UIColor(hex: 0x999999), for: .normal)
             generateButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
             generateButton.translatesAutoresizingMaskIntoConstraints = false
 
@@ -303,7 +304,7 @@ class AddEntryViewController: UITableViewController, IconPickerViewControllerDel
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
-            let iconPickerViewController = IconPickerViewController()
+            let iconPickerViewController = IconPickerViewController(tintColor: UIColor(hex: 0xDADADA))
             iconPickerViewController.delegate = self
 
             navigationController?.pushViewController(iconPickerViewController, animated: true)

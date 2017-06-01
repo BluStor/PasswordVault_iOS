@@ -146,7 +146,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
-            let iconPickerViewController = IconPickerViewController()
+            let iconPickerViewController = IconPickerViewController(tintColor: UIColor(hex: 0xFFCC80))
             iconPickerViewController.delegate = self
 
             navigationController?.pushViewController(iconPickerViewController, animated: true)

@@ -82,7 +82,7 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
 
     func reloadData() {
         let iconName = String(format: "%02d", group.iconId)
-        let iconImage = UIImage(named: iconName)?.tint(with: UIColor(hex: 0xDADADA))
+        let iconImage = UIImage(named: iconName)?.tint(with: UIColor(hex: 0xFFCC80))
         iconImageView.image = iconImage
 
         nameTextField.text = group.name
@@ -163,7 +163,7 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
-            let iconPickerViewController = IconPickerViewController()
+            let iconPickerViewController = IconPickerViewController(tintColor: UIColor(hex: 0xFFCC80))
             iconPickerViewController.delegate = self
 
             navigationController?.pushViewController(iconPickerViewController, animated: true)

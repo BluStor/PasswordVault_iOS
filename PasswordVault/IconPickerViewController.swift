@@ -13,6 +13,7 @@ class IconPickerViewController: UIViewController, UICollectionViewDataSource, UI
 
     weak var delegate: IconPickerViewControllerDelegate?
 
+    let tintColor: UIColor
     let collectionView: UICollectionView
     let flowLayout = UICollectionViewFlowLayout()
 
@@ -20,8 +21,9 @@ class IconPickerViewController: UIViewController, UICollectionViewDataSource, UI
         fatalError("init(coder:) has not been implemented")
     }
 
-    required init() {
-        collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
+    required init(tintColor: UIColor) {
+        self.tintColor = tintColor
+        self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -70,7 +72,7 @@ class IconPickerViewController: UIViewController, UICollectionViewDataSource, UI
         }
 
         let iconName = String(format: "%02d.svg", indexPath.row)
-        cell.setIcon(iconName: iconName, tintColor: UIColor(hex: 0xDADADA))
+        cell.setIcon(iconName: iconName, tintColor: tintColor)
 
         return cell
     }
