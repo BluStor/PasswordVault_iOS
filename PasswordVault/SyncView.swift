@@ -3,10 +3,11 @@
 //  PasswordVault
 //
 
-import UIKit
+import Material
 
 class SyncView: UIView {
     let statusLabel = UILabel()
+    let retryButton = RaisedButton()
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -21,23 +22,28 @@ class SyncView: UIView {
         statusLabel.font = UIFont.boldSystemFont(ofSize: 16.0)
         statusLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        self.addSubview(statusLabel)
-        NSLayoutConstraint(item: statusLabel, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
-        NSLayoutConstraint(item: statusLabel, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
-        NSLayoutConstraint(item: statusLabel, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-        NSLayoutConstraint(item: statusLabel, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+        // Retry button
 
-        // Bottom border
+        retryButton.setTitle("Retry", for: .normal)
+        retryButton.backgroundColor = UIColor(hex: 0xEAEAEA)
+        retryButton.setTitleColor(UIColor(hex: 0x999999), for: .normal)
+        retryButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
+        retryButton.translatesAutoresizingMaskIntoConstraints = false
 
-        let bottomBorder = UIView()
-        bottomBorder.backgroundColor = UIColor(hex: 0xEEEEEE)
-        bottomBorder.translatesAutoresizingMaskIntoConstraints = false
+        // Stack view
 
-        self.addSubview(bottomBorder)
-        NSLayoutConstraint(item: bottomBorder, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 1.0).isActive = true
-        NSLayoutConstraint(item: bottomBorder, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
-        NSLayoutConstraint(item: bottomBorder, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
-        NSLayoutConstraint(item: bottomBorder, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+
+        self.addSubview(stackView)
+        NSLayoutConstraint(item: stackView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+        NSLayoutConstraint(item: stackView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+        NSLayoutConstraint(item: stackView, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+        NSLayoutConstraint(item: stackView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+
+        stackView.addArrangedSubview(statusLabel)
 
         // Signals
 
@@ -47,17 +53,28 @@ class SyncView: UIView {
                 case .complete:
                     self.statusLabel.text = "Synced"
                     self.statusLabel.textColor = UIColor(hex: 0x80CBC4)
+                    self.retryButton.removeFromSuperview()
                 case .encrypting:
                     self.statusLabel.text = "Encrypting ..."
                     self.statusLabel.textColor = UIColor(hex: 0xFFCC80)
                 case .failed:
                     self.statusLabel.text = "Failed"
                     self.statusLabel.textColor = UIColor(hex: 0xD50000)
+                    stackView.addArrangedSubview(self.retryButton)
                 case .transferring:
                     self.statusLabel.text = "Transferring ..."
                     self.statusLabel.textColor = UIColor(hex: 0xFFCC80)
                 }
             }
+        }
+    }
+
+    func didTouchUpInside(sender: UIView) {
+        switch sender {
+        case retryButton:
+            Vault.save()
+        default:
+            break
         }
     }
 }
