@@ -97,6 +97,9 @@ class Vault {
                     card.put(path: Vault.dbPath, data: encryptedData)
                 }
                 .then {
+                    card.checksum(data: encryptedData)
+                }
+                .then {
                     card.close(path: Vault.dbPath)
                 }
                 .always {
