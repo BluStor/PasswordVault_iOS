@@ -8,6 +8,7 @@ import Material
 class SyncView: UIView {
     let statusLabel = UILabel()
     let retryButton = RaisedButton()
+    let bottomBorder = UIView()
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -44,6 +45,17 @@ class SyncView: UIView {
         NSLayoutConstraint(item: stackView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
 
         stackView.addArrangedSubview(statusLabel)
+
+        // Bottom border
+
+        bottomBorder.backgroundColor = UIColor(hex: 0xEEEEEE)
+        bottomBorder.translatesAutoresizingMaskIntoConstraints = false
+
+        self.addSubview(bottomBorder)
+        NSLayoutConstraint(item: bottomBorder, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 1.0).isActive = true
+        NSLayoutConstraint(item: bottomBorder, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
+        NSLayoutConstraint(item: bottomBorder, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
+        NSLayoutConstraint(item: bottomBorder, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
 
         // Signals
 
