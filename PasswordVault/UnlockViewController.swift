@@ -97,7 +97,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
     func bluetoothCheck() {
         GKCard.checkBluetoothState()
-        .catch { error in
+        .catch { _ in
             let alertController = UIAlertController(title: "Bluetooth", message: "Bluetooth is not enabled. Enable it in your device's Settings app.", preferredStyle: .alert)
 
             alertController.addAction(UIAlertAction(title: "Done", style: .default, handler: { _ in

@@ -114,7 +114,7 @@ class Kdbx {
 
         let group = KdbxXml.Group(
             uuid: UUID().uuidString,
-            name: "PasswordVault",
+            name: "Password Vault",
             notes: "",
             iconId: 49,
             times: times,
@@ -182,7 +182,7 @@ class Kdbx {
         database.root.group.groups.forEach({ (group) in
             entries.append(contentsOf: group.findEntries(title: title))
         })
-        
+
         return entries
     }
 

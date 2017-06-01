@@ -52,7 +52,7 @@ extension CGFloat {
 }
 
 extension Data {
-    
+
     func crc16() -> UInt16 {
         var crc = UInt16(0)
         var temp = UInt16(0)

@@ -114,7 +114,7 @@ class GKCard {
     }
 
     private func waitOnControlPointResult() -> Promise<Data> {
-        return Promise { resolve, reject in
+        return Promise { resolve, _ in
             var bufferCount = 0
 
             let timer = DispatchSource.makeTimerSource()

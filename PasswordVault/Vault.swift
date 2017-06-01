@@ -103,7 +103,7 @@ class Vault {
                     card.disconnect().then {}
                     syncStatus.fire(.complete)
                 }
-                .catch { error in
+                .catch { _ in
                     syncStatus.fire(.failed)
                 }
             }
