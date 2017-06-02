@@ -475,8 +475,8 @@ class KdbxXml {
         var maintenanceHistoryDays: Int?
         var color: String
         var masterKeyChanged: Date?
-        var masterKeyChangeRec: Int
-        var masterKeyChangeForce: Int
+        var masterKeyChangeRec: Int?
+        var masterKeyChangeForce: Int?
         var memoryProtection: MemoryProtection
         var recycleBinEnabled: Bool
         var recycleBinUUID: String
@@ -511,8 +511,8 @@ class KdbxXml {
                 maintenanceHistoryDays: elem["MaintenenceHistoryDays"].int,
                 color: elem["Color"].string,
                 masterKeyChanged: elem["MasterKeyChanged"].string.xmlDate,
-                masterKeyChangeRec: elem["MasterKeyChangeRec"].int!,
-                masterKeyChangeForce: elem["MasterKeyChangeForce"].int!,
+                masterKeyChangeRec: elem["MasterKeyChangeRec"].int,
+                masterKeyChangeForce: elem["MasterKeyChangeForce"].int,
                 memoryProtection: MemoryProtection.parse(elem: elem["MemoryProtection"]),
                 recycleBinEnabled: elem["RecycleBinEnabled"].string == "True",
                 recycleBinUUID: elem["RecycleBinUUID"].string,
@@ -541,8 +541,8 @@ class KdbxXml {
             elem.addChild(name: "MaintenanceHistoryDays", value: maintenanceHistoryDays?.xmlString, attributes: [:])
             elem.addChild(name: "Color", value: color, attributes: [:])
             elem.addChild(name: "MasterKeyChanged", value: masterKeyChanged?.xmlString, attributes: [:])
-            elem.addChild(name: "MasterKeyChangeRec", value: masterKeyChangeRec.xmlString, attributes: [:])
-            elem.addChild(name: "MasterKeyChangeForce", value: masterKeyChangeForce.xmlString, attributes: [:])
+            elem.addChild(name: "MasterKeyChangeRec", value: masterKeyChangeRec?.xmlString, attributes: [:])
+            elem.addChild(name: "MasterKeyChangeForce", value: masterKeyChangeForce?.xmlString, attributes: [:])
             elem.addChild(memoryProtection.build())
             elem.addChild(name: "RecycleBinEnabled", value: recycleBinEnabled.xmlString, attributes: [:])
             elem.addChild(name: "RecycleBinUUID", value: recycleBinUUID, attributes: [:])
@@ -626,7 +626,7 @@ class KdbxXml {
         var lastAccessTime: Date?
         var expiryTime: Date?
         var expires: Bool
-        var usageCount: Int
+        var usageCount: Int?
         var locationChanged: Date?
 
         static func parse(elem: AEXMLElement) -> Times {
@@ -636,7 +636,7 @@ class KdbxXml {
                 lastAccessTime: elem["LastAccessTime"].string.xmlDate,
                 expiryTime: elem["ExpiryTime"].string.xmlDate,
                 expires: elem["Expires"].string == "True",
-                usageCount: elem["UsageCount"].int!,
+                usageCount: elem["UsageCount"].int,
                 locationChanged: elem["LocationChanged"].string.xmlDate
             )
         }
@@ -648,7 +648,7 @@ class KdbxXml {
             elem.addChild(name: "LastAccessTime", value: lastAccessTime?.xmlString, attributes: [:])
             elem.addChild(name: "ExpiryTime", value: expiryTime?.xmlString, attributes: [:])
             elem.addChild(name: "Expires", value: expires.xmlString, attributes: [:])
-            elem.addChild(name: "UsageCount", value: usageCount.xmlString, attributes: [:])
+            elem.addChild(name: "UsageCount", value: usageCount?.xmlString, attributes: [:])
             elem.addChild(name: "LocationChanged", value: locationChanged?.xmlString, attributes: [:])
             return elem
         }
