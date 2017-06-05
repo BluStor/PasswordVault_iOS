@@ -203,6 +203,10 @@ class Kdbx {
     }
 
     func get(entryUUID: UUID) -> KdbxXml.Entry? {
+        for entry in database.root.group.entries where entry.uuid == entryUUID {
+            return entry
+        }
+        
         for group in database.root.group.groups {
             if let foundEntry = group.get(entryUUID: entryUUID) {
                 return foundEntry

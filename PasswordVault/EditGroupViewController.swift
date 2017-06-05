@@ -10,7 +10,6 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
     weak var groupDelegate: GroupViewControllerDelegate?
 
     var group: KdbxXml.Group
-    var groupHasChanged = false
 
     let saveButton = IconButton(title: "Save", titleColor: .white)
     let iconImageView = UIImageView()
@@ -76,7 +75,12 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
     }
 
     func editingChanged(sender: UIView) {
-
+        switch sender {
+        case nameTextField:
+            group.name = nameTextField.text ?? ""
+        default:
+            break
+        }
     }
 
     func reloadData() {
@@ -93,14 +97,24 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
                 return
             }
 
-            group.name = nameTextField.text ?? ""
+            if hasChanged() {
+                kdbx.update(group: group)
+                Vault.save()
+            }
 
-            kdbx.update(group: group)
-            Vault.save()
-            
             groupDelegate?.reloadData()
             navigationController?.popViewController(animated: true)
         }
+    }
+
+    func hasChanged() -> Bool {
+        guard let oldGroup = Vault.kdbx?.get(groupUUID: group.uuid) else {
+            return false
+        }
+
+        let name = nameTextField.text ?? ""
+
+        return oldGroup.name != name
     }
 
     func validate() -> Bool {

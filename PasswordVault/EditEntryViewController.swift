@@ -179,11 +179,37 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
                 return
             }
 
-            kdbx.update(entry: entry)
-            Vault.save()
+            if hasChanged() {
+                kdbx.update(entry: entry)
+                Vault.save()
+            }
 
             navigationController?.popViewController(animated: true)
         }
+    }
+
+    func hasChanged() -> Bool {
+        guard let oldEntry = Vault.kdbx?.get(entryUUID: entry.uuid) else {
+            return false
+        }
+
+        let oldTitle = oldEntry.getStr(key: "Title")?.value ?? ""
+        let oldUsername = oldEntry.getStr(key: "UserName")?.value ?? ""
+        let oldPassword = oldEntry.getStr(key: "Password")?.value ?? ""
+        let oldUrl = oldEntry.getStr(key: "Url")?.value ?? ""
+        let oldNotes = oldEntry.getStr(key: "Notes")?.value ?? ""
+
+        let title = entry.getStr(key: "Title")?.value ?? ""
+        let username = entry.getStr(key: "UserName")?.value ?? ""
+        let password = entry.getStr(key: "Password")?.value ?? ""
+        let url = entry.getStr(key: "Url")?.value ?? ""
+        let notes = entry.getStr(key: "Notes")?.value ?? ""
+
+        return oldTitle != title
+            || oldUsername != username
+            || oldPassword != password
+            || oldUrl != url
+            || oldNotes != notes
     }
 
     func validate() -> Bool {
