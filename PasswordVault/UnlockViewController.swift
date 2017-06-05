@@ -113,6 +113,11 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         case moreButton:
             let alertController = UIAlertController(title: "Menu", message: nil, preferredStyle: .actionSheet)
 
+            alertController.addAction(UIAlertAction(title: "Choose card", style: .default, handler: { action in
+                let chooseCardViewController = ChooseCardViewController()
+                self.navigationController?.pushViewController(chooseCardViewController, animated: true)
+            }))
+
             alertController.addAction(UIAlertAction(title: "About", style: .default, handler: { _ in
                 let aboutViewController = AboutViewController()
                 self.navigationController?.pushViewController(aboutViewController, animated: true)
@@ -220,7 +225,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     // MARK: UITableViewDataSource
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -254,12 +259,6 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
             NSLayoutConstraint(item: newDatabaseButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: newDatabaseButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: newDatabaseButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-        case 4:
-            cell.contentView.addSubview(chooseCardButton)
-            NSLayoutConstraint(item: chooseCardButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: chooseCardButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
-            NSLayoutConstraint(item: chooseCardButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: chooseCardButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         default:
             break
         }

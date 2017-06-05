@@ -53,6 +53,11 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
         case moreButton:
             let alertController = UIAlertController(title: "Menu", message: nil, preferredStyle: .actionSheet)
 
+            alertController.addAction(UIAlertAction(title: "Choose card", style: .default, handler: { action in
+                let chooseCardViewController = ChooseCardViewController()
+                self.navigationController?.pushViewController(chooseCardViewController, animated: true)
+            }))
+
             alertController.addAction(UIAlertAction(title: "About", style: .default, handler: { _ in
                 let aboutViewController = AboutViewController()
                 self.navigationController?.pushViewController(aboutViewController, animated: true)
