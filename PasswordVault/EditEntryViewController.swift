@@ -14,13 +14,13 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
 
     let saveButton = IconButton(title: "Save", titleColor: .white)
     let iconImageView = UIImageView()
-    let titleTextField = TextField()
-    let usernameTextField = TextField()
-    let passwordTextField = TextField()
+    let titleTextField = ErrorTextField()
+    let usernameTextField = ErrorTextField()
+    let passwordTextField = ErrorTextField()
     let copyButton = RaisedButton()
     let generateButton = RaisedButton()
-    let urlTextField = TextField()
-    let notesTextField = TextField()
+    let urlTextField = ErrorTextField()
+    let notesTextField = ErrorTextField()
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -64,7 +64,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         titleTextField.placeholder = "Title"
         titleTextField.autocapitalizationType = .sentences
         titleTextField.autocorrectionType = .no
-        titleTextField.addTarget(self, action: #selector(didChangeEditing(sender:)), for: .editingChanged)
+        titleTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
 
         // Title text view
@@ -72,16 +72,16 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         usernameTextField.placeholder = "Username"
         usernameTextField.autocapitalizationType = .none
         usernameTextField.autocorrectionType = .no
-        usernameTextField.addTarget(self, action: #selector(didChangeEditing(sender:)), for: .editingChanged)
+        usernameTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
         usernameTextField.translatesAutoresizingMaskIntoConstraints = false
 
         // Password text view
 
-        passwordTextField.placeholder = "New password"
+        passwordTextField.placeholder = "Password"
         passwordTextField.isSecureTextEntry = true
         passwordTextField.autocapitalizationType = .none
         passwordTextField.autocorrectionType = .no
-        passwordTextField.addTarget(self, action: #selector(didChangeEditing(sender:)), for: .editingChanged)
+        passwordTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
         passwordTextField.isVisibilityIconButtonEnabled = true
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
 
@@ -107,7 +107,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         urlTextField.placeholder = "URL"
         urlTextField.autocapitalizationType = .none
         urlTextField.autocorrectionType = .no
-        urlTextField.addTarget(self, action: #selector(didChangeEditing(sender:)), for: .editingChanged)
+        urlTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
         urlTextField.translatesAutoresizingMaskIntoConstraints = false
 
         // Notes text view
@@ -115,7 +115,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         notesTextField.placeholder = "Notes"
         notesTextField.autocapitalizationType = .sentences
         notesTextField.autocorrectionType = .no
-        notesTextField.addTarget(self, action: #selector(didChangeEditing(sender:)), for: .editingChanged)
+        notesTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
         notesTextField.translatesAutoresizingMaskIntoConstraints = false
 
         // Data
@@ -143,10 +143,11 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         }
     }
 
-    func didChangeEditing(sender: UIView) {
+    func editingChanged(sender: UIView) {
         switch sender {
         case titleTextField:
             entry.setStr(key: "Title", value: titleTextField.text ?? "", isProtected: false)
+            titleTextField.isErrorRevealed = false
         case usernameTextField:
             entry.setStr(key: "UserName", value: usernameTextField.text ?? "", isProtected: false)
         case passwordTextField:
@@ -173,7 +174,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
     }
 
     func save() {
-        if validateEntry() {
+        if validate() {
             if let kdbx = Vault.kdbx {
                 kdbx.update(entry: entry)
                 Vault.save()
@@ -183,8 +184,20 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         }
     }
 
-    func validateEntry() -> Bool {
-        return true
+    func validate() -> Bool {
+        let title = titleTextField.text ?? ""
+
+        var hasError = false
+
+        if title.characters.count == 0 {
+            titleTextField.detail = "This field is required."
+            titleTextField.isErrorRevealed = true
+            hasError = true
+        } else {
+            titleTextField.isErrorRevealed = false
+        }
+
+        return !hasError
     }
 
     // MARK: IconPickerViewControllerDelegate

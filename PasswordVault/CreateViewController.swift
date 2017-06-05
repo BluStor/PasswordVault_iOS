@@ -114,9 +114,10 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
     func editingChanged(sender: UIView) {
         switch sender {
         case passwordTextField:
-            _ = validate()
+            passwordTextField.isErrorRevealed = false
+            passwordRepeatTextField.isErrorRevealed = false
         case passwordRepeatTextField:
-            _ = validate()
+            passwordRepeatTextField.isErrorRevealed = false
         default:
             break
         }

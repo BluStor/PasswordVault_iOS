@@ -14,7 +14,7 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
     let groupUUID: UUID
     let saveButton = IconButton(title: "Save", titleColor: .white)
     let iconImageView = UIImageView()
-    let nameTextField = TextField()
+    let nameTextField = ErrorTextField()
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -28,7 +28,7 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
 
         group = KdbxXml.Group(
             uuid: UUID(),
-            name: "Untitled",
+            name: "",
             notes: "",
             iconId: 49,
             times: times,
@@ -66,15 +66,39 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 200.0
 
+        // Icon image view
+
+        iconImageView.contentMode = .scaleAspectFit
+        iconImageView.translatesAutoresizingMaskIntoConstraints = false
+
+        // Name text view
+
+        nameTextField.placeholder = "Title"
+        nameTextField.autocapitalizationType = .sentences
+        nameTextField.autocorrectionType = .no
+        nameTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
+        nameTextField.translatesAutoresizingMaskIntoConstraints = false
+
         // Data
 
         reloadData()
+
+        _ = nameTextField.becomeFirstResponder()
     }
 
     func didTouchUpInside(sender: UIView) {
         switch sender {
         case saveButton:
             save()
+        default:
+            break
+        }
+    }
+
+    func editingChanged(sender: UIView) {
+        switch sender {
+        case nameTextField:
+            nameTextField.isErrorRevealed = false
         default:
             break
         }
@@ -104,7 +128,18 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
 
     func validate() -> Bool {
         let name = nameTextField.text ?? ""
-        return name.characters.count > 0
+
+        var hasError = false
+
+        if name.characters.count == 0 {
+            nameTextField.detail = "This field is required."
+            nameTextField.isErrorRevealed = true
+            hasError = true
+        } else {
+            nameTextField.isErrorRevealed = false
+        }
+
+        return !hasError
     }
 
     // MARK: IconPickerViewControllerDelegate
@@ -126,12 +161,7 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
 
         switch indexPath.row {
         case 0:
-            // Icon image view
-
             let iconWidth = UIScreen.main.bounds.width / 2
-
-            iconImageView.contentMode = .scaleAspectFit
-            iconImageView.translatesAutoresizingMaskIntoConstraints = false
 
             cell.contentView.addSubview(iconImageView)
             NSLayoutConstraint(item: iconImageView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: iconWidth).isActive = true
@@ -139,13 +169,6 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
             NSLayoutConstraint(item: iconImageView, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: iconImageView, attribute: .centerX, relatedBy: .equal, toItem: cell.contentView, attribute: .centerX, multiplier: 1.0, constant: 0.0).isActive = true
         case 1:
-            // Name text view
-
-            nameTextField.placeholder = "Title"
-            nameTextField.autocapitalizationType = .sentences
-            nameTextField.autocorrectionType = .no
-            nameTextField.translatesAutoresizingMaskIntoConstraints = false
-
             cell.contentView.addSubview(nameTextField)
             NSLayoutConstraint(item: nameTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 25.0).isActive = true
             NSLayoutConstraint(item: nameTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true

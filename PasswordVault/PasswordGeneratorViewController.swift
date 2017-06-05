@@ -153,17 +153,21 @@ class PasswordGeneratorViewController: UITableViewController {
     }
 
     func didChangeSliderValue(sender: UISlider) {
-        if sender == slider {
+        switch sender {
+        case slider:
             generatePassword()
+        default:
+            break
         }
     }
 
     func didTapButton(sender: Button) {
-        if sender == setButton {
-            if delegate != nil {
-                delegate?.setPassword(passwordLabel.text ?? "")
-                navigationController?.popViewController(animated: true)
-            }
+        switch sender {
+        case setButton:
+            delegate?.setPassword(passwordLabel.text ?? "")
+            navigationController?.popViewController(animated: true)
+        default:
+            break
         }
     }
 

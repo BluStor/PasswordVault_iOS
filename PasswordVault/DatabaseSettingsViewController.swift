@@ -8,8 +8,8 @@ import Material
 class DatabaseSettingsViewController: UITableViewController {
 
     let saveButton = IconButton(title: "Save", titleColor: .white)
-    let passwordTextField = TextField()
-    let transformationRoundsTextField = TextField()
+    let passwordTextField = ErrorTextField()
+    let transformationRoundsTextField = ErrorTextField()
 
     override func viewDidLoad() {
         navigationItem.title = "Database Settings"
@@ -64,22 +64,42 @@ class DatabaseSettingsViewController: UITableViewController {
     }
 
     func save() {
-        if let kdbx = Vault.kdbx {
-            if let transformationRoundsStr = transformationRoundsTextField.text {
-                if let transformationRounds = Int(transformationRoundsStr) {
-                    kdbx.transformationRounds = transformationRounds
-                }
+        if validate() {
+            guard let kdbx = Vault.kdbx else {
+                return
             }
 
-            if let password = passwordTextField.text {
-                if password.characters.count > 0 {
-                    kdbx.setPassword(password)
-                }
+            let password = passwordTextField.text ?? ""
+
+            let transformationRoundsStr = transformationRoundsTextField.text ?? "8000"
+            let transformationRounds = Int(transformationRoundsStr) ?? 8000
+
+            kdbx.transformationRounds = transformationRounds
+
+            if password.characters.count > 0 {
+                kdbx.setPassword(password)
             }
+
+            Vault.save()
+            navigationController?.popViewController(animated: true)
+        }
+    }
+
+    func validate() -> Bool {
+        let transformationRoundsStr = transformationRoundsTextField.text ?? "-1"
+        let transformationRounds = Int(transformationRoundsStr) ?? -1
+
+        var hasError = false
+
+        if transformationRounds < 8000 {
+            transformationRoundsTextField.detail = "Must be at least 8000."
+            transformationRoundsTextField.isErrorRevealed = true
+            hasError = true
+        } else {
+            transformationRoundsTextField.isErrorRevealed = false
         }
 
-        Vault.save()
-        navigationController?.popViewController(animated: true)
+        return !hasError
     }
 
     // MARK: UITableViewDataSource
