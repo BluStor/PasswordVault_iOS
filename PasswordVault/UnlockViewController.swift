@@ -58,6 +58,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         passwordTextField.isSecureTextEntry = true
         passwordTextField.placeholder = "Password"
         passwordTextField.returnKeyType = .next
+        passwordTextField.isVisibilityIconButtonEnabled = true
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
 
         // Open button
@@ -100,7 +101,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         .catch { _ in
             let alertController = UIAlertController(title: "Bluetooth", message: "Bluetooth is not enabled. Enable it in your device's Settings app.", preferredStyle: .alert)
 
-            alertController.addAction(UIAlertAction(title: "Done", style: .default, handler: { _ in
+            alertController.addAction(UIAlertAction(title: "Okay", style: .default, handler: { _ in
                 alertController.dismiss(animated: true, completion: nil)
             }))
 

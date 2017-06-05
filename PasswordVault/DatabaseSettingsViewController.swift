@@ -9,8 +9,6 @@ class DatabaseSettingsViewController: UITableViewController {
 
     let saveButton = IconButton(title: "Save", titleColor: .white)
     let passwordTextField = TextField()
-    let unmaskSwitch = Switch()
-    let unmaskLabel = UILabel()
     let transformationRoundsTextField = TextField()
 
     override func viewDidLoad() {
@@ -37,20 +35,8 @@ class DatabaseSettingsViewController: UITableViewController {
         passwordTextField.isSecureTextEntry = true
         passwordTextField.autocapitalizationType = .none
         passwordTextField.autocorrectionType = .no
+        passwordTextField.isVisibilityIconButtonEnabled = true
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
-
-        // Unmask switch
-
-        unmaskSwitch.addTarget(self, action: #selector(didChangeValue(sender:)), for: .valueChanged)
-        unmaskSwitch.setContentHuggingPriority(UILayoutPriorityRequired, for: .horizontal)
-        unmaskSwitch.translatesAutoresizingMaskIntoConstraints = false
-
-        // Unmask label
-
-        unmaskLabel.text = "Unmask password"
-        unmaskLabel.textColor = UIColor(hex: 0x666666)
-        unmaskLabel.font = UIFont.systemFont(ofSize: 14.0)
-        unmaskLabel.translatesAutoresizingMaskIntoConstraints = false
 
         // Transformation rounds text field
 
@@ -60,15 +46,6 @@ class DatabaseSettingsViewController: UITableViewController {
         // Load
 
         load()
-    }
-
-    func didChangeValue(sender: UIView) {
-        switch sender {
-        case unmaskSwitch:
-            passwordTextField.isSecureTextEntry = !unmaskSwitch.isOn
-        default:
-            break
-        }
     }
 
     func didTouchUpInside(sender: UIView) {
@@ -108,7 +85,7 @@ class DatabaseSettingsViewController: UITableViewController {
     // MARK: UITableViewDataSource
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return 2
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -123,17 +100,6 @@ class DatabaseSettingsViewController: UITableViewController {
             NSLayoutConstraint(item: passwordTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: passwordTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 1:
-            cell.contentView.addSubview(unmaskSwitch)
-            NSLayoutConstraint(item: unmaskSwitch, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: unmaskSwitch, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
-            NSLayoutConstraint(item: unmaskSwitch, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-
-            cell.contentView.addSubview(unmaskLabel)
-            NSLayoutConstraint(item: unmaskLabel, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: unmaskLabel, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
-            NSLayoutConstraint(item: unmaskLabel, attribute: .left, relatedBy: .equal, toItem: unmaskSwitch, attribute: .right, multiplier: 1.0, constant: 15.0).isActive = true
-            NSLayoutConstraint(item: unmaskLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-        case 2:
             cell.contentView.addSubview(transformationRoundsTextField)
             NSLayoutConstraint(item: transformationRoundsTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 30.0).isActive = true
             NSLayoutConstraint(item: transformationRoundsTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
