@@ -42,7 +42,7 @@ class PasswordGeneratorViewController: UITableViewController {
 
         // Set button
 
-        setButton.addTarget(self, action: #selector(didTapButton(sender:)), for: .touchUpInside)
+        setButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
 
         // Password label
 
@@ -152,7 +152,7 @@ class PasswordGeneratorViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
-    func didChangeSliderValue(sender: UISlider) {
+    func didChangeSliderValue(sender: UIView) {
         switch sender {
         case slider:
             generatePassword()
@@ -161,7 +161,7 @@ class PasswordGeneratorViewController: UITableViewController {
         }
     }
 
-    func didTapButton(sender: Button) {
+    func didTouchUpInside(sender: UIView) {
         switch sender {
         case setButton:
             delegate?.setPassword(passwordLabel.text ?? "")

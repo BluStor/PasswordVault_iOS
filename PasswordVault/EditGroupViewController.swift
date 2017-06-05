@@ -10,6 +10,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
     weak var groupDelegate: GroupViewControllerDelegate?
 
     var group: KdbxXml.Group
+    var groupHasChanged = false
 
     let saveButton = IconButton(title: "Save", titleColor: .white)
     let iconImageView = UIImageView()
@@ -57,6 +58,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
         nameTextField.placeholder = "Title"
         nameTextField.autocapitalizationType = .sentences
         nameTextField.autocorrectionType = .no
+        nameTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
         nameTextField.translatesAutoresizingMaskIntoConstraints = false
 
         // Data
@@ -64,13 +66,17 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
         reloadData()
     }
 
-    func didTouchUpInside(sender: IconButton) {
+    func didTouchUpInside(sender: UIView) {
         switch sender {
         case saveButton:
             save()
         default:
             break
         }
+    }
+
+    func editingChanged(sender: UIView) {
+
     }
 
     func reloadData() {
@@ -83,15 +89,17 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
 
     func save() {
         if validate() {
+            guard let kdbx = Vault.kdbx else {
+                return
+            }
+
             group.name = nameTextField.text ?? ""
 
-            if let kdbx = Vault.kdbx {
-                kdbx.update(group: group)
-                Vault.save()
-                
-                groupDelegate?.reloadData()
-                navigationController?.popViewController(animated: true)
-            }
+            kdbx.update(group: group)
+            Vault.save()
+            
+            groupDelegate?.reloadData()
+            navigationController?.popViewController(animated: true)
         }
     }
 

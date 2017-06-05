@@ -185,10 +185,12 @@ class AddEntryViewController: UITableViewController, IconPickerViewControllerDel
 
     func save() {
         if validate() {
-            if let kdbx = Vault.kdbx {
-                kdbx.add(groupUUID: groupUUID, entry: entry)
-                Vault.save()
+            guard let kdbx = Vault.kdbx else {
+                return
             }
+
+            kdbx.add(groupUUID: groupUUID, entry: entry)
+            Vault.save()
 
             groupDelegate?.reloadData()
             navigationController?.popViewController(animated: true)

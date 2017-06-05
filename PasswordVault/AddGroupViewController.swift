@@ -114,15 +114,17 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
 
     func save() {
         if validate() {
+            guard let kdbx = Vault.kdbx else {
+                return
+            }
+
             group.name = nameTextField.text ?? ""
 
-            if let kdbx = Vault.kdbx {
-                kdbx.add(groupUUID: groupUUID, group: group)
-                groupDelegate?.reloadData()
+            kdbx.add(groupUUID: groupUUID, group: group)
+            groupDelegate?.reloadData()
 
-                Vault.save()
-                navigationController?.popViewController(animated: true)
-            }
+            Vault.save()
+            navigationController?.popViewController(animated: true)
         }
     }
 

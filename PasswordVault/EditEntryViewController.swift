@@ -175,10 +175,12 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
 
     func save() {
         if validate() {
-            if let kdbx = Vault.kdbx {
-                kdbx.update(entry: entry)
-                Vault.save()
+            guard let kdbx = Vault.kdbx else {
+                return
             }
+
+            kdbx.update(entry: entry)
+            Vault.save()
 
             navigationController?.popViewController(animated: true)
         }
