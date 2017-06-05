@@ -15,8 +15,8 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     }
 
     let moreButton = IconButton(image: Icon.moreVertical, tintColor: UIColor.white)
-    let passwordTextField = TextField()
     let lockImageView = UIImageView(image: UIImage(named: "lock"))
+    let passwordTextField = TextField()
     let openButton = RaisedButton()
     let newDatabaseButton = RaisedButton()
     let chooseCardButton = RaisedButton()
@@ -269,7 +269,10 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     // MARK: UITextFieldDelegate
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        open()
+        if textField == passwordTextField {
+            open()
+        }
+        
         return true
     }
 }

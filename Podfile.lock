@@ -1,6 +1,5 @@
 PODS:
   - AEXML (4.1.0)
-  - Fuzi (1.0.1)
   - GzipSwift (3.1.4)
   - HydraAsync (0.9.4)
   - IQKeyboardManagerSwift (4.0.9)
@@ -13,7 +12,6 @@ PODS:
 
 DEPENDENCIES:
   - AEXML (= 4.1.0)
-  - Fuzi (= 1.0.1)
   - GzipSwift (= 3.1.4)
   - HydraAsync (= 0.9.4)
   - IQKeyboardManagerSwift (= 4.0.9)
@@ -24,7 +22,6 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   AEXML: 647fbb051280f3fb38a1a7caa62b0344055a851c
-  Fuzi: 851403654bac55675aaeed815d0c8a1d3e3d3e8b
   GzipSwift: 11ddb2bf253b1cd7b60bb169da20f62ac4348769
   HydraAsync: 7cd7fc544d4260f261d28a8d9b3f7dc0f77b4c8e
   IQKeyboardManagerSwift: 2eefe6c429b86aa08bfbc1b5c891164d754adf91
@@ -33,6 +30,6 @@ SPEC CHECKSUMS:
   SVProgressHUD: c404a55d78acbeb7ebb78b76d3faf986475a6994
   SwiftyBluetooth: 586007f757086357a7f02b5d3d9d574a86396339
 
-PODFILE CHECKSUM: fceade062713a4b240da9a8d59a44ea3db9ebe3b
+PODFILE CHECKSUM: 8452d39b982d02feca427f54e66c6f2dfb119a8e
 
 COCOAPODS: 1.2.1

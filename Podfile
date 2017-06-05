@@ -4,7 +4,6 @@ target 'PasswordVault' do
   use_frameworks!
 
   pod 'AEXML', '4.1.0'
-  pod 'Fuzi', '1.0.1'
   pod 'GzipSwift', '3.1.4'
   pod 'HydraAsync', '0.9.4'
   pod 'IQKeyboardManagerSwift', '4.0.9' 

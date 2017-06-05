@@ -13,8 +13,8 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
     }
 
     let moreButton = IconButton(image: Icon.moreVertical, tintColor: UIColor.white)
-    let passwordTextField = TextField()
-    let warningLabel = UILabel()
+    let passwordTextField = ErrorTextField()
+    let passwordRepeatTextField = ErrorTextField()
     let createButton = RaisedButton()
     let openDatabaseButton = RaisedButton()
 
@@ -40,10 +40,45 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
         tableView.separatorStyle = .none
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 200.0
-    }
 
-    override func viewDidAppear(_ animated: Bool) {
-        Vault.close()
+        // Password text field
+
+        passwordTextField.delegate = self
+        passwordTextField.autocorrectionType = .no
+        passwordTextField.autocapitalizationType = .none
+        passwordTextField.isSecureTextEntry = true
+        passwordTextField.placeholder = "Password"
+        passwordTextField.returnKeyType = .next
+        passwordTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
+        passwordTextField.translatesAutoresizingMaskIntoConstraints = false
+
+        // Password repeat text field
+
+        passwordRepeatTextField.delegate = self
+        passwordRepeatTextField.autocorrectionType = .no
+        passwordRepeatTextField.autocapitalizationType = .none
+        passwordRepeatTextField.isSecureTextEntry = true
+        passwordRepeatTextField.placeholder = "Password (repeat)"
+        passwordRepeatTextField.returnKeyType = .done
+        passwordRepeatTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
+        passwordRepeatTextField.translatesAutoresizingMaskIntoConstraints = false
+
+        // New database button
+
+        openDatabaseButton.setTitle("Open existing database", for: .normal)
+        openDatabaseButton.pulseColor = UIColor.white
+        openDatabaseButton.backgroundColor = UIColor(hex: 0xEAEAEA)
+        openDatabaseButton.setTitleColor(UIColor(hex: 0x999999), for: .normal)
+        openDatabaseButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
+        openDatabaseButton.translatesAutoresizingMaskIntoConstraints = false
+
+        // Create button
+
+        createButton.setTitle("Create", for: .normal)
+        createButton.pulseColor = UIColor.white
+        createButton.backgroundColor = UIColor(hex: 0x00BCD4)
+        createButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
+        createButton.translatesAutoresizingMaskIntoConstraints = false
     }
 
     func didTouchUpInside(sender: UIView) {
@@ -71,6 +106,17 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
         case openDatabaseButton:
             let unlockViewController = UnlockViewController()
             navigationController?.setViewControllers([unlockViewController], animated: true)
+        default:
+            break
+        }
+    }
+
+    func editingChanged(sender: UIView) {
+        switch sender {
+        case passwordTextField:
+            _ = validate()
+        case passwordRepeatTextField:
+            _ = validate()
         default:
             break
         }
@@ -110,18 +156,56 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
     }
 
     func create() {
-        let password = self.passwordTextField.text ?? ""
-        self.passwordTextField.text = ""
-
-        Vault.create(password: password)
-        Vault.save()
-
-        if let kdbx = Vault.kdbx {
-            let groupViewController = GroupViewController(group: kdbx.database.root.group)
-
-            // TODO: Replace create view controller with unlock view controller
-            navigationController?.pushViewController(groupViewController, animated: true)
+        guard validate() else {
+            return
         }
+
+        let alertController = UIAlertController(title: "Warning", message: "Creating a new database will destroy any existing database on your card. Are you sure?", preferredStyle: .alert)
+
+        alertController.addAction(UIAlertAction(title: "Create", style: .default, handler: { action in
+            let password = self.passwordTextField.text ?? ""
+            self.passwordTextField.text = ""
+
+            Vault.create(password: password)
+            Vault.save()
+
+            if let kdbx = Vault.kdbx {
+                let unlockViewController = UnlockViewController()
+                let groupViewController = GroupViewController(group: kdbx.database.root.group)
+
+                self.navigationController?.setViewControllers([unlockViewController], animated: false)
+                unlockViewController.navigationController?.pushViewController(groupViewController, animated: true)
+            }
+        }))
+
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { action in
+            alertController.dismiss(animated: true, completion: nil)
+        }))
+
+        present(alertController, animated: true, completion: nil)
+    }
+
+    func validate() -> Bool {
+        let password = passwordTextField.text ?? ""
+        let passwordRepeat = passwordRepeatTextField.text ?? ""
+
+        if password.characters.count == 0 {
+            passwordTextField.detail = "This field is required."
+            passwordTextField.isErrorRevealed = true
+            return false
+        } else {
+            passwordTextField.isErrorRevealed = false
+        }
+
+        if passwordRepeat != password {
+            passwordRepeatTextField.detail = "Passwords do not match."
+            passwordRepeatTextField.isErrorRevealed = true
+            return false
+        } else {
+            passwordRepeatTextField.isErrorRevealed = false
+        }
+
+        return true
     }
 
     // MARK: UITableViewDelegate
@@ -136,58 +220,24 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
 
         switch indexPath.row {
         case 0:
-            // Warning label
-
-            warningLabel.numberOfLines = 0
-            warningLabel.text = "Creating a new database will destroy any existing database on your card."
-
-            warningLabel.translatesAutoresizingMaskIntoConstraints = false
-
-            cell.contentView.addSubview(warningLabel)
-            NSLayoutConstraint(item: warningLabel, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: warningLabel, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
-            NSLayoutConstraint(item: warningLabel, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: warningLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-        case 1:
-            // Password text field
-
-            passwordTextField.delegate = self
-            passwordTextField.autocorrectionType = .no
-            passwordTextField.autocapitalizationType = .none
-            passwordTextField.isSecureTextEntry = true
-            passwordTextField.placeholder = "Password"
-            passwordTextField.returnKeyType = .next
-            passwordTextField.translatesAutoresizingMaskIntoConstraints = false
-
             cell.contentView.addSubview(passwordTextField)
             NSLayoutConstraint(item: passwordTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 30.0).isActive = true
             NSLayoutConstraint(item: passwordTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: passwordTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: passwordTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+        case 1:
+            cell.contentView.addSubview(passwordRepeatTextField)
+            NSLayoutConstraint(item: passwordRepeatTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 35.0).isActive = true
+            NSLayoutConstraint(item: passwordRepeatTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: passwordRepeatTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: passwordRepeatTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 2:
-            // Create button
-
-            createButton.setTitle("Create", for: .normal)
-            createButton.pulseColor = UIColor.white
-            createButton.backgroundColor = UIColor(hex: 0x00BCD4)
-            createButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
-            createButton.translatesAutoresizingMaskIntoConstraints = false
-
             cell.contentView.addSubview(createButton)
-            NSLayoutConstraint(item: createButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: createButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 20.0).isActive = true
             NSLayoutConstraint(item: createButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: createButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: createButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 3:
-            // New database button
-
-            openDatabaseButton.setTitle("Open existing database", for: .normal)
-            openDatabaseButton.pulseColor = UIColor.white
-            openDatabaseButton.backgroundColor = UIColor(hex: 0xEAEAEA)
-            openDatabaseButton.setTitleColor(UIColor(hex: 0x999999), for: .normal)
-            openDatabaseButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
-            openDatabaseButton.translatesAutoresizingMaskIntoConstraints = false
-
             cell.contentView.addSubview(openDatabaseButton)
             NSLayoutConstraint(item: openDatabaseButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: openDatabaseButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
@@ -203,7 +253,15 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
     // MARK: UITextFieldDelegate
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        create()
+        switch textField {
+        case passwordTextField:
+            _ = passwordRepeatTextField.becomeFirstResponder()
+        case passwordRepeatTextField:
+            create()
+        default:
+            textField.resignFirstResponder()
+        }
+
         return true
     }
 }
