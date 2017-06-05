@@ -11,7 +11,7 @@ class AddEntryViewController: UITableViewController, IconPickerViewControllerDel
 
     var entry: KdbxXml.Entry
 
-    let groupUUID: String
+    let groupUUID: UUID
     let saveButton = IconButton(title: "Save", titleColor: .white)
     let iconImageView = UIImageView()
     let titleTextField = TextField()
@@ -26,7 +26,7 @@ class AddEntryViewController: UITableViewController, IconPickerViewControllerDel
         fatalError("init(coder:) has not been implemented")
     }
 
-    required init(groupUUID: String) {
+    required init(groupUUID: UUID) {
         self.groupUUID = groupUUID
 
         let now = Date()
@@ -41,7 +41,7 @@ class AddEntryViewController: UITableViewController, IconPickerViewControllerDel
         let notes = KdbxXml.Str(key: "Notes", value: "", isProtected: false)
 
         entry = KdbxXml.Entry(
-            uuid: UUID().uuidString,
+            uuid: UUID(),
             iconId: 0,
             foregroundColor: "",
             backgroundColor: "",

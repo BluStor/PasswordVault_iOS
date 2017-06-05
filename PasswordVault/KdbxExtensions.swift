@@ -39,6 +39,15 @@ extension Array where Iterator.Element == UInt8 {
 
         return hash
     }
+
+    func uuid() -> UUID? {
+        if self.count == 16 {
+            return UUID(uuid: (self[0], self[1], self[2], self[3], self[4], self[5], self[6], self[7], self[8], self[9], self[10], self[11], self[12],
+                               self[13], self[14], self[15]))
+        } else {
+            return nil
+        }
+    }
 }
 
 extension Date {
@@ -58,13 +67,6 @@ extension Int {
 }
 
 extension String {
-
-    func base64Encoded() -> [UInt8]? {
-        if let data = self.data(using: .utf8) {
-            return [UInt8](data)
-        }
-        return nil
-    }
 
     func base64Decoded() -> [UInt8]? {
         if let data = Data(base64Encoded: self) {

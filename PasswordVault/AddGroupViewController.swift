@@ -11,7 +11,7 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
 
     var group: KdbxXml.Group
 
-    let groupUUID: String
+    let groupUUID: UUID
     let saveButton = IconButton(title: "Save", titleColor: .white)
     let iconImageView = UIImageView()
     let nameTextField = TextField()
@@ -20,14 +20,14 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
         fatalError("init(coder:) has not been implemented")
     }
 
-    required init(groupUUID: String) {
+    required init(groupUUID: UUID) {
         self.groupUUID = groupUUID
 
         let now = Date()
         let times = KdbxXml.Times(lastModificationTime: now, creationTime: now, lastAccessTime: now, expiryTime: nil, expires: false, usageCount: 0, locationChanged: nil)
 
         group = KdbxXml.Group(
-            uuid: UUID().uuidString,
+            uuid: UUID(),
             name: "Untitled",
             notes: "",
             iconId: 49,

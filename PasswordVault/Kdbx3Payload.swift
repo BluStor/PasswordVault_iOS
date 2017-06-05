@@ -87,9 +87,7 @@ class Kdbx3Payload {
 
         // Unprotect
 
-        switch header.innerAlgorithm {
-        case .none:
-            break
+        switch header.streamAlgorithm {
         case .salsa20:
             let salsaKey = header.protectedStreamKey.sha256()
             let iv = [0xE8, 0x30, 0x09, 0x4B, 0x97, 0x20, 0x5D, 0x2A] as [UInt8]

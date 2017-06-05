@@ -89,19 +89,19 @@ class KdbxXml {
 
     struct DeletedObject {
 
-        var uuid: String
+        var uuid: UUID
         var deletionTime: Date
 
         static func parse(elem: AEXMLElement) -> DeletedObject {
             return DeletedObject(
-                uuid: elem["UUID"].string,
+                uuid: elem["UUID"].string.base64Decoded()?.uuid() ?? UUID(),
                 deletionTime: elem["DeletionTime"].string.xmlDate!
             )
         }
 
         func build() -> AEXMLElement {
             let elem = AEXMLElement(name: "DeletedObject")
-            elem.addChild(name: "UUID", value: uuid, attributes: [:])
+            elem.addChild(name: "UUID", value: uuid.data.base64EncodedString(), attributes: [:])
             elem.addChild(name: "DeletionTime", value: deletionTime.xmlString, attributes: [:])
             return elem
         }
@@ -109,7 +109,7 @@ class KdbxXml {
 
     struct Entry {
 
-        var uuid: String
+        var uuid: UUID
         var iconId: Int
         var foregroundColor: String
         var backgroundColor: String
@@ -141,7 +141,7 @@ class KdbxXml {
             }
 
             return Entry(
-                uuid: elem["UUID"].string,
+                uuid: elem["UUID"].string.base64Decoded()?.uuid() ?? UUID(),
                 iconId: elem["IconID"].int!,
                 foregroundColor: elem["ForegroundColor"].string,
                 backgroundColor: elem["BackgroundColor"].string,
@@ -156,7 +156,7 @@ class KdbxXml {
 
         func build() -> AEXMLElement {
             let elem = AEXMLElement(name: "Entry")
-            elem.addChild(name: "UUID", value: uuid, attributes: [:])
+            elem.addChild(name: "UUID", value: uuid.data.base64EncodedString(), attributes: [:])
             elem.addChild(name: "IconID", value: iconId.xmlString, attributes: [:])
             elem.addChild(name: "ForegroundColor", value: foregroundColor, attributes: [:])
             elem.addChild(name: "BackgroundColor", value: backgroundColor, attributes: [:])
@@ -172,7 +172,6 @@ class KdbxXml {
             for entry in histories {
                 historyElem.addChild(entry.build())
             }
-            elem.addChild(historyElem)
 
             return elem
         }
@@ -197,13 +196,14 @@ class KdbxXml {
         mutating func unprotect(streamCipher: KdbxStreamCipher) throws {
             for i in strings.indices where strings[i].isProtected {
                 strings[i].value = try streamCipher.unprotect(string: strings[i].value)
+                print("unprotected entry: \(getStr(key: "Title")?.value ?? "?")")
             }
         }
     }
 
     struct Group {
 
-        var uuid: String
+        var uuid: UUID
         var name: String
         var notes: String
         var iconId: Int
@@ -240,7 +240,7 @@ class KdbxXml {
             }
 
             return Group(
-                uuid: elem["UUID"].string,
+                uuid: elem["UUID"].string.base64Decoded()?.uuid() ?? UUID(),
                 name: elem["Name"].string,
                 notes: elem["Notes"].string,
                 iconId: elem["IconID"].int!,
@@ -255,7 +255,7 @@ class KdbxXml {
             )
         }
 
-        mutating func add(groupUUID: String, entry: Entry) {
+        mutating func add(groupUUID: UUID, entry: Entry) {
             if uuid == groupUUID {
                 entries.append(entry)
             } else {
@@ -265,7 +265,7 @@ class KdbxXml {
             }
         }
 
-        mutating func add(groupUUID: String, group: Group) {
+        mutating func add(groupUUID: UUID, group: Group) {
             if uuid == groupUUID {
                 groups.append(group)
             } else {
@@ -277,7 +277,7 @@ class KdbxXml {
 
         func build() -> AEXMLElement {
             let elem = AEXMLElement(name: "Group")
-            elem.addChild(name: "UUID", value: uuid, attributes: [:])
+            elem.addChild(name: "UUID", value: uuid.data.base64EncodedString(), attributes: [:])
             elem.addChild(name: "Name", value: name, attributes: [:])
             elem.addChild(name: "Notes", value: notes, attributes: [:])
             elem.addChild(name: "IconID", value: iconId.xmlString, attributes: [:])
@@ -299,7 +299,7 @@ class KdbxXml {
             return elem
         }
 
-        mutating func delete(entryUUID: String) {
+        mutating func delete(entryUUID: UUID) {
             if let index = entries.index(where: { $0.uuid == entryUUID}) {
                 entries.remove(at: index)
                 return
@@ -310,7 +310,7 @@ class KdbxXml {
             }
         }
 
-        mutating func delete(groupUUID: String) {
+        mutating func delete(groupUUID: UUID) {
             if let index = groups.index(where: { $0.uuid == groupUUID}) {
                 groups.remove(at: index)
                 return
@@ -335,14 +335,14 @@ class KdbxXml {
 
             foundEntries.append(contentsOf: filteredEntries)
 
-            groups.forEach { (group) in
+            groups.forEach { group in
                 foundEntries.append(contentsOf: group.findEntries(title: title))
             }
 
             return foundEntries
         }
 
-        func get(groupUUID: String) -> Group? {
+        func get(groupUUID: UUID) -> Group? {
             for group in groups {
                 if group.uuid == groupUUID {
                     return group
@@ -356,7 +356,7 @@ class KdbxXml {
             return nil
         }
 
-        func get(entryUUID: String) -> Entry? {
+        func get(entryUUID: UUID) -> Entry? {
             for entry in entries where entry.uuid == entryUUID {
                 return entry
             }
@@ -368,7 +368,7 @@ class KdbxXml {
             }
             return nil
         }
-
+        
         mutating func unprotect(streamCipher: KdbxStreamCipher) throws {
             for i in entries.indices {
                 try entries[i].unprotect(streamCipher: streamCipher)
@@ -479,7 +479,7 @@ class KdbxXml {
         var masterKeyChangeForce: Int
         var memoryProtection: MemoryProtection
         var recycleBinEnabled: Bool
-        var recycleBinUUID: String
+        var recycleBinUUID: UUID?
         var recycleBinChanged: Date?
         var entryTemplatesGroup: String
         var entryTemplatesGroupChanged: Date?
@@ -515,7 +515,7 @@ class KdbxXml {
                 masterKeyChangeForce: elem["MasterKeyChangeForce"].int ?? -1,
                 memoryProtection: MemoryProtection.parse(elem: elem["MemoryProtection"]),
                 recycleBinEnabled: elem["RecycleBinEnabled"].string == "True",
-                recycleBinUUID: elem["RecycleBinUUID"].string,
+                recycleBinUUID: elem["RecycleBinUUID"].string.base64Decoded()?.uuid(),
                 recycleBinChanged: elem["RecycleBinChanged"].string.xmlDate,
                 entryTemplatesGroup: elem["EntryTemplatesGroup"].string,
                 entryTemplatesGroupChanged: elem["EntryTemplatesGroupChanged"].string.xmlDate,
@@ -545,7 +545,7 @@ class KdbxXml {
             elem.addChild(name: "MasterKeyChangeForce", value: masterKeyChangeForce.xmlString, attributes: [:])
             elem.addChild(memoryProtection.build())
             elem.addChild(name: "RecycleBinEnabled", value: recycleBinEnabled.xmlString, attributes: [:])
-            elem.addChild(name: "RecycleBinUUID", value: recycleBinUUID, attributes: [:])
+            elem.addChild(name: "RecycleBinUUID", value: recycleBinUUID?.data.base64EncodedString() ?? "", attributes: [:])
             elem.addChild(name: "RecycleBinChanged", value: recycleBinChanged?.xmlString, attributes: [:])
             elem.addChild(name: "EntryTemplatesGroup", value: entryTemplatesGroup, attributes: [:])
             elem.addChild(name: "EntryTemplatesGroupChanged", value: entryTemplatesGroupChanged?.xmlString, attributes: [:])

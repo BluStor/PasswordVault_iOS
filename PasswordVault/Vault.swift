@@ -102,11 +102,14 @@ class Vault {
                 .then {
                     card.close(path: Vault.dbPath)
                 }
-                .always {
-                    card.disconnect().then {}
+                .then {
                     syncStatus.fire(.complete)
                 }
-                .catch { _ in
+                .always {
+                    card.disconnect().then {}
+                }
+                .catch { error in
+                    print(error)
                     syncStatus.fire(.failed)
                 }
             }

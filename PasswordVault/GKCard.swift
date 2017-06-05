@@ -94,7 +94,7 @@ class GKCard {
 
                 print("fileWrite <- \(chunk.count) bytes")
 
-                self.peripheral.writeValue(ofCharacWithUUID: GKCard.fileWriteUUID, fromServiceWithUUID: GKCard.serviceUUID, value: chunk, type: .withoutResponse, completion: { (result) in
+                self.peripheral.writeValue(ofCharacWithUUID: GKCard.fileWriteUUID, fromServiceWithUUID: GKCard.serviceUUID, value: chunk, type: .withoutResponse, completion: { result in
                     switch result {
                     case .failure(let error):
                         print(error)
@@ -124,7 +124,7 @@ class GKCard {
                     bufferCount = self.controlPointBuffer.count
                 } else {
                     timer.cancel()
-                    print("controlPointBuffer: \([UInt8](self.controlPointBuffer).sha256().hexString) (\(self.controlPointBuffer.count) bytes)")
+                    print("controlPointBuffer: \(self.controlPointBuffer.count) bytes")
                     resolve(self.controlPointBuffer)
                     self.controlPointBuffer.removeAll()
                 }
@@ -141,7 +141,7 @@ class GKCard {
                 fromServiceWithUUID: GKCard.serviceUUID,
                 value: data,
                 type: .withoutResponse,
-                completion: { (result) in
+                completion: { result in
                     switch result {
                     case .failure(let error):
                         reject(error)

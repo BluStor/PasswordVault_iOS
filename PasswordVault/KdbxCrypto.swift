@@ -28,22 +28,23 @@ class KdbxCrypto {
     }
 
     static func aes(operation: Operation, bytes: [UInt8], key: [UInt8], iv: [UInt8]) throws -> [UInt8] {
-        var result = [UInt8](repeating: 0x0, count: bytes.count + kCCBlockSizeAES128)
+        var buffer = [UInt8](repeating: 0x0, count: bytes.count + kCCBlockSizeAES128)
 
-        print("aes: \(operation)")
+        print("aes: \(operation) \(bytes.count) bytes")
 
+        var cryptoCount = 0
         let status = CCCrypt(
             operation.cc,
-            UInt32(kCCAlgorithmAES),
+            UInt32(kCCAlgorithmAES128),
             UInt32(kCCOptionPKCS7Padding),
             key,
-            key.count,
+            kCCKeySizeAES256,
             iv,
             bytes,
             bytes.count,
-            &result,
-            result.count,
-            nil
+            &buffer,
+            buffer.count,
+            &cryptoCount
         )
 
         guard status == Int32(kCCSuccess) else {
@@ -55,7 +56,10 @@ class KdbxCrypto {
             }
         }
 
-        return result
+        let output = Array(buffer.prefix(cryptoCount))
+        print("aes: \(operation) output \(output.count) bytes")
+        
+        return output
     }
 
     static func aesTransform(bytes: [UInt8], key: [UInt8], rounds: Int) throws -> [UInt8] {
@@ -63,7 +67,7 @@ class KdbxCrypto {
 
         CCCryptorCreate(
             UInt32(kCCEncrypt),
-            UInt32(kCCAlgorithmAES),
+            UInt32(kCCAlgorithmAES128),
             UInt32(kCCOptionECBMode),
             bytes,
             kCCKeySizeAES256,

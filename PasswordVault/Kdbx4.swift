@@ -38,11 +38,11 @@ class Kdbx4: KdbxProtocol {
         }
     }
 
-    func delete(groupUUID: String) {
+    func delete(groupUUID: UUID) {
         fatalError("Not implemented.")
     }
 
-    func delete(entryUUID: String) {
+    func delete(entryUUID: UUID) {
         fatalError("Not implemented.")
     }
 

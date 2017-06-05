@@ -12,8 +12,7 @@ class Kdbx3Header {
         case gzip = 1
     }
 
-    enum InnerAlgorithm: UInt32 {
-        case none = 0
+    enum StreamAlgorithm: UInt32 {
         case salsa20 = 2
     }
 
@@ -28,7 +27,7 @@ class Kdbx3Header {
         case encryptionIv = 7
         case protectedStreamKey = 8
         case streamStartBytes = 9
-        case innerAlgorithm = 10
+        case streamAlgorithm = 10
     }
 
     enum ReadError: Error {
@@ -37,7 +36,7 @@ class Kdbx3Header {
         case unknownReadType
         case unknownCipherUuid
         case unknownCompressionType
-        case unknownInnerAlgorithm
+        case unknownStreamAlgorithm
     }
 
     struct Version {
@@ -55,7 +54,7 @@ class Kdbx3Header {
     var encryptionIv = [UInt8]()
     var protectedStreamKey = [UInt8]()
     var streamStartBytes = [UInt8]()
-    var innerAlgorithm = InnerAlgorithm.none
+    var streamAlgorithm = StreamAlgorithm.salsa20
 
     required init() {
         magicNumbers = Kdbx.magicNumbers
@@ -126,13 +125,13 @@ class Kdbx3Header {
                     protectedStreamKey = try readStream.readBytes(size: size)
                 case .streamStartBytes:
                     streamStartBytes = try readStream.readBytes(size: size)
-                case .innerAlgorithm:
+                case .streamAlgorithm:
                     let rawValue = try readStream.read() as UInt32
 
-                    if let algorithm = InnerAlgorithm(rawValue: rawValue) {
-                        innerAlgorithm = algorithm
+                    if let algorithm = StreamAlgorithm(rawValue: rawValue) {
+                        streamAlgorithm = algorithm
                     } else {
-                        throw ReadError.unknownInnerAlgorithm
+                        throw ReadError.unknownStreamAlgorithm
                     }
                 case .end:
                     _ = try readStream.readBytes(size: size)

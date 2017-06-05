@@ -96,7 +96,7 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
 
             let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
 
-            alertController.addAction(UIAlertAction(title: "Okay", style: .default, handler: { (_) in
+            alertController.addAction(UIAlertAction(title: "Okay", style: .default, handler: { _ in
                 alertController.dismiss(animated: true, completion: nil)
             }))
 

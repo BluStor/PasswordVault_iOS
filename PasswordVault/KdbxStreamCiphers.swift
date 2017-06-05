@@ -6,8 +6,8 @@
 import Foundation
 
 protocol KdbxStreamCipher {
-    func unprotect(string: String) throws -> String
     func protect(string: String) throws -> String
+    func unprotect(string: String) throws -> String
 }
 
 class Salsa20: KdbxStreamCipher {

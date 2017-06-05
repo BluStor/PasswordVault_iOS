@@ -15,8 +15,8 @@ protocol KdbxProtocol {
     var database: KdbxXml.KeePassFile { get set }
     var transformationRounds: Int { get set }
 
-    func delete(entryUUID: String)
-    func delete(groupUUID: String)
+    func delete(entryUUID: UUID)
+    func delete(groupUUID: UUID)
     func encrypt(compositeKey: [UInt8]) throws -> Data
     func update(entry: KdbxXml.Entry)
     func update(group: KdbxXml.Group)
@@ -28,8 +28,7 @@ class Kdbx {
         case aes
     }
 
-    enum InnerAlgorithm {
-        case none
+    enum StreamAlgorithm {
         case salsa20
     }
 
@@ -88,7 +87,7 @@ class Kdbx {
             masterKeyChangeForce: -1,
             memoryProtection: memoryProtection,
             recycleBinEnabled: false,
-            recycleBinUUID: "",
+            recycleBinUUID: nil,
             recycleBinChanged: nil,
             entryTemplatesGroup: "",
             entryTemplatesGroupChanged: nil,
@@ -113,7 +112,7 @@ class Kdbx {
         )
 
         let group = KdbxXml.Group(
-            uuid: UUID().uuidString,
+            uuid: UUID(),
             name: "Password Vault",
             notes: "",
             iconId: 49,
@@ -142,7 +141,7 @@ class Kdbx {
         self.init(compositeKey: password.sha256())
     }
 
-    func add(groupUUID: String, entry: KdbxXml.Entry) {
+    func add(groupUUID: UUID, entry: KdbxXml.Entry) {
         if kdbx.database.root.group.uuid == groupUUID {
             kdbx.database.root.group.entries.append(entry)
         } else {
@@ -152,7 +151,7 @@ class Kdbx {
         }
     }
 
-    func add(groupUUID: String, group: KdbxXml.Group) {
+    func add(groupUUID: UUID, group: KdbxXml.Group) {
         if kdbx.database.root.group.uuid == groupUUID {
             kdbx.database.root.group.groups.append(group)
         } else {
@@ -162,11 +161,11 @@ class Kdbx {
         }
     }
 
-    func delete(entryUUID: String) {
+    func delete(entryUUID: UUID) {
         kdbx.delete(entryUUID: entryUUID)
     }
 
-    func delete(groupUUID: String) {
+    func delete(groupUUID: UUID) {
         kdbx.delete(groupUUID: groupUUID)
     }
 
@@ -179,14 +178,14 @@ class Kdbx {
 
         entries.append(contentsOf: database.root.group.findEntries(title: title))
 
-        database.root.group.groups.forEach({ (group) in
+        database.root.group.groups.forEach({ group in
             entries.append(contentsOf: group.findEntries(title: title))
         })
 
         return entries
     }
 
-    func get(groupUUID: String) -> KdbxXml.Group? {
+    func get(groupUUID: UUID) -> KdbxXml.Group? {
         if database.root.group.uuid == groupUUID {
             return database.root.group
         } else {
@@ -203,7 +202,7 @@ class Kdbx {
         return nil
     }
 
-    func get(entryUUID: String) -> KdbxXml.Entry? {
+    func get(entryUUID: UUID) -> KdbxXml.Entry? {
         for group in database.root.group.groups {
             if let foundEntry = group.get(entryUUID: entryUUID) {
                 return foundEntry
