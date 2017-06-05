@@ -65,14 +65,14 @@ class Vault {
     static func save() {
         Vault.syncQueue.async {
             guard let kdbx = kdbx else {
-                print("database not found")
                 return
             }
 
             guard let cardUUID = cardUUID else {
-                print("card UUID not found")
                 return
             }
+
+            let semaphore = DispatchSemaphore(value: 0)
 
             syncStatus.fire(.encrypting)
 
@@ -107,6 +107,7 @@ class Vault {
                 }
                 .always {
                     card.disconnect().then {}
+                    semaphore.signal()
                 }
                 .catch { error in
                     print(error)
@@ -117,6 +118,8 @@ class Vault {
                 print(error)
                 syncStatus.fire(.failed)
             }
+
+            semaphore.wait()
         }
     }
 }
