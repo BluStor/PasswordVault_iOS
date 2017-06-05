@@ -170,11 +170,12 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
             Vault.save()
 
             if let kdbx = Vault.kdbx {
-                let unlockViewController = UnlockViewController()
                 let groupViewController = GroupViewController(group: kdbx.database.root.group)
 
-                self.navigationController?.setViewControllers([unlockViewController], animated: false)
-                unlockViewController.navigationController?.pushViewController(groupViewController, animated: true)
+                self.navigationController?.pushViewController(groupViewController, animated: true)
+
+                let unlockViewController = UnlockViewController()
+                self.navigationController?.setViewControllers([unlockViewController, groupViewController], animated: false)
             }
         }))
 
