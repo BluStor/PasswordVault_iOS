@@ -61,7 +61,7 @@ class ChooseCardViewController: UITableViewController {
     func scan() {
         SwiftyBluetooth.scanForPeripherals(
             withServiceUUIDs: [GKCard.serviceUUID],
-            timeoutAfter: 10.0
+            timeoutAfter: TimeInterval.infinity
         ) { result in
             switch result {
             case .scanStarted:
