@@ -114,6 +114,9 @@ class Vault {
                     syncStatus.fire(.failed)
                 }
             }
+            .always {
+                semaphore.signal()
+            }
             .catch { error in
                 print(error)
                 syncStatus.fire(.failed)
