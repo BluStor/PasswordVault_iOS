@@ -5,8 +5,8 @@ target 'PasswordVault' do
 
   pod 'AEXML', '4.1.0'
   pod 'GzipSwift', '3.1.4'
-  pod 'HydraAsync', '0.9.4'
-  pod 'IQKeyboardManagerSwift', '4.0.9' 
+  pod 'HydraAsync', '0.9.5'
+  pod 'IQKeyboardManagerSwift', '4.0.10'
   pod 'Material', '2.6.3'
   pod 'Signals', '4.0.0'
   pod 'SVProgressHUD', '2.1.2'
