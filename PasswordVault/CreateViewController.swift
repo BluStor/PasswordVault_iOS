@@ -50,6 +50,7 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
         passwordTextField.placeholder = "Password"
         passwordTextField.returnKeyType = .next
         passwordTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
+        passwordTextField.isVisibilityIconButtonEnabled = true
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
 
         // Password repeat text field
@@ -61,6 +62,7 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
         passwordRepeatTextField.placeholder = "Password (repeat)"
         passwordRepeatTextField.returnKeyType = .done
         passwordRepeatTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
+        passwordRepeatTextField.isVisibilityIconButtonEnabled = true
         passwordRepeatTextField.translatesAutoresizingMaskIntoConstraints = false
 
         // New database button
