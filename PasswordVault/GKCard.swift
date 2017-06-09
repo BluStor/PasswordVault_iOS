@@ -305,11 +305,11 @@ class GKCard {
         }
     }
 
-    func put(path: String, data: Data) -> Promise<Void> {
+    func put(data: Data) -> Promise<Void> {
         return Promise { resolve, reject in
             GKCard.checkBluetoothState()
             .then {
-                self.makeCommandData(command: 3, string: path)
+                self.makeCommandData(command: 3, string: nil)
             }
             .then(self.writeToControlPoint)
             .then {
