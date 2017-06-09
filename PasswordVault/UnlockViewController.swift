@@ -15,7 +15,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     }
 
     let moreButton = IconButton(image: Icon.moreVertical, tintColor: UIColor.white)
-    let lockImageView = UIImageView(image: UIImage(named: "lock"))
+    let vaultImageView = UIImageView(image: UIImage(named: "vault"))
     let passwordTextField = TextField()
     let openButton = RaisedButton()
     let newDatabaseButton = RaisedButton()
@@ -44,11 +44,11 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 200.0
 
-        // Lock image view
+        // Vault image view
 
-        lockImageView.clipsToBounds = true
-        lockImageView.contentMode = .scaleAspectFit
-        lockImageView.translatesAutoresizingMaskIntoConstraints = false
+        vaultImageView.clipsToBounds = true
+        vaultImageView.contentMode = .scaleAspectFit
+        vaultImageView.translatesAutoresizingMaskIntoConstraints = false
 
         // Password text field
 
@@ -241,13 +241,14 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
         switch indexPath.row {
         case 0:
-            cell.contentView.addSubview(lockImageView)
-            NSLayoutConstraint(item: lockImageView, attribute: .height, relatedBy: .lessThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 150.0).isActive = true
-            NSLayoutConstraint(item: lockImageView, attribute: .width, relatedBy: .equal, toItem: cell.contentView, attribute: .width, multiplier: 1.0, constant: 0.0).isActive = true
-            NSLayoutConstraint(item: lockImageView, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: lockImageView, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
-            NSLayoutConstraint(item: lockImageView, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
-            NSLayoutConstraint(item: lockImageView, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
+            let aspectRatio = (vaultImageView.frame.size.height / vaultImageView.frame.size.width)
+
+            cell.contentView.addSubview(vaultImageView)
+            NSLayoutConstraint(item: vaultImageView, attribute: .height, relatedBy: .lessThanOrEqual, toItem: vaultImageView, attribute: .width, multiplier: aspectRatio, constant: 0.0).isActive = true
+            NSLayoutConstraint(item: vaultImageView, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 0.0).isActive = true
+            NSLayoutConstraint(item: vaultImageView, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
+            NSLayoutConstraint(item: vaultImageView, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
+            NSLayoutConstraint(item: vaultImageView, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
         case 1:
             cell.contentView.addSubview(passwordTextField)
             NSLayoutConstraint(item: passwordTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 30.0).isActive = true
