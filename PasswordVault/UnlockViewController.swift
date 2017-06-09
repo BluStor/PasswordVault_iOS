@@ -26,7 +26,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        navigationItem.title = "Password Vault"
+        navigationItem.title = "Password Vault \(versionString())"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white
@@ -220,6 +220,13 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
             card.disconnect().then {}
             self.showError(error)
         }
+    }
+
+    func versionString() -> String {
+        let releaseVersionNumber = Bundle.main.releaseVersionNumber
+        let buildVersionNumber = Bundle.main.buildVersionNumber
+
+        return "\(releaseVersionNumber ?? "?").\(buildVersionNumber ?? "?")"
     }
 
     // MARK: UITableViewDataSource

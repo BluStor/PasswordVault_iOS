@@ -44,6 +44,17 @@ extension Array {
     }
 }
 
+extension Bundle {
+
+    var releaseVersionNumber: String? {
+        return infoDictionary?["CFBundleShortVersionString"] as? String
+    }
+    
+    var buildVersionNumber: String? {
+        return infoDictionary?["CFBundleVersion"] as? String
+    }
+}
+
 extension CGFloat {
 
     static func random() -> CGFloat {
