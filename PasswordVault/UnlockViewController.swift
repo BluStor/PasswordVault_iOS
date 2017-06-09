@@ -34,7 +34,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
         // More button
 
-        moreButton.pulseColor = UIColor(hex: 0xa0e0ff)
+        moreButton.pulseColor = Theme.Base.navigationItemButtonPulseColor
         moreButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
 
         // Table view
@@ -64,8 +64,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         // Open button
 
         openButton.setTitle("Open", for: .normal)
-        openButton.pulseColor = UIColor.white
-        openButton.backgroundColor = UIColor(hex: 0x00BCD4)
+        openButton.backgroundColor = Theme.Buttons.normalBackgroundColor
         openButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
         openButton.translatesAutoresizingMaskIntoConstraints = false
 
@@ -73,8 +72,8 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
         newDatabaseButton.setTitle("New database", for: .normal)
         newDatabaseButton.pulseColor = UIColor.white
-        newDatabaseButton.backgroundColor = UIColor(hex: 0xEAEAEA)
-        newDatabaseButton.setTitleColor(UIColor(hex: 0x999999), for: .normal)
+        newDatabaseButton.backgroundColor = Theme.Buttons.mutedBackgroundColor
+        newDatabaseButton.setTitleColor(Theme.Buttons.mutedTitleColor, for: .normal)
         newDatabaseButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
         newDatabaseButton.translatesAutoresizingMaskIntoConstraints = false
 
@@ -82,8 +81,8 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
         chooseCardButton.setTitle("Choose card", for: .normal)
         chooseCardButton.pulseColor = UIColor.white
-        chooseCardButton.backgroundColor = UIColor(hex: 0xEAEAEA)
-        chooseCardButton.setTitleColor(UIColor(hex: 0x999999), for: .normal)
+        chooseCardButton.backgroundColor = Theme.Buttons.mutedBackgroundColor
+        chooseCardButton.setTitleColor(Theme.Buttons.mutedTitleColor, for: .normal)
         chooseCardButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
         chooseCardButton.translatesAutoresizingMaskIntoConstraints = false
 
