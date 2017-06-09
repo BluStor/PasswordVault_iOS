@@ -16,9 +16,9 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
     var group: KdbxXml.Group
     let moreButton = IconButton(image: Icon.moreVertical, tintColor: UIColor.white)
     let syncView = SyncView()
-    let searchView = SearchView()
     let tableView = UITableView()
-    let fabButton = FABButton(image: Icon.add, tintColor: .white)
+    let searchFabButton = FABButton(image: Icon.search, tintColor: .white)
+    let addFabButton = FABButton(image: Icon.add, tintColor: .white)
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -55,15 +55,6 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
         NSLayoutConstraint(item: syncView, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
         NSLayoutConstraint(item: syncView, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
 
-        // Search view
-
-        searchView.translatesAutoresizingMaskIntoConstraints = false
-
-        view.addSubview(searchView)
-        NSLayoutConstraint(item: searchView, attribute: .top, relatedBy: .equal, toItem: syncView, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
-        NSLayoutConstraint(item: searchView, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
-        NSLayoutConstraint(item: searchView, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
-
         // Table view
 
         tableView.dataSource = self
@@ -82,17 +73,29 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
         NSLayoutConstraint(item: tableView, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
         NSLayoutConstraint(item: tableView, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
 
-        // Floating action button
+        // Search floating action button
 
-        fabButton.backgroundColor = Theme.Group.floatingActionButtonBackgroundColor
-        fabButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
-        fabButton.translatesAutoresizingMaskIntoConstraints = false
+        searchFabButton.backgroundColor = Theme.Group.searchFloatingActionButtonBackgroundColor
+        searchFabButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
+        searchFabButton.translatesAutoresizingMaskIntoConstraints = false
 
-        view.addSubview(fabButton)
-        NSLayoutConstraint(item: fabButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 70.0).isActive = true
-        NSLayoutConstraint(item: fabButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 70.0).isActive = true
-        NSLayoutConstraint(item: fabButton, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: -20.0).isActive = true
-        NSLayoutConstraint(item: fabButton, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1.0, constant: -20.0).isActive = true
+        view.addSubview(searchFabButton)
+        NSLayoutConstraint(item: searchFabButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50.0).isActive = true
+        NSLayoutConstraint(item: searchFabButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50.0).isActive = true
+        NSLayoutConstraint(item: searchFabButton, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1.0, constant: -20.0).isActive = true
+        NSLayoutConstraint(item: searchFabButton, attribute: .centerY, relatedBy: .equal, toItem: syncView, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
+
+        // Add floating action button
+
+        addFabButton.backgroundColor = Theme.Group.addFloatingActionButtonBackgroundColor
+        addFabButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
+        addFabButton.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(addFabButton)
+        NSLayoutConstraint(item: addFabButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 65.0).isActive = true
+        NSLayoutConstraint(item: addFabButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 65.0).isActive = true
+        NSLayoutConstraint(item: addFabButton, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: -20.0).isActive = true
+        NSLayoutConstraint(item: addFabButton, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1.0, constant: -20.0).isActive = true
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -180,7 +183,7 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
 
     func didTouchUpInside(sender: UIView) {
         switch sender {
-        case fabButton:
+        case addFabButton:
             let alertController = UIAlertController(title: "Add", message: nil, preferredStyle: .actionSheet)
 
             alertController.addAction(UIAlertAction(title: "Group", style: .default, handler: { _ in
@@ -208,11 +211,19 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
                 self.navigationController?.pushViewController(databaseSettingsViewController, animated: true)
             }))
 
+            alertController.addAction(UIAlertAction(title: "About", style: .default, handler: { _ in
+                let aboutViewController = AboutViewController()
+                self.navigationController?.pushViewController(aboutViewController, animated: true)
+            }))
+
             alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
                 alertController.dismiss(animated: true, completion: nil)
             }))
 
             present(alertController, animated: true, completion: nil)
+        case searchFabButton:
+            let searchViewController = SearchViewController()
+            navigationController?.pushViewController(searchViewController, animated: true)
         default:
             break
         }

@@ -12,6 +12,8 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
     var group: KdbxXml.Group
 
     let saveButton = IconButton(title: "Save", titleColor: .white)
+    let moreButton = IconButton(image: Icon.moreVertical, tintColor: UIColor.white)
+
     let iconImageView = UIImageView()
     let nameTextField = ErrorTextField()
 
@@ -34,7 +36,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white
-        navigationItem.rightViews = [saveButton]
+        navigationItem.rightViews = [saveButton, moreButton]
 
         // Save button
 

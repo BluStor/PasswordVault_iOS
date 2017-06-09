@@ -327,7 +327,7 @@ class KdbxXml {
 
             let filteredEntries = entries.filter { (entry) -> Bool in
                 if let title = entry.getStr(key: "Title")?.value {
-                    return title.lowercased() == lowercasedTitle
+                    return title.lowercased().contains(lowercasedTitle)
                 } else {
                     return false
                 }

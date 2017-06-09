@@ -8,7 +8,7 @@ import Material
 class SyncView: UIView {
     let statusLabel = UILabel()
     let retryButton = RaisedButton()
-    let bottomBorder = UIView()
+    let bottomBorderView = UIView()
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -48,14 +48,14 @@ class SyncView: UIView {
 
         // Bottom border
 
-        bottomBorder.backgroundColor = UIColor(hex: 0xEEEEEE)
-        bottomBorder.translatesAutoresizingMaskIntoConstraints = false
+        bottomBorderView.backgroundColor = UIColor(hex: 0xEEEEEE)
+        bottomBorderView.translatesAutoresizingMaskIntoConstraints = false
 
-        self.addSubview(bottomBorder)
-        NSLayoutConstraint(item: bottomBorder, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 1.0).isActive = true
-        NSLayoutConstraint(item: bottomBorder, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
-        NSLayoutConstraint(item: bottomBorder, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
-        NSLayoutConstraint(item: bottomBorder, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
+        self.addSubview(bottomBorderView)
+        NSLayoutConstraint(item: bottomBorderView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 1.0).isActive = true
+        NSLayoutConstraint(item: bottomBorderView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
+        NSLayoutConstraint(item: bottomBorderView, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
+        NSLayoutConstraint(item: bottomBorderView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
 
         // Signals
 

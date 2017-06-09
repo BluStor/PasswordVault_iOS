@@ -175,12 +175,7 @@ class Kdbx {
 
     func findEntries(title: String) -> [KdbxXml.Entry] {
         var entries = Array<KdbxXml.Entry>()
-
         entries.append(contentsOf: database.root.group.findEntries(title: title))
-
-        database.root.group.groups.forEach({ group in
-            entries.append(contentsOf: group.findEntries(title: title))
-        })
 
         return entries
     }

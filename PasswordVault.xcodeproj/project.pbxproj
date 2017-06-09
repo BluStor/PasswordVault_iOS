@@ -35,6 +35,7 @@
 		A18E88D31EB1DD10004D1E91 /* GroupTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18E88D21EB1DD10004D1E91 /* GroupTableViewCell.swift */; };
 		A18E88D61EB1ECDE004D1E91 /* SyncView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18E88D51EB1ECDE004D1E91 /* SyncView.swift */; };
 		A18E88D81EB1F0E2004D1E91 /* EntryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18E88D71EB1F0E2004D1E91 /* EntryTableViewCell.swift */; };
+		A190D8F31EEB1EFB006D6E34 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A190D8F21EEB1EFB006D6E34 /* SearchViewController.swift */; };
 		A1B287EE1EAF357F0006B341 /* Kdbx.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B287ED1EAF357F0006B341 /* Kdbx.swift */; };
 		A1B287F11EAF39010006B341 /* Kdbx4.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B287EF1EAF39010006B341 /* Kdbx4.swift */; };
 		A1B287F21EAF39010006B341 /* Kdbx4Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B287F01EAF39010006B341 /* Kdbx4Header.swift */; };
@@ -43,7 +44,6 @@
 		A1BF3A961EAC443100CB306C /* KdbxExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BF3A951EAC443100CB306C /* KdbxExtensions.swift */; };
 		A1DBBA441EDEB89F0099A9B8 /* ChooseCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBBA431EDEB89F0099A9B8 /* ChooseCardViewController.swift */; };
 		A1DBBA461EDEB9170099A9B8 /* ScannedCardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBBA451EDEB9170099A9B8 /* ScannedCardTableViewCell.swift */; };
-		A1DBBA481EDEE28B0099A9B8 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBBA471EDEE28B0099A9B8 /* SearchView.swift */; };
 		A1E2E7801ED458E2005C2D02 /* AboutTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E2E77F1ED458E2005C2D02 /* AboutTableViewCell.swift */; };
 		A1E2E7821ED467C1005C2D02 /* DatabaseSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E2E7811ED467C1005C2D02 /* DatabaseSettingsViewController.swift */; };
 		A1F1747C1EADC64300FC49BD /* KdbxXml.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F1747B1EADC64300FC49BD /* KdbxXml.swift */; };
@@ -108,6 +108,7 @@
 		A18E88D21EB1DD10004D1E91 /* GroupTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupTableViewCell.swift; sourceTree = "<group>"; };
 		A18E88D51EB1ECDE004D1E91 /* SyncView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncView.swift; sourceTree = "<group>"; };
 		A18E88D71EB1F0E2004D1E91 /* EntryTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntryTableViewCell.swift; sourceTree = "<group>"; };
+		A190D8F21EEB1EFB006D6E34 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		A1B287ED1EAF357F0006B341 /* Kdbx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx.swift; sourceTree = "<group>"; };
 		A1B287EF1EAF39010006B341 /* Kdbx4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx4.swift; sourceTree = "<group>"; };
 		A1B287F01EAF39010006B341 /* Kdbx4Header.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx4Header.swift; sourceTree = "<group>"; };
@@ -116,7 +117,6 @@
 		A1BF3A951EAC443100CB306C /* KdbxExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KdbxExtensions.swift; sourceTree = "<group>"; };
 		A1DBBA431EDEB89F0099A9B8 /* ChooseCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseCardViewController.swift; sourceTree = "<group>"; };
 		A1DBBA451EDEB9170099A9B8 /* ScannedCardTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannedCardTableViewCell.swift; sourceTree = "<group>"; };
-		A1DBBA471EDEE28B0099A9B8 /* SearchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		A1E2E77F1ED458E2005C2D02 /* AboutTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutTableViewCell.swift; sourceTree = "<group>"; };
 		A1E2E7811ED467C1005C2D02 /* DatabaseSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseSettingsViewController.swift; sourceTree = "<group>"; };
 		A1F1747B1EADC64300FC49BD /* KdbxXml.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KdbxXml.swift; sourceTree = "<group>"; };
@@ -260,6 +260,7 @@
 				A15B1A0A1EB002870068328E /* GroupViewController.swift */,
 				A15B1A0C1EB0029A0068328E /* IconPickerViewController.swift */,
 				A15B1A0E1EB002BF0068328E /* PasswordGeneratorViewController.swift */,
+				A190D8F21EEB1EFB006D6E34 /* SearchViewController.swift */,
 				A15B1A121EB002D80068328E /* UnlockViewController.swift */,
 			);
 			name = UIViewController;
@@ -288,7 +289,6 @@
 			isa = PBXGroup;
 			children = (
 				A18E88D51EB1ECDE004D1E91 /* SyncView.swift */,
-				A1DBBA471EDEE28B0099A9B8 /* SearchView.swift */,
 			);
 			name = UIView;
 			sourceTree = "<group>";
@@ -625,9 +625,9 @@
 				A175E45F1ECD6EF0002DF419 /* GKCard.swift in Sources */,
 				A1E2E7821ED467C1005C2D02 /* DatabaseSettingsViewController.swift in Sources */,
 				A1525FD71EA7387700B580A7 /* AppDelegate.swift in Sources */,
-				A1DBBA481EDEE28B0099A9B8 /* SearchView.swift in Sources */,
 				A15B19FF1EB002080068328E /* AboutViewController.swift in Sources */,
 				A15B1A181EB01AED0068328E /* Extensions.swift in Sources */,
+				A190D8F31EEB1EFB006D6E34 /* SearchViewController.swift in Sources */,
 				A15B1A131EB002D80068328E /* UnlockViewController.swift in Sources */,
 				A15B1A031EB002280068328E /* AddGroupViewController.swift in Sources */,
 				A1F1747C1EADC64300FC49BD /* KdbxXml.swift in Sources */,
