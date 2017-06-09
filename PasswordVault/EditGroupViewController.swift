@@ -114,7 +114,8 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
 
         let name = nameTextField.text ?? ""
 
-        return oldGroup.name != name
+        return oldGroup.iconId != group.iconId
+            ||  oldGroup.name != name
     }
 
     func validate() -> Bool {

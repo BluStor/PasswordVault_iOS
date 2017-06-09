@@ -89,7 +89,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
 
         copyButton.setTitle("Copy", for: .normal)
         copyButton.pulseColor = UIColor.white
-        copyButton.backgroundColor = UIColor(hex: 0x00BCD4)
+        copyButton.backgroundColor = Theme.Buttons.normalBackgroundColor
         copyButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
         copyButton.translatesAutoresizingMaskIntoConstraints = false
 
@@ -97,8 +97,8 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
 
         generateButton.setTitle("Generate", for: .normal)
         generateButton.pulseColor = UIColor.white
-        generateButton.backgroundColor = UIColor(hex: 0xEAEAEA)
-        generateButton.setTitleColor(UIColor(hex: 0x999999), for: .normal)
+        generateButton.backgroundColor = Theme.Buttons.mutedBackgroundColor
+        generateButton.setTitleColor(Theme.Buttons.mutedTitleColor, for: .normal)
         generateButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
         generateButton.translatesAutoresizingMaskIntoConstraints = false
 
@@ -205,7 +205,8 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         let url = entry.getStr(key: "Url")?.value ?? ""
         let notes = entry.getStr(key: "Notes")?.value ?? ""
 
-        return oldTitle != title
+        return oldEntry.iconId != entry.iconId
+            || oldTitle != title
             || oldUsername != username
             || oldPassword != password
             || oldUrl != url
