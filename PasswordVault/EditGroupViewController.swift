@@ -12,7 +12,6 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
     var group: KdbxXml.Group
 
     let saveButton = IconButton(title: "Save", titleColor: .white)
-    let moreButton = IconButton(image: Icon.moreVertical, tintColor: UIColor.white)
 
     let iconImageView = UIImageView()
     let nameTextField = ErrorTextField()
@@ -36,7 +35,11 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white
-        navigationItem.rightViews = [saveButton, moreButton]
+        navigationItem.rightViews = [saveButton]
+
+        // Back button
+
+        navigationItem.backButton.removeTarget(navigationController, action: nil, for: .allEvents)
 
         // Save button
 
@@ -69,6 +72,8 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
 
     func didTouchUpInside(sender: UIView) {
         switch sender {
+        case navigationItem.backButton:
+            print("touchUpInside")
         case saveButton:
             save()
         default:

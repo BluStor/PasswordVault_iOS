@@ -65,9 +65,11 @@ class SyncView: UIView {
                 case .complete:
                     self.statusLabel.text = "Synced"
                     self.statusLabel.textColor = UIColor(hex: 0x80CBC4)
+                    self.retryButton.removeFromSuperview()
                 case .encrypting:
                     self.statusLabel.text = "Encrypting ..."
                     self.statusLabel.textColor = UIColor(hex: 0xFFCC80)
+                    self.retryButton.removeFromSuperview()
                 case .failed:
                     self.statusLabel.text = "Failed"
                     self.statusLabel.textColor = UIColor(hex: 0xD50000)
@@ -75,6 +77,7 @@ class SyncView: UIView {
                 case .transferring:
                     self.statusLabel.text = "Transferring ..."
                     self.statusLabel.textColor = UIColor(hex: 0xFFCC80)
+                    self.retryButton.removeFromSuperview()
                 }
             }
         }

@@ -72,6 +72,10 @@ class Vault {
                 return
             }
 
+            guard let card = GKCard(uuid: cardUUID) else {
+                return
+            }
+
             let semaphore = DispatchSemaphore(value: 0)
 
             syncStatus.fire(.encrypting)
@@ -86,35 +90,25 @@ class Vault {
 
             GKCard.checkBluetoothState()
             .then {
-                guard let card = GKCard(uuid: cardUUID) else {
-                    return
-                }
-
                 syncStatus.fire(.transferring)
-
+            }
+            .then {
                 card.connect()
-                .then {
-                    card.put(data: encryptedData)
-                }
-                .then {
-                    card.checksum(data: encryptedData)
-                }
-                .then {
-                    card.close(path: Vault.dbPath)
-                }
-                .then {
-                    syncStatus.fire(.complete)
-                }
-                .always {
-                    card.disconnect().then {}
-                    semaphore.signal()
-                }
-                .catch { error in
-                    print(error)
-                    syncStatus.fire(.failed)
-                }
+            }
+            .then {
+                card.put(data: encryptedData)
+            }
+            .then {
+                card.checksum(data: encryptedData)
+            }
+            .then {
+                card.close(path: Vault.dbPath)
+            }
+            .then {
+                syncStatus.fire(.complete)
             }
             .always {
+                card.disconnect().then {}
                 semaphore.signal()
             }
             .catch { error in

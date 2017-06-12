@@ -88,23 +88,27 @@ class GKCard {
     private func fileWrite(data: Data) -> Promise<Void> {
         return Promise { resolve, reject in
             var offset = 0
+
             repeat {
                 let chunkSize = (data.count - offset) > 128 ? 128 : data.count - offset
                 let chunk = data.subdata(in: offset..<offset + chunkSize)
 
                 print("fileWrite <- \(chunk.count) bytes")
 
+                let semaphore = DispatchSemaphore(value: 0)
+
                 self.peripheral.writeValue(ofCharacWithUUID: GKCard.fileWriteUUID, fromServiceWithUUID: GKCard.serviceUUID, value: chunk, type: .withoutResponse, completion: { result in
                     switch result {
                     case .failure(let error):
                         print(error)
                         reject(CardError.characteristicWriteFailure)
+                        return
                     case .success:
-                        break
+                        semaphore.signal()
                     }
                 })
 
-                usleep(10000)
+                semaphore.wait()
 
                 offset += chunkSize
             } while offset < data.count
