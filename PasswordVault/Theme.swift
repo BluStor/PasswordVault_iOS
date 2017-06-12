@@ -22,6 +22,6 @@ struct Theme {
 
     struct Group {
         static let addFloatingActionButtonBackgroundColor = UIColor(hex: 0x00BCD4)
-        static let searchFloatingActionButtonBackgroundColor = UIColor(hex: 0xCDCDCD)
+        static let searchFloatingActionButtonBackgroundColor = UIColor(hex: 0xDADADA)
     }
 }
