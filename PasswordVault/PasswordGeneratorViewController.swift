@@ -66,6 +66,7 @@ class PasswordGeneratorViewController: UITableViewController {
         tableView.separatorColor = UIColor(hex: 0xDEDEDE)
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 75.0
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
 
         // Data
 
@@ -74,7 +75,6 @@ class PasswordGeneratorViewController: UITableViewController {
         checkedCharacterClasses.insert(.digits)
 
         generatePassword()
-
         reloadData()
     }
 
@@ -84,6 +84,7 @@ class PasswordGeneratorViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
+
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = .zero
         cell.layoutMargins = .zero
@@ -96,32 +97,35 @@ class PasswordGeneratorViewController: UITableViewController {
             NSLayoutConstraint(item: passwordLabel, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: passwordLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 1:
-            // Slider
-
             cell.contentView.addSubview(slider)
             NSLayoutConstraint(item: slider, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: slider, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: slider, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: slider, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 2:
-            cell.accessoryType = .checkmark
             cell.textLabel?.text = "Upper-case (A, B, C, ...)"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.upperCase) ? .checkmark : .none
         case 3:
-            cell.accessoryType = .checkmark
             cell.textLabel?.text = "Lower-case (a, b, c, ...)"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.lowerCase) ? .checkmark : .none
         case 4:
-            cell.accessoryType = .checkmark
             cell.textLabel?.text = "Digits (0, 1, 2, ...)"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.digits) ? .checkmark : .none
         case 5:
             cell.textLabel?.text = "Dash"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.dash) ? .checkmark : .none
         case 6:
             cell.textLabel?.text = "Underscore"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.underscore) ? .checkmark : .none
         case 7:
             cell.textLabel?.text = "Space"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.space) ? .checkmark : .none
         case 8:
             cell.textLabel?.text = "Special"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.special) ? .checkmark : .none
         case 9:
             cell.textLabel?.text = "Brackets"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.brackets) ? .checkmark : .none
         default:
             break
         }
@@ -134,11 +138,12 @@ class PasswordGeneratorViewController: UITableViewController {
         case 0:
             generatePassword()
         case 2..<10:
-            let characterClass = CharacterClass(rawValue: indexPath.row)!
+            guard let characterClass = CharacterClass(rawValue: indexPath.row) else {
+                return
+            }
+
             if checkedCharacterClasses.contains(characterClass) {
-                if checkedCharacterClasses.count > 1 {
-                    checkedCharacterClasses.remove(characterClass)
-                }
+                checkedCharacterClasses.remove(characterClass)
             } else {
                 checkedCharacterClasses.insert(characterClass)
             }
