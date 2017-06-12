@@ -100,11 +100,11 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
 
     func save() {
         if validate() {
-            guard let kdbx = Vault.kdbx else {
-                return
-            }
-
             if hasChanged() {
+                guard let kdbx = Vault.kdbx else {
+                    return
+                }
+                
                 kdbx.update(group: group)
                 Vault.save()
             }

@@ -175,11 +175,11 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
 
     func save() {
         if validate() {
-            guard let kdbx = Vault.kdbx else {
-                return
-            }
-
             if hasChanged() {
+                guard let kdbx = Vault.kdbx else {
+                    return
+                }
+
                 kdbx.update(entry: entry)
                 Vault.save()
             }

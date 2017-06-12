@@ -9,6 +9,7 @@ class DatabaseSettingsViewController: UITableViewController {
 
     let saveButton = IconButton(title: "Save", titleColor: .white)
     let passwordTextField = ErrorTextField()
+    let passwordRepeatTextField = ErrorTextField()
     let transformationRoundsTextField = ErrorTextField()
 
     override func viewDidLoad() {
@@ -31,12 +32,21 @@ class DatabaseSettingsViewController: UITableViewController {
 
         // Password text field
 
-        passwordTextField.placeholder = "Password"
+        passwordTextField.placeholder = "New password"
         passwordTextField.isSecureTextEntry = true
         passwordTextField.autocapitalizationType = .none
         passwordTextField.autocorrectionType = .no
         passwordTextField.isVisibilityIconButtonEnabled = true
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
+
+        // Password repeat text field
+
+        passwordRepeatTextField.placeholder = "New password (repeat)"
+        passwordRepeatTextField.isSecureTextEntry = true
+        passwordRepeatTextField.autocapitalizationType = .none
+        passwordRepeatTextField.autocorrectionType = .no
+        passwordRepeatTextField.isVisibilityIconButtonEnabled = true
+        passwordRepeatTextField.translatesAutoresizingMaskIntoConstraints = false
 
         // Transformation rounds text field
 
@@ -65,29 +75,34 @@ class DatabaseSettingsViewController: UITableViewController {
 
     func save() {
         if validate() {
-            guard let kdbx = Vault.kdbx else {
-                return
+            if hasChanged() {
+                guard let kdbx = Vault.kdbx else {
+                    return
+                }
+
+                let password = passwordTextField.text ?? ""
+
+                let transformationRoundsStr = transformationRoundsTextField.text ?? "8000"
+                let transformationRounds = Int(transformationRoundsStr) ?? 8000
+
+                kdbx.transformationRounds = transformationRounds
+
+                if password.characters.count > 0 {
+                    kdbx.setPassword(password)
+                }
+
+                Vault.save()
             }
 
-            let password = passwordTextField.text ?? ""
-
-            let transformationRoundsStr = transformationRoundsTextField.text ?? "8000"
-            let transformationRounds = Int(transformationRoundsStr) ?? 8000
-
-            kdbx.transformationRounds = transformationRounds
-
-            if password.characters.count > 0 {
-                kdbx.setPassword(password)
-            }
-
-            Vault.save()
             navigationController?.popViewController(animated: true)
         }
     }
 
     func validate() -> Bool {
-        let transformationRoundsStr = transformationRoundsTextField.text ?? "-1"
-        let transformationRounds = Int(transformationRoundsStr) ?? -1
+        let password = passwordTextField.text ?? ""
+        let passwordRepeat = passwordRepeatTextField.text ?? ""
+        let transformationRoundsStr = transformationRoundsTextField.text ?? "8000"
+        let transformationRounds = Int(transformationRoundsStr) ?? 8000
 
         var hasError = false
 
@@ -99,13 +114,39 @@ class DatabaseSettingsViewController: UITableViewController {
             transformationRoundsTextField.isErrorRevealed = false
         }
 
+        if password != passwordRepeat {
+            passwordRepeatTextField.detail = "Passwords must be equal."
+            passwordRepeatTextField.isErrorRevealed = true
+            hasError = true
+        } else {
+            passwordRepeatTextField.isErrorRevealed = false
+        }
+
         return !hasError
+    }
+
+    func hasChanged() -> Bool {
+        let password = passwordTextField.text ?? ""
+
+        if password.characters.count > 0 {
+            return true
+        }
+
+        guard let kdbx = Vault.kdbx else {
+            return false
+        }
+
+        let transformationRoundsStr = transformationRoundsTextField.text ?? "8000"
+        let transformationRounds = Int(transformationRoundsStr) ?? 8000
+
+        return password.characters.count > 0
+            || transformationRounds != kdbx.transformationRounds
     }
 
     // MARK: UITableViewDataSource
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return 3
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -120,6 +161,12 @@ class DatabaseSettingsViewController: UITableViewController {
             NSLayoutConstraint(item: passwordTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: passwordTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 1:
+            cell.contentView.addSubview(passwordRepeatTextField)
+            NSLayoutConstraint(item: passwordRepeatTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 30.0).isActive = true
+            NSLayoutConstraint(item: passwordRepeatTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: passwordRepeatTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: passwordRepeatTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+        case 2:
             cell.contentView.addSubview(transformationRoundsTextField)
             NSLayoutConstraint(item: transformationRoundsTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 30.0).isActive = true
             NSLayoutConstraint(item: transformationRoundsTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
