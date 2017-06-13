@@ -285,7 +285,7 @@ class AddEntryViewController: UITableViewController, IconPickerViewControllerDel
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 6
+        return 7
     }
 
     // MARK: UITableViewControllerDelegate
