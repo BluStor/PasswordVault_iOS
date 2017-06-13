@@ -68,11 +68,15 @@ class KdbxXml {
         var compressed: Bool
         var content: String
 
-        static func parse(elem: AEXMLElement) -> Binary {
+        static func parse(elem: AEXMLElement) -> Binary? {
+
+            guard let id = elem.attributes["ID"] else {
+                return nil
+            }
 
             return Binary(
-                id: elem.attributes["ID"]!,
-                compressed: elem.attributes["Compressed"]!.xmlBool,
+                id: id,
+                compressed: elem.attributes["Compressed"]?.xmlBool ?? false,
                 content: elem.string
             )
         }
@@ -90,19 +94,19 @@ class KdbxXml {
     struct DeletedObject {
 
         var uuid: UUID
-        var deletionTime: Date
+        var deletionTime: Date?
 
         static func parse(elem: AEXMLElement) -> DeletedObject {
             return DeletedObject(
                 uuid: elem["UUID"].string.base64Decoded()?.uuid() ?? UUID(),
-                deletionTime: elem["DeletionTime"].string.xmlDate!
+                deletionTime: elem["DeletionTime"].string.xmlDate
             )
         }
 
         func build() -> AEXMLElement {
             let elem = AEXMLElement(name: "DeletedObject")
             elem.addChild(name: "UUID", value: uuid.data.base64EncodedString(), attributes: [:])
-            elem.addChild(name: "DeletionTime", value: deletionTime.xmlString, attributes: [:])
+            elem.addChild(name: "DeletionTime", value: deletionTime?.xmlString, attributes: [:])
             return elem
         }
     }
@@ -142,7 +146,7 @@ class KdbxXml {
 
             return Entry(
                 uuid: elem["UUID"].string.base64Decoded()?.uuid() ?? UUID(),
-                iconId: elem["IconID"].int!,
+                iconId: elem["IconID"].int ?? 0,
                 foregroundColor: elem["ForegroundColor"].string,
                 backgroundColor: elem["BackgroundColor"].string,
                 overrideURL: elem["OverrideURL"].string,
@@ -243,7 +247,7 @@ class KdbxXml {
                 uuid: elem["UUID"].string.base64Decoded()?.uuid() ?? UUID(),
                 name: elem["Name"].string,
                 notes: elem["Notes"].string,
-                iconId: elem["IconID"].int!,
+                iconId: elem["IconID"].int ?? 49,
                 times: times,
                 isExpanded: elem["IsExpanded"].string == "True",
                 defaultAutoTypeSequence: elem["DefaultAutoTypeSequence"].string,
@@ -494,8 +498,9 @@ class KdbxXml {
             var binaries = [Binary]()
             if let children = elem["Binaries"]["Binary"].all {
                 for elem in children {
-                    let binary = Binary.parse(elem: elem)
-                    binaries.append(binary)
+                    if let binary = Binary.parse(elem: elem) {
+                        binaries.append(binary)
+                    }
                 }
             }
 
@@ -519,8 +524,8 @@ class KdbxXml {
                 recycleBinChanged: elem["RecycleBinChanged"].string.xmlDate,
                 entryTemplatesGroup: elem["EntryTemplatesGroup"].string,
                 entryTemplatesGroupChanged: elem["EntryTemplatesGroupChanged"].string.xmlDate,
-                historyMaxItems: elem["HistoryMaxItems"].int!,
-                historyMaxSize: elem["HistoryMaxSize"].int!,
+                historyMaxItems: elem["HistoryMaxItems"].int ?? 10,
+                historyMaxSize: elem["HistoryMaxSize"].int ?? 6291456,
                 lastSelectedGroup: elem["LastSelectedGroup"].string,
                 lastTopVisibleGroup: elem["LastTopVisibleGroup"].string,
                 binaries: binaries,
@@ -570,10 +575,40 @@ class KdbxXml {
         var deletedObjects: [DeletedObject]
 
         static func parse(elem: AEXMLElement) -> Root {
-            let group = Group.parse(elem: elem["Group"].first!)
+            let group: Group
+            if let groupElem = elem["Group"].first {
+                group = Group.parse(elem: groupElem)
+            } else {
+                let now = Date()
+
+                let times = KdbxXml.Times(
+                    lastModificationTime: now,
+                    creationTime: now,
+                    lastAccessTime: now,
+                    expiryTime: now,
+                    expires: false,
+                    usageCount: 0,
+                    locationChanged: nil
+                )
+
+                group = Group(
+                    uuid: UUID(),
+                    name: "Password Vault",
+                    notes: "",
+                    iconId: 49,
+                    times: times,
+                    isExpanded: true,
+                    defaultAutoTypeSequence: "{USERNAME}{TAB}{PASSWORD}",
+                    enableAutoType: false,
+                    enableSearching: true,
+                    lastTopVisibleEntry: "",
+                    groups: [],
+                    entries: []
+                )
+            }
 
             var deletedObjects = [DeletedObject]()
-            if let children = elem["DevaredObjects"]["DevaredObject"].all {
+            if let children = elem["DeletedObjects"]["DeletedObject"].all {
                 for elem in children {
                     let deletedObject = DeletedObject.parse(elem: elem)
                     deletedObjects.append(deletedObject)
