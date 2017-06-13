@@ -8,6 +8,7 @@ import Signals
 class Vault {
     enum SyncStatus {
         case complete
+        case connecting
         case encrypting
         case failed
         case transferring
@@ -90,10 +91,13 @@ class Vault {
 
             GKCard.checkBluetoothState()
             .then {
-                syncStatus.fire(.transferring)
+                syncStatus.fire(.connecting)
             }
             .then {
                 card.connect()
+            }
+            .then {
+                syncStatus.fire(.transferring)
             }
             .then {
                 card.put(data: encryptedData)
