@@ -28,7 +28,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Keyboard manager
 
-        IQKeyboardManager.sharedManager().enable = true
+        let keyboardManager = IQKeyboardManager.sharedManager()
+        keyboardManager.enable = true
+        keyboardManager.toolbarDoneBarButtonItemText = "Hide"
 
         // Window
 
