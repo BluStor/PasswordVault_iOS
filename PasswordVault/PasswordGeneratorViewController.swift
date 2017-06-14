@@ -58,7 +58,7 @@ class PasswordGeneratorViewController: UITableViewController {
         slider.minimumValue = 10.0
         slider.maximumValue = 200.0
         slider.value = 32.0
-        slider.addTarget(self, action: #selector(didChangeSliderValue(sender:)), for: .valueChanged)
+        slider.addTarget(self, action: #selector(didValueChanged(sender:)), for: .valueChanged)
         slider.translatesAutoresizingMaskIntoConstraints = false
 
         // Character count label
@@ -82,91 +82,7 @@ class PasswordGeneratorViewController: UITableViewController {
         reloadData()
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-
-        cell.preservesSuperviewLayoutMargins = false
-        cell.separatorInset = .zero
-        cell.layoutMargins = .zero
-
-        switch indexPath.row {
-        case 0:
-            cell.contentView.addSubview(passwordLabel)
-            NSLayoutConstraint(item: passwordLabel, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: passwordLabel, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
-            NSLayoutConstraint(item: passwordLabel, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: passwordLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-        case 1:
-            cell.contentView.addSubview(characterCountLabel)
-            NSLayoutConstraint(item: characterCountLabel, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: characterCountLabel, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: characterCountLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-
-            cell.contentView.addSubview(slider)
-            NSLayoutConstraint(item: slider, attribute: .top, relatedBy: .equal, toItem: characterCountLabel, attribute: .bottom, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: slider, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
-            NSLayoutConstraint(item: slider, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: slider, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-        case 2:
-            cell.textLabel?.text = "Upper-case (A, B, C, ...)"
-            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.upperCase) ? .checkmark : .none
-        case 3:
-            cell.textLabel?.text = "Lower-case (a, b, c, ...)"
-            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.lowerCase) ? .checkmark : .none
-        case 4:
-            cell.textLabel?.text = "Digits (0, 1, 2, ...)"
-            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.digits) ? .checkmark : .none
-        case 5:
-            cell.textLabel?.text = "Dash"
-            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.dash) ? .checkmark : .none
-        case 6:
-            cell.textLabel?.text = "Underscore"
-            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.underscore) ? .checkmark : .none
-        case 7:
-            cell.textLabel?.text = "Space"
-            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.space) ? .checkmark : .none
-        case 8:
-            cell.textLabel?.text = "Special"
-            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.special) ? .checkmark : .none
-        case 9:
-            cell.textLabel?.text = "Brackets"
-            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.brackets) ? .checkmark : .none
-        default:
-            break
-        }
-
-        return cell
-    }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch indexPath.row {
-        case 0:
-            generatePassword()
-        case 2..<10:
-            guard let characterClass = CharacterClass(rawValue: indexPath.row) else {
-                return
-            }
-
-            if checkedCharacterClasses.contains(characterClass) {
-                checkedCharacterClasses.remove(characterClass)
-            } else {
-                checkedCharacterClasses.insert(characterClass)
-            }
-
-            generatePassword()
-            reloadData()
-        default:
-            break
-        }
-
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-
-    func didChangeSliderValue(sender: UIView) {
+    func didValueChanged(sender: UIView) {
         switch sender {
         case slider:
             updateCharacterCountLabel()
@@ -241,5 +157,93 @@ class PasswordGeneratorViewController: UITableViewController {
     func updateCharacterCountLabel() {
         let count = Int(roundf(slider.value))
         characterCountLabel.text = "\(count) characters"
+    }
+
+    // MARK: UITableViewDataSource
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 10
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+
+        cell.preservesSuperviewLayoutMargins = false
+        cell.separatorInset = .zero
+        cell.layoutMargins = .zero
+
+        switch indexPath.row {
+        case 0:
+            cell.contentView.addSubview(passwordLabel)
+            NSLayoutConstraint(item: passwordLabel, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: passwordLabel, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: passwordLabel, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: passwordLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+        case 1:
+            cell.contentView.addSubview(characterCountLabel)
+            NSLayoutConstraint(item: characterCountLabel, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: characterCountLabel, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: characterCountLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+
+            cell.contentView.addSubview(slider)
+            NSLayoutConstraint(item: slider, attribute: .top, relatedBy: .equal, toItem: characterCountLabel, attribute: .bottom, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: slider, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: slider, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 25.0).isActive = true
+            NSLayoutConstraint(item: slider, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -25.0).isActive = true
+        case 2:
+            cell.textLabel?.text = "Upper-case (A, B, C, ...)"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.upperCase) ? .checkmark : .none
+        case 3:
+            cell.textLabel?.text = "Lower-case (a, b, c, ...)"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.lowerCase) ? .checkmark : .none
+        case 4:
+            cell.textLabel?.text = "Digits (0, 1, 2, ...)"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.digits) ? .checkmark : .none
+        case 5:
+            cell.textLabel?.text = "Dash"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.dash) ? .checkmark : .none
+        case 6:
+            cell.textLabel?.text = "Underscore"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.underscore) ? .checkmark : .none
+        case 7:
+            cell.textLabel?.text = "Space"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.space) ? .checkmark : .none
+        case 8:
+            cell.textLabel?.text = "Special"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.special) ? .checkmark : .none
+        case 9:
+            cell.textLabel?.text = "Brackets"
+            cell.accessoryType = checkedCharacterClasses.contains(CharacterClass.brackets) ? .checkmark : .none
+        default:
+            break
+        }
+        
+        return cell
+    }
+
+    // MARK: UITableViewDelegate
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch indexPath.row {
+        case 0:
+            generatePassword()
+        case 2..<10:
+            guard let characterClass = CharacterClass(rawValue: indexPath.row) else {
+                return
+            }
+
+            if checkedCharacterClasses.contains(characterClass) {
+                checkedCharacterClasses.remove(characterClass)
+            } else {
+                checkedCharacterClasses.insert(characterClass)
+            }
+
+            generatePassword()
+            reloadData()
+        default:
+            break
+        }
+
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
