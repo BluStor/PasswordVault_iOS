@@ -5,6 +5,13 @@
 
 import Foundation
 
+enum KdbxEntrySearchAttribute {
+    case title
+    case username
+    case url
+    case notes
+}
+
 enum KdbxError: Error {
     case databaseVersionUnsupported
     case decryptionFailed
@@ -173,11 +180,8 @@ class Kdbx {
         return try kdbx.encrypt(compositeKey: compositeKey)
     }
 
-    func findEntries(title: String) -> [KdbxXml.Entry] {
-        var entries = Array<KdbxXml.Entry>()
-        entries.append(contentsOf: database.root.group.findEntries(title: title))
-
-        return entries
+    func search(query: String, attributes: Set<KdbxEntrySearchAttribute>) -> [KdbxEntrySearchAttribute:[KdbxXml.Entry]] {
+        return database.root.group.search(query: query, attributes: attributes)
     }
 
     func get(groupUUID: UUID) -> KdbxXml.Group? {

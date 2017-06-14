@@ -11,7 +11,10 @@ class SearchViewController: UIViewController, SearchBarDelegate, UITableViewData
     let separatorView = UIView()
     let tableView = UITableView()
 
-    var entries: [KdbxXml.Entry] = Array()
+    var titleEntries: [KdbxXml.Entry] = Array()
+    var usernameEntries: [KdbxXml.Entry] = Array()
+    var urlEntries: [KdbxXml.Entry] = Array()
+    var notesEntries: [KdbxXml.Entry] = Array()
 
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
@@ -24,7 +27,7 @@ class SearchViewController: UIViewController, SearchBarDelegate, UITableViewData
         // Search bar
 
         searchBar.delegate = self
-        searchBar.placeholder = "Enter a title"
+        searchBar.placeholder = "Enter a query"
         searchBar.textField.autocapitalizationType = .none
         searchBar.textField.autocorrectionType = .no
         searchBar.translatesAutoresizingMaskIntoConstraints = false
@@ -65,33 +68,82 @@ class SearchViewController: UIViewController, SearchBarDelegate, UITableViewData
         searchBar.textField.becomeFirstResponder()
     }
 
+    func getEntry(indexPath: IndexPath) -> KdbxXml.Entry? {
+        switch indexPath.section {
+        case 0:
+            return titleEntries[indexPath.row]
+        case 1:
+            return usernameEntries[indexPath.row]
+        case 2:
+            return urlEntries[indexPath.row]
+        case 3:
+            return notesEntries[indexPath.row]
+        default:
+            return nil
+        }
+    }
+
     // MARK: SearchBarDelegate
 
     func searchBar(searchBar: SearchBar, didClear textField: UITextField, with text: String?) {
-        entries.removeAll()
+        titleEntries.removeAll()
+        usernameEntries.removeAll()
+        urlEntries.removeAll()
+        notesEntries.removeAll()
+
         tableView.reloadData()
     }
 
     func searchBar(searchBar: SearchBar, didChange textField: UITextField, with text: String?) {
         guard let query = text, let kdbx = Vault.kdbx else {
-            entries.removeAll()
-            tableView.reloadData()
             return
         }
 
-        entries.removeAll()
-        entries.append(contentsOf: kdbx.findEntries(title: query))
+        titleEntries.removeAll()
+        usernameEntries.removeAll()
+        urlEntries.removeAll()
+        notesEntries.removeAll()
+
+        let results = kdbx.search(query: query, attributes: [.title, .username, .url, .notes])
+
+        titleEntries.append(contentsOf: results[.title] ?? [])
+        usernameEntries.append(contentsOf: results[.username] ?? [])
+        urlEntries.append(contentsOf: results[.url] ?? [])
+        notesEntries.append(contentsOf: results[.notes] ?? [])
+
+        print("title results: \(titleEntries.count)")
+        print("username results: \(usernameEntries.count)")
+        print("url results: \(urlEntries.count)")
+        print("notes results: \(notesEntries.count)")
+
         tableView.reloadData()
     }
 
     // MARK: UITableViewDataSource
 
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 4
+    }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return entries.count
+        switch section {
+        case 0:
+            return titleEntries.count
+        case 1:
+            return usernameEntries.count
+        case 2:
+            return urlEntries.count
+        case 3:
+            return notesEntries.count
+        default:
+            return 0
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let entry = entries[indexPath.row]
+        guard let entry = getEntry(indexPath: indexPath) else {
+            return UITableViewCell()
+        }
 
         guard  let cell = tableView.dequeueReusableCell(withIdentifier: "entryCell") as? EntryTableViewCell else {
             return UITableViewCell()
@@ -107,10 +159,38 @@ class SearchViewController: UIViewController, SearchBarDelegate, UITableViewData
         return cell
     }
 
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0:
+            if !titleEntries.isEmpty {
+                return "Title matches"
+            }
+        case 1:
+            if !usernameEntries.isEmpty {
+                return "Username matches"
+            }
+        case 2:
+            if !urlEntries.isEmpty {
+                return "URL matches"
+            }
+        case 3:
+            if !notesEntries.isEmpty {
+                return "Notes matches"
+            }
+        default:
+            return nil
+        }
+
+        return nil
+    }
+
+
     // MARK: UITableViewDelegate
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let entry = entries[indexPath.row]
+        guard let entry = getEntry(indexPath: indexPath) else {
+            return
+        }
 
         guard let navigationController = navigationController else {
             return

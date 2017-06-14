@@ -325,25 +325,48 @@ class KdbxXml {
             }
         }
 
-        func findEntries(title: String) -> [Entry] {
-            var foundEntries = [Entry]()
-            let lowercasedTitle = title.lowercased()
+        func search(query: String, attributes: Set<KdbxEntrySearchAttribute>) -> [KdbxEntrySearchAttribute:[Entry]] {
+            let lowercasedQuery = query.lowercased(with: .current)
 
-            let filteredEntries = entries.filter { (entry) -> Bool in
-                if let title = entry.getStr(key: "Title")?.value {
-                    return title.lowercased().contains(lowercasedTitle)
-                } else {
-                    return false
-                }
+            var results: [KdbxEntrySearchAttribute:[Entry]] = [
+                .title: [],
+                .username: [],
+                .url: [],
+                .notes: []
+            ]
+
+            entries.forEach { entry in
+                attributes.forEach({ attribute in
+                    switch attribute {
+                    case .title:
+                        if let title = entry.getStr(key: "Title")?.value.lowercased(with: .current) {
+                            if title.contains(lowercasedQuery) {
+                                results[.title]?.append(entry)
+                            }
+                        }
+                    case .username:
+                        if let username = entry.getStr(key: "UserName")?.value.lowercased(with: .current) {
+                            if username.contains(lowercasedQuery) {
+                                results[.username]?.append(entry)
+                            }
+                        }
+                    case .url:
+                        if let url = entry.getStr(key: "Url")?.value.lowercased(with: .current) {
+                            if url.contains(lowercasedQuery) {
+                                results[.url]?.append(entry)
+                            }
+                        }
+                    case .notes:
+                        if let notes = entry.getStr(key: "Notes")?.value.lowercased(with: .current) {
+                            if notes.contains(lowercasedQuery) {
+                                results[.notes]?.append(entry)
+                            }
+                        }
+                    }
+                })
             }
-
-            foundEntries.append(contentsOf: filteredEntries)
-
-            groups.forEach { group in
-                foundEntries.append(contentsOf: group.findEntries(title: title))
-            }
-
-            return foundEntries
+            
+            return results
         }
 
         func get(groupUUID: UUID) -> Group? {
