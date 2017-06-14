@@ -23,12 +23,13 @@ class PasswordGeneratorViewController: UITableViewController {
     }
 
     var password = ""
-    var checkedCharacterClasses = Set<CharacterClass>()
+    var checkedCharacterClasses: Set<CharacterClass> = [.upperCase, .lowerCase, .digits]
 
     weak var delegate: PasswordGeneratorViewControllerDelegate?
 
     let setButton = IconButton(title: "Set", titleColor: .white)
     let passwordLabel = UILabel()
+    let characterCountLabel = UILabel()
     let slider = UISlider()
 
     override func viewDidLoad() {
@@ -60,6 +61,12 @@ class PasswordGeneratorViewController: UITableViewController {
         slider.addTarget(self, action: #selector(didChangeSliderValue(sender:)), for: .valueChanged)
         slider.translatesAutoresizingMaskIntoConstraints = false
 
+        // Character count label
+
+        characterCountLabel.font = UIFont.boldSystemFont(ofSize: 16.0)
+        characterCountLabel.textAlignment = .center
+        characterCountLabel.translatesAutoresizingMaskIntoConstraints = false
+
         // Table view
 
         tableView.bounces = false
@@ -68,12 +75,9 @@ class PasswordGeneratorViewController: UITableViewController {
         tableView.estimatedRowHeight = 75.0
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
 
-        // Data
+        // Load
 
-        checkedCharacterClasses.insert(.upperCase)
-        checkedCharacterClasses.insert(.lowerCase)
-        checkedCharacterClasses.insert(.digits)
-
+        updateCharacterCountLabel()
         generatePassword()
         reloadData()
     }
@@ -97,8 +101,13 @@ class PasswordGeneratorViewController: UITableViewController {
             NSLayoutConstraint(item: passwordLabel, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: passwordLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 1:
+            cell.contentView.addSubview(characterCountLabel)
+            NSLayoutConstraint(item: characterCountLabel, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: characterCountLabel, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: characterCountLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+
             cell.contentView.addSubview(slider)
-            NSLayoutConstraint(item: slider, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: slider, attribute: .top, relatedBy: .equal, toItem: characterCountLabel, attribute: .bottom, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: slider, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: slider, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: slider, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
@@ -160,6 +169,7 @@ class PasswordGeneratorViewController: UITableViewController {
     func didChangeSliderValue(sender: UIView) {
         switch sender {
         case slider:
+            updateCharacterCountLabel()
             generatePassword()
         default:
             break
@@ -213,10 +223,10 @@ class PasswordGeneratorViewController: UITableViewController {
             }
         }
 
-        let size = Int(roundf(slider.value))
+        let count = Int(roundf(slider.value))
 
         var password = ""
-        for _ in 0..<size {
+        for _ in 0..<count {
             if let char = characters.randomItem() {
                 password.append(char)
             }
@@ -226,5 +236,10 @@ class PasswordGeneratorViewController: UITableViewController {
 
         tableView.beginUpdates()
         tableView.endUpdates()
+    }
+
+    func updateCharacterCountLabel() {
+        let count = Int(roundf(slider.value))
+        characterCountLabel.text = "\(count) characters"
     }
 }
