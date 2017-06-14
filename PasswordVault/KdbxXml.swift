@@ -365,6 +365,14 @@ class KdbxXml {
                     }
                 })
             }
+
+            groups.forEach { group in
+                let subResults = group.search(query: query, attributes: attributes)
+                results[.title]?.append(contentsOf: subResults[.title] ?? [])
+                results[.username]?.append(contentsOf: subResults[.username] ?? [])
+                results[.url]?.append(contentsOf: subResults[.url] ?? [])
+                results[.notes]?.append(contentsOf: subResults[.notes] ?? [])
+            }
             
             return results
         }
