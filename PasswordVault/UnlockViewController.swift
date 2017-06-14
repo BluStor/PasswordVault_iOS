@@ -57,7 +57,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         passwordTextField.autocapitalizationType = .none
         passwordTextField.isSecureTextEntry = true
         passwordTextField.placeholder = "Password"
-        passwordTextField.returnKeyType = .next
+        passwordTextField.returnKeyType = .done
         passwordTextField.isVisibilityIconButtonEnabled = true
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
 
@@ -174,8 +174,9 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     }
 
     func open() {
-        let password = self.passwordTextField.text ?? ""
-        self.passwordTextField.text = ""
+        let password = passwordTextField.text ?? ""
+        passwordTextField.text = ""
+        passwordTextField.resignFirstResponder()
 
         SVProgressHUD.show(withStatus: "Connecting")
 
