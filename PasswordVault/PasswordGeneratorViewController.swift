@@ -49,7 +49,7 @@ class PasswordGeneratorViewController: UITableViewController {
         passwordLabel.numberOfLines = 0
         passwordLabel.textAlignment = .center
         passwordLabel.lineBreakMode = .byCharWrapping
-        passwordLabel.font = UIFont.systemFont(ofSize: 16.0)
+        passwordLabel.font = UIFont(name: "Courier", size: 16.0)
         passwordLabel.translatesAutoresizingMaskIntoConstraints = false
 
         // Slider
