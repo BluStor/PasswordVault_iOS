@@ -151,15 +151,17 @@ class ChooseCardViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.section {
-        case 0:
-            return
         case 1:
             let scannedPeripheral = scannedCards[indexPath.row]
 
             Vault.cardUUID = scannedPeripheral.peripheral.identifier
 
-            let unlockViewController = UnlockViewController()
-            navigationController?.setViewControllers([unlockViewController], animated: true)
+            if (navigationController?.viewControllers ?? []).count > 0 {
+                navigationController?.popViewController(animated: true)
+            } else {
+                let unlockViewController = UnlockViewController()
+                navigationController?.setViewControllers([unlockViewController], animated: true)
+            }
         default:
             return
         }
