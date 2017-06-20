@@ -255,12 +255,6 @@ class KdbxXml {
         mutating func add(groupUUID: UUID, entry: Entry) {
             if uuid == groupUUID {
                 entries.append(entry)
-                
-                entries.sort(by: { (entrya, entryb) -> Bool in
-                    let titlea = entrya.getStr(key: "Title")?.value ?? ""
-                    let titleb = entryb.getStr(key: "Title")?.value ?? ""
-                    return titlea < titleb
-                })
             } else {
                 for index in groups.indices {
                     groups[index].add(groupUUID: groupUUID, entry: entry)
@@ -271,10 +265,6 @@ class KdbxXml {
         mutating func add(groupUUID: UUID, group: Group) {
             if uuid == groupUUID {
                 groups.append(group)
-
-                groups.sort(by: { (groupa, groupb) -> Bool in
-                    return groupa.name < groupb.name
-                })
             } else {
                 for index in groups.indices {
                     groups[index].add(groupUUID: groupUUID, group: group)
