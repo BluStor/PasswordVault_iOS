@@ -243,7 +243,11 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row < group.groups.count {
-            let cellGroup = group.groups[indexPath.row]
+            let sortedGroups = group.groups.sorted(by: { (groupa, groupb) -> Bool in
+                return groupa.name < groupb.name
+            })
+
+            let cellGroup = sortedGroups[indexPath.row]
 
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "group", for: indexPath) as? GroupTableViewCell else {
                 return UITableViewCell()
@@ -257,7 +261,13 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
 
             return cell
         } else {
-            let entry = group.entries[indexPath.row - group.groups.count]
+            let sortedEntries = group.entries.sorted(by: { (entrya, entryb) -> Bool in
+                let titlea = entrya.getStr(key: "Title")?.value ?? ""
+                let titleb = entryb.getStr(key: "Title")?.value ?? ""
+                return titlea < titleb
+            })
+
+            let entry = sortedEntries[indexPath.row - group.groups.count]
 
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "entry", for: indexPath) as? EntryTableViewCell else {
                 return UITableViewCell()
