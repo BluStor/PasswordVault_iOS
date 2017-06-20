@@ -716,12 +716,8 @@ class KdbxXml {
     static func unprotect(elem: AEXMLElement, streamCipher: KdbxStreamCipher) throws {
         for child in elem.children {
             if child.name == "Value" {
-                print(child.xmlCompact)
                 if child.attributes["Protected"]?.xmlBool ?? false {
                     child.value = try streamCipher.unprotect(string: child.value ?? "")
-                    print("unprotected")
-                } else {
-                    print("skipped")
                 }
             }
 
