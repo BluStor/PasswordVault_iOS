@@ -3,7 +3,6 @@
 //  PasswordVault
 //
 
-import AEXML
 import Hydra
 import Material
 import SVProgressHUD
@@ -113,7 +112,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         case moreButton:
             let alertController = UIAlertController(title: "Menu", message: nil, preferredStyle: .actionSheet)
 
-            alertController.addAction(UIAlertAction(title: "Choose card", style: .default, handler: { action in
+            alertController.addAction(UIAlertAction(title: "Choose card", style: .default, handler: { _ in
                 let chooseCardViewController = ChooseCardViewController()
                 self.navigationController?.pushViewController(chooseCardViewController, animated: true)
             }))
@@ -281,7 +280,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         if textField == passwordTextField {
             open()
         }
-        
+
         return true
     }
 }

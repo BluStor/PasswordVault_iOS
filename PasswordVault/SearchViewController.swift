@@ -184,7 +184,6 @@ class SearchViewController: UIViewController, SearchBarDelegate, UITableViewData
         return nil
     }
 
-
     // MARK: UITableViewDelegate
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

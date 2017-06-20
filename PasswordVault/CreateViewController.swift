@@ -90,7 +90,7 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
         case moreButton:
             let alertController = UIAlertController(title: "Menu", message: nil, preferredStyle: .actionSheet)
 
-            alertController.addAction(UIAlertAction(title: "Choose card", style: .default, handler: { action in
+            alertController.addAction(UIAlertAction(title: "Choose card", style: .default, handler: { _ in
                 let chooseCardViewController = ChooseCardViewController()
                 self.navigationController?.pushViewController(chooseCardViewController, animated: true)
             }))
@@ -165,7 +165,7 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
 
         let alertController = UIAlertController(title: "Warning", message: "Creating a new database will destroy any existing database on your card. Are you sure?", preferredStyle: .alert)
 
-        alertController.addAction(UIAlertAction(title: "Create", style: .default, handler: { action in
+        alertController.addAction(UIAlertAction(title: "Create", style: .default, handler: { _ in
             let password = self.passwordTextField.text ?? ""
             self.passwordTextField.text = ""
 
@@ -182,7 +182,7 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
             }
         }))
 
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { action in
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
             alertController.dismiss(animated: true, completion: nil)
         }))
 

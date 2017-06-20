@@ -104,7 +104,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
                 guard let kdbx = Vault.kdbx else {
                     return
                 }
-                
+
                 kdbx.update(group: group)
                 Vault.save()
             }

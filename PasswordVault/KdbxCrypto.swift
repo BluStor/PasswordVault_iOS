@@ -58,7 +58,7 @@ class KdbxCrypto {
 
         let output = Array(buffer.prefix(cryptoCount))
         print("aes: \(operation) output \(output.count) bytes")
-        
+
         return output
     }
 

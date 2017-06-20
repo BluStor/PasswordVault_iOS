@@ -366,7 +366,7 @@ class KdbxXml {
                 results[.url]?.append(contentsOf: subResults[.url] ?? [])
                 results[.notes]?.append(contentsOf: subResults[.notes] ?? [])
             }
-            
+
             return results
         }
 

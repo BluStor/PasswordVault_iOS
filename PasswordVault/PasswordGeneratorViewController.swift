@@ -217,7 +217,7 @@ class PasswordGeneratorViewController: UITableViewController {
         default:
             break
         }
-        
+
         return cell
     }
 
