@@ -36,14 +36,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        let navigationController: NavigationController
-        if Vault.cardUUID == nil {
-            let chooseCardViewController = ChooseCardViewController()
-            navigationController = NavigationController(rootViewController: chooseCardViewController)
-        } else {
-            let unlockViewController = UnlockViewController()
-            navigationController = NavigationController(rootViewController: unlockViewController)
-        }
+        let splashViewController = SplashViewController()
+        let navigationController = NavigationController(rootViewController: splashViewController)
 
         navigationController.navigationBar.tintColor = Theme.Base.navigationBarTintColor
         navigationController.navigationBar.barTintColor = Theme.Base.navigationBarBarTintColor

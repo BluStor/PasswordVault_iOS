@@ -23,6 +23,7 @@ class GKCard {
         case cardNotPaired
         case characteristicReadFailure
         case characteristicWriteFailure
+        case connectionTimedOut
         case fileNotFound
         case invalidChecksum
         case makeCommandDataFailed
@@ -163,7 +164,12 @@ class GKCard {
             self.peripheral.connect(withTimeout: timeout, completion: { result in
                 switch result {
                 case .failure(let error):
-                    reject(error)
+                    switch error {
+                    case SBError.operationTimedOut:
+                        reject(CardError.connectionTimedOut)
+                    default:
+                        reject(error)
+                    }
                 case .success:
                     self.peripheral.setNotifyValue(
                         toEnabled: true,

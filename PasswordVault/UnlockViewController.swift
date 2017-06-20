@@ -17,7 +17,6 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     let vaultImageView = UIImageView(image: UIImage(named: "vault"))
     let passwordTextField = TextField()
     let openButton = RaisedButton()
-    let newDatabaseButton = RaisedButton()
     let chooseCardButton = RaisedButton()
 
     override func viewDidLoad() {
@@ -67,15 +66,6 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         openButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
         openButton.translatesAutoresizingMaskIntoConstraints = false
 
-        // New database button
-
-        newDatabaseButton.setTitle("New database", for: .normal)
-        newDatabaseButton.pulseColor = UIColor.white
-        newDatabaseButton.backgroundColor = Theme.Buttons.mutedBackgroundColor
-        newDatabaseButton.setTitleColor(Theme.Buttons.mutedTitleColor, for: .normal)
-        newDatabaseButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
-        newDatabaseButton.translatesAutoresizingMaskIntoConstraints = false
-
         // Choose card button
 
         chooseCardButton.setTitle("Choose card", for: .normal)
@@ -117,6 +107,11 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
                 self.navigationController?.pushViewController(chooseCardViewController, animated: true)
             }))
 
+            alertController.addAction(UIAlertAction(title: "New database", style: .default, handler: { _ in
+                let createViewController = CreateViewController()
+                self.navigationController?.setViewControllers([createViewController], animated: true)
+            }))
+
             alertController.addAction(UIAlertAction(title: "About", style: .default, handler: { _ in
                 let aboutViewController = AboutViewController()
                 self.navigationController?.pushViewController(aboutViewController, animated: true)
@@ -129,9 +124,6 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
             present(alertController, animated: true, completion: nil)
         case openButton:
             open()
-        case newDatabaseButton:
-            let createViewController = CreateViewController()
-            navigationController?.setViewControllers([createViewController], animated: true)
         case chooseCardButton:
             let chooseCardViewController = ChooseCardViewController()
             navigationController?.setViewControllers([chooseCardViewController], animated: true)
@@ -147,6 +139,8 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
             message = "Bluetooth is not enabled. Enable it in your device's Settings app."
         case GKCard.CardError.cardNotPaired:
             message = "Card is not paired. Please put the card in pairing mode and try again."
+        case GKCard.CardError.connectionTimedOut:
+            message = "Connection timed out. Ensure the card is powered on and nearby."
         case GKCard.CardError.fileNotFound:
             message = "No database found on card."
         case UnlockError.scanFoundNothing:
@@ -232,7 +226,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     // MARK: UITableViewDataSource
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return 3
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -261,12 +255,6 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
             NSLayoutConstraint(item: openButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: openButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: openButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-        case 3:
-            cell.contentView.addSubview(newDatabaseButton)
-            NSLayoutConstraint(item: newDatabaseButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: newDatabaseButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
-            NSLayoutConstraint(item: newDatabaseButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: newDatabaseButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         default:
             break
         }

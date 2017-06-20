@@ -13,6 +13,7 @@
 		A10CFD1E1EA89115006EFDB6 /* DataStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10CFD1C1EA89115006EFDB6 /* DataStream.swift */; };
 		A115AADC1EAC6E85006F2675 /* KdbxCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = A115AADB1EAC6E85006F2675 /* KdbxCrypto.swift */; };
 		A12723DF1EB1B9D000247C85 /* IconPickerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12723DE1EB1B9D000247C85 /* IconPickerCollectionViewCell.swift */; };
+		A14F90D91EF97A3300079DAE /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A14F90D81EF97A3300079DAE /* SplashViewController.swift */; };
 		A1525FD71EA7387700B580A7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1525FD61EA7387700B580A7 /* AppDelegate.swift */; };
 		A1525FDE1EA7387700B580A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1525FDD1EA7387700B580A7 /* Assets.xcassets */; };
 		A1525FE11EA7387700B580A7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1525FDF1EA7387700B580A7 /* LaunchScreen.storyboard */; };
@@ -79,6 +80,7 @@
 		A10CFD1C1EA89115006EFDB6 /* DataStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStream.swift; sourceTree = "<group>"; };
 		A115AADB1EAC6E85006F2675 /* KdbxCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KdbxCrypto.swift; sourceTree = "<group>"; };
 		A12723DE1EB1B9D000247C85 /* IconPickerCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IconPickerCollectionViewCell.swift; sourceTree = "<group>"; };
+		A14F90D81EF97A3300079DAE /* SplashViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		A1525FD31EA7387700B580A7 /* PasswordVault.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PasswordVault.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1525FD61EA7387700B580A7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1525FDD1EA7387700B580A7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 				A15B1A0C1EB0029A0068328E /* IconPickerViewController.swift */,
 				A15B1A0E1EB002BF0068328E /* PasswordGeneratorViewController.swift */,
 				A190D8F21EEB1EFB006D6E34 /* SearchViewController.swift */,
+				A14F90D81EF97A3300079DAE /* SplashViewController.swift */,
 				A15B1A121EB002D80068328E /* UnlockViewController.swift */,
 			);
 			name = UIViewController;
@@ -601,6 +604,7 @@
 				A18E88D61EB1ECDE004D1E91 /* SyncView.swift in Sources */,
 				A10CFD171EA890FE006EFDB6 /* Kdbx3.swift in Sources */,
 				A15B1A091EB0026E0068328E /* EditGroupViewController.swift in Sources */,
+				A14F90D91EF97A3300079DAE /* SplashViewController.swift in Sources */,
 				A10CFD181EA890FE006EFDB6 /* Kdbx3Header.swift in Sources */,
 				A1B287EE1EAF357F0006B341 /* Kdbx.swift in Sources */,
 				A1B287F21EAF39010006B341 /* Kdbx4Header.swift in Sources */,
