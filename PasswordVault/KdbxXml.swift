@@ -718,6 +718,7 @@ class KdbxXml {
             if child.name == "Value" {
                 if child.attributes["Protected"]?.xmlBool ?? false {
                     child.value = try streamCipher.unprotect(string: child.value ?? "")
+                    child.attributes.removeValue(forKey: "Protected")
                 }
             }
 
