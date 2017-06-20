@@ -81,20 +81,20 @@ class Kdbx3Payload {
             payloadData = try Data(bytes: payloadBytes).gunzipped()
         }
 
-        // Parse
+        // Prepare stream cipher (if any)
 
-        var database = try KdbxXml.parse(data: payloadData)
-
-        // Unprotect
-
+        let streamCipher: KdbxStreamCipher?
         switch header.streamAlgorithm {
         case .salsa20:
             let salsaKey = header.protectedStreamKey.sha256()
             let iv = [0xE8, 0x30, 0x09, 0x4B, 0x97, 0x20, 0x5D, 0x2A] as [UInt8]
 
-            let streamCipher = Salsa20(key: salsaKey, iv: iv)
-            try database.unprotect(streamCipher: streamCipher)
+            streamCipher = Salsa20(key: salsaKey, iv: iv)
         }
+
+        // Parse
+
+        let database = try KdbxXml.parse(data: payloadData, streamCipher: streamCipher)
 
         self.init(database: database)
     }

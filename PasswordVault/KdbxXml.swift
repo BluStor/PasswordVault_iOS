@@ -196,13 +196,6 @@ class KdbxXml {
                 strings.append(Str(key: key, value: value, isProtected: isProtected))
             }
         }
-
-        mutating func unprotect(streamCipher: KdbxStreamCipher) throws {
-            for i in strings.indices where strings[i].isProtected {
-                strings[i].value = try streamCipher.unprotect(string: strings[i].value)
-                print("unprotected entry: \(getStr(key: "Title")?.value ?? "?")")
-            }
-        }
     }
 
     struct Group {
@@ -213,7 +206,7 @@ class KdbxXml {
         var iconId: Int
         var times: Times
         var isExpanded: Bool
-        var defaultAutoTypeSequence: String
+        var defaultAutoTypeSequence: String?
         var enableAutoType: Bool
         var enableSearching: Bool
         var lastTopVisibleEntry: String
@@ -403,16 +396,6 @@ class KdbxXml {
             }
             return nil
         }
-        
-        mutating func unprotect(streamCipher: KdbxStreamCipher) throws {
-            for i in entries.indices {
-                try entries[i].unprotect(streamCipher: streamCipher)
-            }
-
-            for i in groups.indices {
-                try groups[i].unprotect(streamCipher: streamCipher)
-            }
-        }
 
         mutating func update(group: Group) {
             if let index = groups.index(where: { $0.uuid == group.uuid }) {
@@ -455,16 +438,6 @@ class KdbxXml {
             elem.addChild(meta.build())
             elem.addChild(root.build())
             return elem
-        }
-
-        mutating func unprotect(streamCipher: KdbxStreamCipher) throws {
-            for i in root.group.entries.indices {
-                try root.group.entries[i].unprotect(streamCipher: streamCipher)
-            }
-
-            for i in root.group.groups.indices {
-                try root.group.groups[i].unprotect(streamCipher: streamCipher)
-            }
         }
     }
 
@@ -629,7 +602,7 @@ class KdbxXml {
                     iconId: 49,
                     times: times,
                     isExpanded: true,
-                    defaultAutoTypeSequence: "{USERNAME}{TAB}{PASSWORD}",
+                    defaultAutoTypeSequence: nil,
                     enableAutoType: false,
                     enableSearching: true,
                     lastTopVisibleEntry: "",
@@ -740,8 +713,29 @@ class KdbxXml {
         }
     }
 
-    static func parse(data: Data) throws -> KeePassFile {
+    static func unprotect(elem: AEXMLElement, streamCipher: KdbxStreamCipher) throws {
+        for child in elem.children {
+            if child.name == "Value" {
+                print(child.xmlCompact)
+                if child.attributes["Protected"]?.xmlBool ?? false {
+                    child.value = try streamCipher.unprotect(string: child.value ?? "")
+                    print("unprotected")
+                } else {
+                    print("skipped")
+                }
+            }
+
+            try unprotect(elem: child, streamCipher: streamCipher)
+        }
+    }
+
+    static func parse(data: Data, streamCipher: KdbxStreamCipher?) throws -> KeePassFile {
         let xmlDoc = try AEXMLDocument(xml: data)
+
+        if let streamCipher = streamCipher {
+            try unprotect(elem: xmlDoc.root, streamCipher: streamCipher)
+        }
+
         return KeePassFile.parse(elem: xmlDoc.root)
     }
 }
