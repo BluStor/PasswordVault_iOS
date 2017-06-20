@@ -95,8 +95,6 @@ class GKCard {
 
                 print("fileWrite <- \(chunk.count) bytes")
 
-                let semaphore = DispatchSemaphore(value: 0)
-
                 self.peripheral.writeValue(ofCharacWithUUID: GKCard.fileWriteUUID, fromServiceWithUUID: GKCard.serviceUUID, value: chunk, type: .withoutResponse, completion: { result in
                     switch result {
                     case .failure(let error):
@@ -104,11 +102,11 @@ class GKCard {
                         reject(CardError.characteristicWriteFailure)
                         return
                     case .success:
-                        semaphore.signal()
+                        break
                     }
                 })
 
-                semaphore.wait()
+                usleep(5000)
 
                 offset += chunkSize
             } while offset < data.count
@@ -160,7 +158,7 @@ class GKCard {
     // MARK: Connection
 
     func connect(timeout: TimeInterval = 10.0) -> Promise<Void> {
-        return Promise { resolve, reject in
+        return Promise(in: .main, { resolve, reject in
             print("connect()")
             self.peripheral.connect(withTimeout: timeout, completion: { result in
                 switch result {
@@ -188,7 +186,7 @@ class GKCard {
                     }
                 }
             })
-        }
+        })
     }
 
     func disconnect() -> Promise<Void> {
@@ -265,6 +263,33 @@ class GKCard {
             .then(self.writeToControlPoint)
             .then(resolve)
             .catch(reject)
+        }
+    }
+
+    func exists(path: String) -> Promise<Bool> {
+        return Promise { resolve, reject in
+            guard path.characters.count <= 30 else {
+                reject(CardError.argumentInvalid)
+                return
+            }
+
+            GKCard.checkBluetoothState()
+            .then {
+                self.makeCommandData(command: 10, string: path)
+            }
+            .then(self.writeToControlPoint)
+            .then(self.waitOnControlPointResult)
+            .then { data in
+                if data.count == 1 {
+                    if data[0] == 0x06 {
+                        resolve(true)
+                    } else {
+                        resolve(false)
+                    }
+                } else {
+                    resolve(false)
+                }
+            }.catch(reject)
         }
     }
 
