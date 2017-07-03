@@ -104,6 +104,9 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
                 alertController.dismiss(animated: true, completion: nil)
             }))
 
+            alertController.popoverPresentationController?.sourceView = moreButton
+            alertController.popoverPresentationController?.sourceRect = moreButton.bounds
+
             present(alertController, animated: true, completion: nil)
         case openDatabaseButton:
             let unlockViewController = UnlockViewController()

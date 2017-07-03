@@ -112,9 +112,18 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
             let point = longPressGestureRecognizer.location(in: tableView)
 
             if let indexPath = tableView.indexPathForRow(at: point) {
+
+                guard let cell = tableView.cellForRow(at: indexPath) else {
+                    return
+                }
+
                 if indexPath.row < group.groups.count {
                     if longPressGestureRecognizer.state == .began {
-                        let selectedGroup = group.groups[indexPath.row]
+                        let sortedGroups = group.groups.sorted(by: { (groupa, groupb) -> Bool in
+                            return groupa.name < groupb.name
+                        })
+
+                        let selectedGroup = sortedGroups[indexPath.row]
 
                         let alertController = UIAlertController(
                             title: "Group",
@@ -141,11 +150,20 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
                             alertController.dismiss(animated: true, completion: nil)
                         }))
 
+                        alertController.popoverPresentationController?.sourceView = cell
+                        alertController.popoverPresentationController?.sourceRect = cell.bounds
+
                         present(alertController, animated: true, completion: nil)
                     }
                 } else {
                     if longPressGestureRecognizer.state == .began {
-                        let selectedEntry = group.entries[indexPath.row - group.groups.count]
+                        let sortedEntries = group.entries.sorted(by: { (entrya, entryb) -> Bool in
+                            let titlea = entrya.getStr(key: "Title")?.value ?? ""
+                            let titleb = entryb.getStr(key: "Title")?.value ?? ""
+                            return titlea < titleb
+                        })
+
+                        let selectedEntry = sortedEntries[indexPath.row - group.groups.count]
 
                         let alertController = UIAlertController(
                             title: "Group",
@@ -171,6 +189,9 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
                         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
                             alertController.dismiss(animated: true, completion: nil)
                         }))
+
+                        alertController.popoverPresentationController?.sourceView = cell
+                        alertController.popoverPresentationController?.sourceRect = cell.bounds
 
                         present(alertController, animated: true, completion: nil)
                     }
@@ -202,6 +223,9 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
                 alertController.dismiss(animated: true, completion: nil)
             }))
 
+            alertController.popoverPresentationController?.sourceView = addFabButton
+            alertController.popoverPresentationController?.sourceRect = addFabButton.bounds
+
             present(alertController, animated: true, completion: nil)
         case moreButton:
             let alertController = UIAlertController(title: "Menu", message: nil, preferredStyle: .actionSheet)
@@ -219,6 +243,9 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
             alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
                 alertController.dismiss(animated: true, completion: nil)
             }))
+
+            alertController.popoverPresentationController?.sourceView = moreButton
+            alertController.popoverPresentationController?.sourceRect = moreButton.bounds
 
             present(alertController, animated: true, completion: nil)
         case searchFabButton:

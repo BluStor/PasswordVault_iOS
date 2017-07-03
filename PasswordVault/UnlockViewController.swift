@@ -121,6 +121,9 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
                 alertController.dismiss(animated: true, completion: nil)
             }))
 
+            alertController.popoverPresentationController?.sourceView = moreButton
+            alertController.popoverPresentationController?.sourceRect = moreButton.bounds
+
             present(alertController, animated: true, completion: nil)
         case openButton:
             open()

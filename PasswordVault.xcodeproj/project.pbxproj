@@ -201,8 +201,8 @@
 		A1525FD51EA7387700B580A7 /* PasswordVault */ = {
 			isa = PBXGroup;
 			children = (
-				A10CFD1C1EA89115006EFDB6 /* DataStream.swift */,
 				A1525FE21EA7387700B580A7 /* Info.plist */,
+				A10CFD1C1EA89115006EFDB6 /* DataStream.swift */,
 				A15260091EA7398800B580A7 /* PasswordVault-Bridging-Header.h */,
 				A1525FD61EA7387700B580A7 /* AppDelegate.swift */,
 				A15B1A171EB01AED0068328E /* Extensions.swift */,
