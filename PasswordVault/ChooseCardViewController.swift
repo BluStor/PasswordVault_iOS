@@ -56,7 +56,7 @@ class ChooseCardViewController: UITableViewController {
 
         // Detail label
 
-        detailLabel.text = "Ensure your PasswordVault card is powered on and it will appear in the list below.\n\nSelect it to continue."
+        detailLabel.text = "Your PasswordVault card should appear below.  Ensure it is charged, powered on, and near your phone.\n\nSelect it to continue."
         detailLabel.numberOfLines = 0
         detailLabel.textAlignment = .center
         detailLabel.translatesAutoresizingMaskIntoConstraints = false
