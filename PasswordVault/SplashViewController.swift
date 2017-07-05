@@ -22,7 +22,7 @@ class SplashViewController: UIViewController {
         // Cards image view
 
         cardsImageView.contentMode = .scaleAspectFit
-        cardsImageView.image = UIImage(named: "blustor_cards")
+        cardsImageView.image = UIImage(named: "card")
         cardsImageView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(cardsImageView)
@@ -32,7 +32,8 @@ class SplashViewController: UIViewController {
 
         // Password vault label
 
-        passwordVaultLabel.text = "Password Vault"
+        passwordVaultLabel.text = "Welcome to\nPassword Vault"
+        passwordVaultLabel.numberOfLines = 0
         passwordVaultLabel.textAlignment = .center
         passwordVaultLabel.font = UIFont.boldSystemFont(ofSize: 24.0)
         passwordVaultLabel.textColor = UIColor(hex: 0x03A9F4)
@@ -41,7 +42,7 @@ class SplashViewController: UIViewController {
         view.addSubview(passwordVaultLabel)
         NSLayoutConstraint(item: passwordVaultLabel, attribute: .bottom, relatedBy: .equal, toItem: cardsImageView, attribute: .top, multiplier: 1.0, constant: -10.0).isActive = true
         NSLayoutConstraint(item: passwordVaultLabel, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-        NSLayoutConstraint(item: passwordVaultLabel, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1.0, constant: 10.0).isActive = true
+        NSLayoutConstraint(item: passwordVaultLabel, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
 
         // Activity indicator view
 
@@ -61,12 +62,12 @@ class SplashViewController: UIViewController {
 
     func load() {
         guard let cardUUID = Vault.cardUUID else {
-            loadUnlock()
+            loadChooseCard()
             return
         }
 
         guard let card = GKCard(uuid: cardUUID) else {
-            loadUnlock()
+            loadChooseCard()
             return
         }
 
@@ -90,6 +91,11 @@ class SplashViewController: UIViewController {
         }
     }
 
+    func loadChooseCard() {
+        let chooseCardViewController = ChooseCardViewController()
+        navigationController?.setViewControllers([chooseCardViewController], animated: true)
+    }
+    
     func loadCreate() {
         let createViewController = CreateViewController()
         navigationController?.setViewControllers([createViewController], animated: true)

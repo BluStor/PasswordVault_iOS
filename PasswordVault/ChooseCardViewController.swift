@@ -24,8 +24,9 @@ class ChooseCardViewController: UITableViewController {
 
     var scannedCards = [ScannedCard]()
 
-    let lockImageView = UIImageView(image: UIImage(named: "lock"))
+    let cardImageView = UIImageView(image: UIImage(named: "card"))
     let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+    let detailLabel = UILabel()
 
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
@@ -45,13 +46,20 @@ class ChooseCardViewController: UITableViewController {
 
         // Lock image view
 
-        lockImageView.clipsToBounds = true
-        lockImageView.contentMode = .scaleAspectFit
-        lockImageView.translatesAutoresizingMaskIntoConstraints = false
+        cardImageView.clipsToBounds = true
+        cardImageView.contentMode = .scaleAspectFit
+        cardImageView.translatesAutoresizingMaskIntoConstraints = false
 
         // Activity indicator view
 
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+
+        // Detail label
+
+        detailLabel.text = "Ensure your PasswordVault card is powered on and it will appear in the list below.\n\nSelect it to continue."
+        detailLabel.numberOfLines = 0
+        detailLabel.textAlignment = .center
+        detailLabel.translatesAutoresizingMaskIntoConstraints = false
 
         // Scan
 
@@ -92,13 +100,20 @@ class ChooseCardViewController: UITableViewController {
             switch indexPath.row {
             case 0:
                 cell.selectionStyle = .none
-                cell.contentView.addSubview(lockImageView)
-                NSLayoutConstraint(item: lockImageView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 150.0).isActive = true
-                NSLayoutConstraint(item: lockImageView, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
-                NSLayoutConstraint(item: lockImageView, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
-                NSLayoutConstraint(item: lockImageView, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-                NSLayoutConstraint(item: lockImageView, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+                cell.contentView.addSubview(cardImageView)
+                NSLayoutConstraint(item: cardImageView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 150.0).isActive = true
+                NSLayoutConstraint(item: cardImageView, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+                NSLayoutConstraint(item: cardImageView, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+                NSLayoutConstraint(item: cardImageView, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+                NSLayoutConstraint(item: cardImageView, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
             case 1:
+                cell.selectionStyle = .none
+                cell.contentView.addSubview(detailLabel)
+                NSLayoutConstraint(item: detailLabel, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+                NSLayoutConstraint(item: detailLabel, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+                NSLayoutConstraint(item: detailLabel, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+                NSLayoutConstraint(item: detailLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+            case 2:
                 cell.selectionStyle = .none
                 cell.contentView.addSubview(activityIndicatorView)
                 NSLayoutConstraint(item: activityIndicatorView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50.0).isActive = true
@@ -139,7 +154,7 @@ class ChooseCardViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 2
+            return 3
         case 1:
             return scannedCards.count
         default:
@@ -156,9 +171,11 @@ class ChooseCardViewController: UITableViewController {
 
             Vault.cardUUID = scannedPeripheral.peripheral.identifier
 
-            if (navigationController?.viewControllers ?? []).count > 0 {
+            if (navigationController?.viewControllers ?? []).count > 1 {
+                print("pop")
                 navigationController?.popViewController(animated: true)
             } else {
+                print("push")
                 let unlockViewController = UnlockViewController()
                 navigationController?.setViewControllers([unlockViewController], animated: true)
             }
