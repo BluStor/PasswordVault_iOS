@@ -221,9 +221,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
     func versionString() -> String {
         let releaseVersionNumber = Bundle.main.releaseVersionNumber
-        let buildVersionNumber = Bundle.main.buildVersionNumber
-
-        return "\(releaseVersionNumber ?? "?").\(buildVersionNumber ?? "?")"
+        return releaseVersionNumber ?? "?"
     }
 
     // MARK: UITableViewDataSource
