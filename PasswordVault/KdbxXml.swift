@@ -34,7 +34,7 @@ class KdbxXml {
     struct AutoType {
 
         var enabled: Bool
-        var dataTransferObfuscation: Int?
+        var dataTransferObfuscation: Int
         var association: Association?
 
         static func parse(elem: AEXMLElement) -> AutoType {
@@ -42,7 +42,7 @@ class KdbxXml {
 
             return AutoType(
                 enabled: elem["Enabled"].string == "True",
-                dataTransferObfuscation: elem["DataTransferObfuscation"].int,
+                dataTransferObfuscation: elem["DataTransferObfuscation"].int ?? 0,
                 association: association
             )
         }
@@ -50,7 +50,7 @@ class KdbxXml {
         func build() -> AEXMLElement {
             let elem = AEXMLElement(name: "AutoType")
             elem.addChild(name: "Enabled", value: enabled.xmlString, attributes: [:])
-            elem.addChild(name: "DataTransferObfuscation", value: dataTransferObfuscation?.xmlString, attributes: [:])
+            elem.addChild(name: "DataTransferObfuscation", value: dataTransferObfuscation.xmlString, attributes: [:])
 
             if let association = association {
                 elem.addChild(association.build())
@@ -473,14 +473,13 @@ class KdbxXml {
     struct Meta {
 
         var generator: String
-        var headerHash: String
         var databaseName: String
         var databaseNameChanged: Date?
         var databaseDescription: String
         var databaseDescriptionChanged: Date?
         var defaultUsername: String
         var defaultUsernameChanged: Date?
-        var maintenanceHistoryDays: Int?
+        var maintenanceHistoryDays: Int
         var color: String
         var masterKeyChanged: Date?
         var masterKeyChangeRec: Int
@@ -510,14 +509,13 @@ class KdbxXml {
 
             return Meta(
                 generator: elem["Generator"].string,
-                headerHash: elem["HeaderHash"].string,
                 databaseName: elem["DatabaseName"].string,
                 databaseNameChanged: elem["DatabaseNameChanged"].string.xmlDate,
                 databaseDescription: elem["DatabaseDescription"].string,
                 databaseDescriptionChanged: elem["DatabaseDescriptionChanged"].string.xmlDate,
                 defaultUsername: elem["DefaultUserName"].string,
                 defaultUsernameChanged: elem["DefaultUserNameChanged"].string.xmlDate,
-                maintenanceHistoryDays: elem["MaintenenceHistoryDays"].int,
+                maintenanceHistoryDays: elem["MaintenenceHistoryDays"].int ?? 365,
                 color: elem["Color"].string,
                 masterKeyChanged: elem["MasterKeyChanged"].string.xmlDate,
                 masterKeyChangeRec: elem["MasterKeyChangeRec"].int ?? -1,
@@ -540,14 +538,13 @@ class KdbxXml {
         func build() -> AEXMLElement {
             let elem = AEXMLElement(name: "Meta")
             elem.addChild(name: "Generator", value: "KdbxSwift", attributes: [:])
-            elem.addChild(name: "HeaderHash", value: headerHash, attributes: [:])
             elem.addChild(name: "DatabaseName", value: databaseName, attributes: [:])
             elem.addChild(name: "DatabaseNameChanged", value: databaseNameChanged?.xmlString, attributes: [:])
             elem.addChild(name: "DatabaseDescription", value: databaseDescription, attributes: [:])
             elem.addChild(name: "DatabaseDescriptionChanged", value: databaseDescriptionChanged?.xmlString, attributes: [:])
             elem.addChild(name: "DefaultUserName", value: defaultUsername, attributes: [:])
             elem.addChild(name: "DefaultUserNameChanged", value: defaultUsernameChanged?.xmlString, attributes: [:])
-            elem.addChild(name: "MaintenanceHistoryDays", value: maintenanceHistoryDays?.xmlString, attributes: [:])
+            elem.addChild(name: "MaintenanceHistoryDays", value: maintenanceHistoryDays.xmlString, attributes: [:])
             elem.addChild(name: "Color", value: color, attributes: [:])
             elem.addChild(name: "MasterKeyChanged", value: masterKeyChanged?.xmlString, attributes: [:])
             elem.addChild(name: "MasterKeyChangeRec", value: masterKeyChangeRec.xmlString, attributes: [:])

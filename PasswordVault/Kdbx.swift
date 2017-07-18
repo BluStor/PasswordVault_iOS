@@ -80,14 +80,13 @@ class Kdbx {
 
         let meta = KdbxXml.Meta(
             generator: "PasswordVault",
-            headerHash: "",
             databaseName: "Passwords",
             databaseNameChanged: nil,
             databaseDescription: "",
             databaseDescriptionChanged: nil,
             defaultUsername: "",
             defaultUsernameChanged: nil,
-            maintenanceHistoryDays: nil,
+            maintenanceHistoryDays: 365,
             color: "",
             masterKeyChanged: nil,
             masterKeyChangeRec: -1,
