@@ -172,9 +172,11 @@ class KdbxXml {
                 elem.addChild(str.build())
             }
 
-            let historyElem = elem.addChild(name: "History")
-            for entry in histories {
-                historyElem.addChild(entry.build())
+            if histories.count > 0 {
+                let historyElem = elem.addChild(name: "History")
+                for entry in histories {
+                    historyElem.addChild(entry.build())
+                }
             }
 
             return elem
