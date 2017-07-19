@@ -706,7 +706,7 @@ class KdbxXml {
 
         init() {
             formatter.locale = Locale(identifier: "en_US_POSIX")
-            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         }
     }
 
