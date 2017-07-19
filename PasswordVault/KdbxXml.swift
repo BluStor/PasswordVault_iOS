@@ -158,7 +158,7 @@ class KdbxXml {
             )
         }
 
-        func build() -> AEXMLElement {
+        func build(includeHistory: Bool) -> AEXMLElement {
             let elem = AEXMLElement(name: "Entry")
             elem.addChild(name: "UUID", value: uuid.data.base64EncodedString(), attributes: [:])
             elem.addChild(name: "IconID", value: iconId.xmlString, attributes: [:])
@@ -172,10 +172,11 @@ class KdbxXml {
                 elem.addChild(str.build())
             }
 
-            if histories.count > 0 {
+            if includeHistory {
                 let historyElem = elem.addChild(name: "History")
                 for entry in histories {
-                    historyElem.addChild(entry.build())
+                    let entry = entry.build(includeHistory: false)
+                    historyElem.addChild(entry)
                 }
             }
 
@@ -292,7 +293,7 @@ class KdbxXml {
             }
 
             for entry in entries {
-                elem.addChild(entry.build())
+                elem.addChild(entry.build(includeHistory: true))
             }
 
             return elem
