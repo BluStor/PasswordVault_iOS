@@ -166,7 +166,7 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
                         let selectedEntry = sortedEntries[indexPath.row - group.groups.count]
 
                         let alertController = UIAlertController(
-                            title: "Group",
+                            title: "Entry",
                             message: selectedEntry.getStr(key: "Title")?.value,
                             preferredStyle: .actionSheet
                         )
