@@ -121,7 +121,7 @@ class GKCard {
             var bufferCount = 0
 
             let timer = DispatchSource.makeTimerSource()
-            timer.scheduleRepeating(deadline: .now() + 2.0, interval: 2.0)
+            timer.scheduleRepeating(deadline: .now() + 1.0, interval: 1.0)
             timer.setEventHandler {
                 if bufferCount < self.controlPointBuffer.count {
                     bufferCount = self.controlPointBuffer.count
@@ -158,7 +158,7 @@ class GKCard {
 
     // MARK: Connection
 
-    func connect(timeout: TimeInterval = 10.0) -> Promise<Void> {
+    func connect(timeout: TimeInterval = 5.0) -> Promise<Void> {
         return Promise(in: .main, { resolve, reject in
             print("connect()")
             self.peripheral.connect(withTimeout: timeout, completion: { result in
