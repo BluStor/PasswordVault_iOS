@@ -184,7 +184,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
             return
         }
 
-        card.connect()
+        card.connect().retry(2)
         .then {
             DispatchQueue.main.async {
                 SVProgressHUD.setStatus("Transferring")

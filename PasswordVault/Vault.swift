@@ -94,7 +94,7 @@ class Vault {
                 syncStatus.fire(.connecting)
             }
             .then {
-                card.connect()
+                card.connect().retry(2)
             }
             .then {
                 syncStatus.fire(.transferring)
