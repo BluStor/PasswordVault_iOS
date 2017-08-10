@@ -6,7 +6,7 @@
 import Material
 import SVProgressHUD
 
-class EditEntryViewController: UITableViewController, IconPickerViewControllerDelegate, PasswordGeneratorViewControllerDelegate {
+class EditEntryViewController: UITableViewController, IconPickerViewControllerDelegate, PasswordGeneratorViewControllerDelegate, UITextViewDelegate {
 
     weak var groupDelegate: GroupViewControllerDelegate?
 
@@ -20,7 +20,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
     let copyButton = RaisedButton()
     let generateButton = RaisedButton()
     let urlTextField = ErrorTextField()
-    let notesTextField = ErrorTextField()
+    let notesTextView = TextView()
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -65,14 +65,16 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         titleTextField.autocapitalizationType = .sentences
         titleTextField.autocorrectionType = .no
         titleTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
+        titleTextField.isPlaceholderAnimated = false
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
 
-        // Title text view
+        // Username text view
 
         usernameTextField.placeholder = "Username"
         usernameTextField.autocapitalizationType = .none
         usernameTextField.autocorrectionType = .no
         usernameTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
+        usernameTextField.isPlaceholderAnimated = false
         usernameTextField.translatesAutoresizingMaskIntoConstraints = false
 
         // Password text view
@@ -83,6 +85,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         passwordTextField.autocorrectionType = .no
         passwordTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
         passwordTextField.isVisibilityIconButtonEnabled = true
+        passwordTextField.isPlaceholderAnimated = false
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
 
         // Copy button
@@ -108,15 +111,19 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         urlTextField.autocapitalizationType = .none
         urlTextField.autocorrectionType = .no
         urlTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
+        urlTextField.isPlaceholderAnimated = false
         urlTextField.translatesAutoresizingMaskIntoConstraints = false
 
         // Notes text view
 
-        notesTextField.placeholder = "Notes"
-        notesTextField.autocapitalizationType = .sentences
-        notesTextField.autocorrectionType = .no
-        notesTextField.addTarget(self, action: #selector(editingChanged(sender:)), for: .editingChanged)
-        notesTextField.translatesAutoresizingMaskIntoConstraints = false
+        notesTextView.delegate = self
+        notesTextView.placeholder = "Notes"
+        notesTextView.autocapitalizationType = .sentences
+        notesTextView.textContainerInsets = UIEdgeInsets(top: 5.0, left: 5.0, bottom: 5.0, right: 5.0)
+        notesTextView.layer.borderWidth = 1.0
+        notesTextView.layer.borderColor = UIColor(hex: 0xEAEAEA).cgColor
+        notesTextView.layer.cornerRadius = 10.0
+        notesTextView.translatesAutoresizingMaskIntoConstraints = false
 
         // Data
 
@@ -154,8 +161,6 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             entry.setStr(key: "Password", value: passwordTextField.text ?? "", isProtected: false)
         case urlTextField:
             entry.setStr(key: "Url", value: urlTextField.text ?? "", isProtected: false)
-        case notesTextField:
-            entry.setStr(key: "Notes", value: notesTextField.text ?? "", isProtected: false)
         default:
             break
         }
@@ -170,7 +175,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         usernameTextField.text = entry.getStr(key: "UserName")?.value
         passwordTextField.text = entry.getStr(key: "Password")?.value
         urlTextField.text = entry.getStr(key: "Url")?.value
-        notesTextField.text = entry.getStr(key: "Notes")?.value
+        notesTextView.text = entry.getStr(key: "Notes")?.value
     }
 
     func save() {
@@ -213,20 +218,27 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             || oldNotes != notes
     }
 
+    func scrollToFirstError() {
+        if titleTextField.isErrorRevealed {
+            tableView.scrollToRow(at: IndexPath(row: 1, section: 0), at: .top, animated: true)
+        }
+    }
+
     func validate() -> Bool {
         let title = titleTextField.text ?? ""
 
-        var hasError = false
+        let hasTitle = title.characters.count > 0
 
-        if title.characters.count == 0 {
+        if hasTitle {
+            titleTextField.isErrorRevealed = false
+        } else {
             titleTextField.detail = "This field is required."
             titleTextField.isErrorRevealed = true
-            hasError = true
-        } else {
-            titleTextField.isErrorRevealed = false
         }
 
-        return !hasError
+        scrollToFirstError()
+
+        return hasTitle
     }
 
     // MARK: IconPickerViewControllerDelegate
@@ -260,19 +272,19 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
         case 1:
             cell.contentView.addSubview(titleTextField)
             NSLayoutConstraint(item: titleTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 25.0).isActive = true
-            NSLayoutConstraint(item: titleTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: titleTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -25.0).isActive = true
             NSLayoutConstraint(item: titleTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: titleTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 2:
             cell.contentView.addSubview(usernameTextField)
-            NSLayoutConstraint(item: usernameTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 20.0).isActive = true
-            NSLayoutConstraint(item: usernameTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: usernameTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 25.0).isActive = true
+            NSLayoutConstraint(item: usernameTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -25.0).isActive = true
             NSLayoutConstraint(item: usernameTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: usernameTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 3:
             cell.contentView.addSubview(passwordTextField)
-            NSLayoutConstraint(item: passwordTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 20.0).isActive = true
-            NSLayoutConstraint(item: passwordTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: passwordTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 25.0).isActive = true
+            NSLayoutConstraint(item: passwordTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -25.0).isActive = true
             NSLayoutConstraint(item: passwordTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: passwordTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 4:
@@ -289,16 +301,17 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             NSLayoutConstraint(item: generateButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 6:
             cell.contentView.addSubview(urlTextField)
-            NSLayoutConstraint(item: urlTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 20.0).isActive = true
-            NSLayoutConstraint(item: urlTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: urlTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 25.0).isActive = true
+            NSLayoutConstraint(item: urlTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -25.0).isActive = true
             NSLayoutConstraint(item: urlTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: urlTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 7:
-            cell.contentView.addSubview(notesTextField)
-            NSLayoutConstraint(item: notesTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 20.0).isActive = true
-            NSLayoutConstraint(item: notesTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
-            NSLayoutConstraint(item: notesTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: notesTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+            cell.contentView.addSubview(notesTextView)
+            NSLayoutConstraint(item: notesTextView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 80.0).isActive = true
+            NSLayoutConstraint(item: notesTextView, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: notesTextView, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: notesTextView, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: notesTextView, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         default:
             break
         }
@@ -307,7 +320,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 9
+        return 8
     }
 
     // MARK: UITableViewControllerDelegate
@@ -319,6 +332,17 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
             iconPickerViewController.delegate = self
 
             navigationController?.pushViewController(iconPickerViewController, animated: true)
+        default:
+            break
+        }
+    }
+
+    // MARK: UITextViewDelegate
+
+    func textViewDidChange(_ textView: UITextView) {
+        switch textView {
+        case notesTextView:
+            entry.setStr(key: "Notes", value: notesTextView.text ?? "", isProtected: false)
         default:
             break
         }
