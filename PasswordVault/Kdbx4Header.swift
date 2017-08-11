@@ -17,7 +17,7 @@ class Kdbx4Header {
 
     var magicNumbers: [UInt8]
     var version: Version
-    var transformRounds: UInt64 = 8000
+    var transformRounds: UInt64 = 80000
 
     required init(readStream: DataReadStream) throws {
         magicNumbers = try readStream.readBytes(size: 8)

@@ -82,8 +82,8 @@ class DatabaseSettingsViewController: UITableViewController {
 
                 let password = passwordTextField.text ?? ""
 
-                let transformationRoundsStr = transformationRoundsTextField.text ?? "8000"
-                let transformationRounds = Int(transformationRoundsStr) ?? 8000
+                let transformationRoundsStr = transformationRoundsTextField.text ?? "80000"
+                let transformationRounds = Int(transformationRoundsStr) ?? 80000
 
                 kdbx.transformationRounds = transformationRounds
 
@@ -101,13 +101,13 @@ class DatabaseSettingsViewController: UITableViewController {
     func validate() -> Bool {
         let password = passwordTextField.text ?? ""
         let passwordRepeat = passwordRepeatTextField.text ?? ""
-        let transformationRoundsStr = transformationRoundsTextField.text ?? "8000"
-        let transformationRounds = Int(transformationRoundsStr) ?? 8000
+        let transformationRoundsStr = transformationRoundsTextField.text ?? "80000"
+        let transformationRounds = Int(transformationRoundsStr) ?? 80000
 
         var hasError = false
 
-        if transformationRounds < 8000 {
-            transformationRoundsTextField.detail = "Must be at least 8000."
+        if transformationRounds < 80000 {
+            transformationRoundsTextField.detail = "Must be at least 80000."
             transformationRoundsTextField.isErrorRevealed = true
             hasError = true
         } else {
@@ -136,8 +136,8 @@ class DatabaseSettingsViewController: UITableViewController {
             return false
         }
 
-        let transformationRoundsStr = transformationRoundsTextField.text ?? "8000"
-        let transformationRounds = Int(transformationRoundsStr) ?? 8000
+        let transformationRoundsStr = transformationRoundsTextField.text ?? "80000"
+        let transformationRounds = Int(transformationRoundsStr) ?? 80000
 
         return password.characters.count > 0
             || transformationRounds != kdbx.transformationRounds

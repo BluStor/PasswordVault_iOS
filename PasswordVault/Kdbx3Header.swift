@@ -50,7 +50,7 @@ class Kdbx3Header {
     var compressionType = CompressionType.gzip
     var masterKeySeed = [UInt8]()
     var transformSeed = [UInt8]()
-    var transformRounds: UInt64 = 8000
+    var transformRounds: UInt64 = 80000
     var encryptionIv = [UInt8]()
     var protectedStreamKey = [UInt8]()
     var streamStartBytes = [UInt8]()
