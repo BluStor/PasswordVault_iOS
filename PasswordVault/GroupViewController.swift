@@ -138,12 +138,22 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
                         }))
 
                         alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
-                            if let kdbx = Vault.kdbx {
-                                kdbx.delete(groupUUID: selectedGroup.uuid)
+                            let deleteAlertController = UIAlertController(title: "Warning", message: "Are you sure you want to delete this group?", preferredStyle: .alert)
 
-                                self.reloadData()
-                                Vault.save()
-                            }
+                            deleteAlertController.addAction(UIAlertAction(title: "Delete", style: .default, handler: { _ in
+                                if let kdbx = Vault.kdbx {
+                                    kdbx.delete(groupUUID: selectedGroup.uuid)
+
+                                    self.reloadData()
+                                    Vault.save()
+                                }
+                            }))
+
+                            deleteAlertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+                                deleteAlertController.dismiss(animated: true, completion: nil)
+                            }))
+
+                            self.present(deleteAlertController, animated: true, completion: nil)
                         }))
 
                         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
@@ -178,12 +188,22 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
                         }))
 
                         alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
-                            if let kdbx = Vault.kdbx {
-                                kdbx.delete(entryUUID: selectedEntry.uuid)
+                            let deleteAlertController = UIAlertController(title: "Warning", message: "Are you sure you want to delete this group?", preferredStyle: .alert)
 
-                                self.reloadData()
-                                Vault.save()
-                            }
+                            deleteAlertController.addAction(UIAlertAction(title: "Delete", style: .default, handler: { _ in
+                                if let kdbx = Vault.kdbx {
+                                    kdbx.delete(entryUUID: selectedEntry.uuid)
+
+                                    self.reloadData()
+                                    Vault.save()
+                                }
+                            }))
+
+                            deleteAlertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+                                deleteAlertController.dismiss(animated: true, completion: nil)
+                            }))
+
+                            self.present(deleteAlertController, animated: true, completion: nil)
                         }))
 
                         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
