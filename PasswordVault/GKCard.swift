@@ -158,7 +158,7 @@ class GKCard {
 
     // MARK: Connection
 
-    func connect(timeout: TimeInterval = 5.0) -> Promise<Void> {
+    func connect(timeout: TimeInterval = 10.0) -> Promise<Void> {
         return Promise(in: .main, { resolve, reject in
             print("connect()")
             self.peripheral.connect(withTimeout: timeout, completion: { result in
