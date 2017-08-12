@@ -57,6 +57,7 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
 
         // Save button
 
+        saveButton.pulseColor = UIColor(hex: 0xa0e0ff)
         saveButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
 
         // Table view
