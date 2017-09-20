@@ -13,7 +13,7 @@ class DatabaseSettingsViewController: UITableViewController {
     let transformationRoundsTextField = ErrorTextField()
 
     override func viewDidLoad() {
-        navigationItem.title = "Database Settings"
+        title = "Database Settings"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white
@@ -59,7 +59,7 @@ class DatabaseSettingsViewController: UITableViewController {
         load()
     }
 
-    func didTouchUpInside(sender: UIView) {
+    @objc func didTouchUpInside(sender: UIView) {
         switch sender {
         case saveButton:
             save()

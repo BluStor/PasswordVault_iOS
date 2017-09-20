@@ -14,7 +14,7 @@ class SplashViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        navigationItem.title = "Password Vault"
+        title = "Password Vault"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white

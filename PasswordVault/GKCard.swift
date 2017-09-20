@@ -30,11 +30,11 @@ class GKCard {
     }
 
     static func checkBluetoothState() -> Promise<Void> {
-        return Promise { resolve, reject in
+        return Promise { resolve, reject, _ in
             SwiftyBluetooth.asyncState(completion: { state in
                 switch state {
                 case .poweredOn:
-                    resolve()
+                    resolve(())
                 default:
                     reject(CardError.bluetoothNotPoweredOn)
                 }
@@ -65,14 +65,14 @@ class GKCard {
     }
 
     private func makeCommandData(command: UInt8, string: String?) -> Promise<Data> {
-        return Promise { resolve, reject in
+        return Promise { resolve, reject, _ in
             let dataWriteStream = DataWriteStream()
 
             do {
                 try dataWriteStream.write(command)
 
                 if let string = string {
-                    try dataWriteStream.write(UInt8(truncatingBitPattern: string.characters.count))
+                    try dataWriteStream.write(UInt8(truncatingIfNeeded: string.characters.count))
                     for byte in [UInt8](string.utf8) {
                         try dataWriteStream.write(byte)
                     }
@@ -87,7 +87,7 @@ class GKCard {
     }
 
     private func fileWrite(data: Data) -> Promise<Void> {
-        return Promise { resolve, reject in
+        return Promise { resolve, reject, _ in
             var offset = 0
 
             repeat {
@@ -112,16 +112,16 @@ class GKCard {
                 offset += chunkSize
             } while offset < data.count
 
-            resolve()
+            resolve(())
         }
     }
 
     private func waitOnControlPointResult() -> Promise<Data> {
-        return Promise { resolve, _ in
+        return Promise { resolve, _, _ in
             var bufferCount = 0
 
             let timer = DispatchSource.makeTimerSource()
-            timer.scheduleRepeating(deadline: .now() + 1.0, interval: 1.0)
+            timer.schedule(deadline: .now() + 1.0, repeating: 1.0)
             timer.setEventHandler {
                 if bufferCount < self.controlPointBuffer.count {
                     bufferCount = self.controlPointBuffer.count
@@ -137,7 +137,7 @@ class GKCard {
     }
 
     private func writeToControlPoint(data: Data) -> Promise<Void> {
-        return Promise { resolve, reject in
+        return Promise { resolve, reject, _ in
             print("writeToControlPoint: \([UInt8](data).hexString)")
             self.peripheral.writeValue(
                 ofCharacWithUUID: GKCard.controlPointUUID,
@@ -149,7 +149,7 @@ class GKCard {
                     case .failure(let error):
                         reject(error)
                     case .success:
-                        resolve()
+                        resolve(())
                     }
                 }
             )
@@ -159,7 +159,7 @@ class GKCard {
     // MARK: Connection
 
     func connect(timeout: TimeInterval = 10.0) -> Promise<Void> {
-        return Promise(in: .main, { resolve, reject in
+        return Promise(in: .main, { resolve, reject, _ in
             print("connect()")
             self.peripheral.connect(withTimeout: timeout, completion: { result in
                 switch result {
@@ -187,7 +187,7 @@ class GKCard {
                             }
                         case .success:
                             print("connected")
-                            resolve()
+                            resolve(())
                         }
                     }
                 }
@@ -196,7 +196,7 @@ class GKCard {
     }
 
     func disconnect() -> Promise<Void> {
-        return Promise { resolve, reject in
+        return Promise { resolve, reject, _ in
             print("disconnect()")
             self.peripheral.disconnect { result in
                 switch result {
@@ -204,7 +204,7 @@ class GKCard {
                     reject(error)
                 case .success:
                     print("disconnected")
-                    resolve()
+                    resolve(())
                 }
             }
         }
@@ -213,11 +213,11 @@ class GKCard {
     // MARK: Commands
 
     func checksum(data: Data) -> Promise<Void> {
-        return Promise { resolve, reject in
+        return Promise { resolve, reject, _ in
             let ourChecksum = data.crc16()
             let ourChecksumBytes = [
-                UInt8(truncatingBitPattern: ourChecksum >> 8),
-                UInt8(truncatingBitPattern: ourChecksum)
+                UInt8(truncatingIfNeeded: ourChecksum >> 8),
+                UInt8(truncatingIfNeeded: ourChecksum)
             ]
 
             self.peripheral.readValue(ofCharacWithUUID: GKCard.fileWriteUUID, fromServiceWithUUID: GKCard.serviceUUID, completion: { result in
@@ -232,7 +232,7 @@ class GKCard {
                     print("our checksum: \(ourChecksumBytes.hexString)")
 
                     if valueBytes == ourChecksumBytes {
-                        resolve()
+                        resolve(())
                     } else {
                         reject(CardError.invalidChecksum)
                     }
@@ -244,7 +244,7 @@ class GKCard {
     }
 
     func close(path: String) -> Promise<Void> {
-        return Promise { resolve, reject in
+        return Promise { resolve, reject, _ in
             GKCard.checkBluetoothState()
             .then {
                 self.makeCommandData(command: 4, string: path)
@@ -256,7 +256,7 @@ class GKCard {
     }
 
     func delete(path: String) -> Promise<Void> {
-        return Promise { resolve, reject in
+        return Promise { resolve, reject, _ in
             guard path.characters.count <= 30 else {
                 reject(CardError.argumentInvalid)
                 return
@@ -273,7 +273,7 @@ class GKCard {
     }
 
     func exists(path: String) -> Promise<Bool> {
-        return Promise { resolve, reject in
+        return Promise { resolve, reject, _ in
             guard path.characters.count <= 30 else {
                 reject(CardError.argumentInvalid)
                 return
@@ -300,7 +300,7 @@ class GKCard {
     }
 
     func get(path: String) -> Promise<Data> {
-        return Promise { resolve, reject in
+        return Promise { resolve, reject, _ in
             guard path.characters.count <= 30 else {
                 reject(CardError.argumentInvalid)
                 return
@@ -324,7 +324,7 @@ class GKCard {
     }
 
     func rename(name: String) -> Promise<Void> {
-        return Promise { resolve, reject in
+        return Promise { resolve, reject, _ in
             guard name.characters.count <= 11 else {
                 reject(CardError.argumentInvalid)
                 return
@@ -341,7 +341,7 @@ class GKCard {
     }
 
     func put(data: Data) -> Promise<Void> {
-        return Promise { resolve, reject in
+        return Promise { resolve, reject, _ in
             GKCard.checkBluetoothState()
             .then {
                 self.makeCommandData(command: 3, string: nil)

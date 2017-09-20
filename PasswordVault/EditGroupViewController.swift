@@ -27,11 +27,9 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
     }
 
     override func viewDidLoad() {
-        super.viewDidLoad()
-
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        navigationItem.title = "Edit group"
+        title = "Edit group"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white
@@ -71,7 +69,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
         reloadData()
     }
 
-    func didTouchUpInside(sender: UIView) {
+    @objc func didTouchUpInside(sender: UIView) {
         switch sender {
         case navigationItem.backButton:
             print("touchUpInside")
@@ -82,7 +80,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
         }
     }
 
-    func editingChanged(sender: UIView) {
+    @objc func editingChanged(sender: UIView) {
         switch sender {
         case nameTextField:
             group.name = nameTextField.text ?? ""

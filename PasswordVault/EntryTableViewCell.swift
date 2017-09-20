@@ -29,7 +29,7 @@ class EntryTableViewCell: UITableViewCell {
         // Icon image view
 
         iconImageView.contentMode = .scaleAspectFit
-        iconImageView.setContentHuggingPriority(UILayoutPriorityRequired, for: .horizontal)
+        iconImageView.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)
         iconImageView.translatesAutoresizingMaskIntoConstraints = false
 
         contentView.addSubview(iconImageView)

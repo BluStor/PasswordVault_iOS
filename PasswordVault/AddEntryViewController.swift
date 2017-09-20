@@ -58,11 +58,9 @@ class AddEntryViewController: UITableViewController, IconPickerViewControllerDel
     }
 
     override func viewDidLoad() {
-        super.viewDidLoad()
-
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        navigationItem.title = "Add entry"
+        title = "Add entry"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white
@@ -156,7 +154,7 @@ class AddEntryViewController: UITableViewController, IconPickerViewControllerDel
         reloadData()
     }
 
-    func didTouchUpInside(sender: UIView) {
+    @objc func didTouchUpInside(sender: UIView) {
         switch sender {
         case copyButton:
             UIPasteboard.general.string = passwordTextField.text
@@ -172,7 +170,7 @@ class AddEntryViewController: UITableViewController, IconPickerViewControllerDel
         }
     }
 
-    func editingChanged(sender: UIView) {
+    @objc func editingChanged(sender: UIView) {
         switch sender {
         case titleTextField:
             entry.setStr(key: "Title", value: titleTextField.text ?? "", isProtected: false)

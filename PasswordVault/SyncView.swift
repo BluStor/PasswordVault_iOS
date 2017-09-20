@@ -87,7 +87,7 @@ class SyncView: UIView {
         }
     }
 
-    func didTouchUpInside(sender: UIView) {
+    @objc func didTouchUpInside(sender: UIView) {
         switch sender {
         case retryButton:
             self.retryButton.removeFromSuperview()

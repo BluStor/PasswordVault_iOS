@@ -33,7 +33,7 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        navigationItem.title = group.name
+        title = group.name
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white
@@ -102,7 +102,7 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
         delegate?.reloadData()
     }
 
-    func didLongPress(longPressGestureRecognizer: UILongPressGestureRecognizer) {
+    @objc func didLongPress(longPressGestureRecognizer: UILongPressGestureRecognizer) {
         guard let view = longPressGestureRecognizer.view else {
             return
         }
@@ -222,7 +222,7 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
     }
 
-    func didTouchUpInside(sender: UIView) {
+    @objc func didTouchUpInside(sender: UIView) {
         switch sender {
         case addFabButton:
             let alertController = UIAlertController(title: "Add", message: nil, preferredStyle: .actionSheet)

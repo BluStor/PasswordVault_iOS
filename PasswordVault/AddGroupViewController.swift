@@ -45,11 +45,9 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
     }
 
     override func viewDidLoad() {
-        super.viewDidLoad()
-
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        navigationItem.title = "Add group"
+        title = "Add group"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white
@@ -87,7 +85,7 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
         _ = nameTextField.becomeFirstResponder()
     }
 
-    func didTouchUpInside(sender: UIView) {
+    @objc func didTouchUpInside(sender: UIView) {
         switch sender {
         case saveButton:
             save()
@@ -96,7 +94,7 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
         }
     }
 
-    func editingChanged(sender: UIView) {
+    @objc func editingChanged(sender: UIView) {
         switch sender {
         case nameTextField:
             nameTextField.isErrorRevealed = false

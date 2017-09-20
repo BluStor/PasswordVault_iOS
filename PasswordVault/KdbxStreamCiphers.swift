@@ -55,10 +55,11 @@ class Salsa20: KdbxStreamCipher {
     }
 
     private func toUInt32(bytes: [UInt8], offset: Int) -> UInt32 {
-        return UInt32(bytes[offset])
-            | UInt32(bytes[offset + 1]) << 8
-            | UInt32(bytes[offset + 2]) << 16
-            | UInt32(bytes[offset + 3]) << 24
+        let a = UInt32(bytes[offset])
+        let b = UInt32(bytes[offset + 1]) << 8
+        let c = UInt32(bytes[offset + 2]) << 16
+        let d = UInt32(bytes[offset + 3]) << 24
+        return a | b | c | d
     }
 
     func transformBlock(inputBuffer: [UInt8], inputOffset: Int, inputCount: Int, outputBuffer: inout [UInt8], outputOffset: Int) {

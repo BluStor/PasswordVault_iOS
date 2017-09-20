@@ -35,7 +35,7 @@ class PasswordGeneratorViewController: UITableViewController {
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        navigationItem.title = "Generate password"
+        title = "Generate password"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white
@@ -82,7 +82,7 @@ class PasswordGeneratorViewController: UITableViewController {
         reloadData()
     }
 
-    func didValueChanged(sender: UIView) {
+    @objc func didValueChanged(sender: UIView) {
         switch sender {
         case slider:
             updateCharacterCountLabel()
@@ -92,7 +92,7 @@ class PasswordGeneratorViewController: UITableViewController {
         }
     }
 
-    func didTouchUpInside(sender: UIView) {
+    @objc func didTouchUpInside(sender: UIView) {
         switch sender {
         case setButton:
             delegate?.setPassword(passwordLabel.text ?? "")

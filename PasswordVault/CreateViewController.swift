@@ -19,11 +19,9 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
     let openDatabaseButton = RaisedButton()
 
     override func viewDidLoad() {
-        super.viewDidLoad()
-
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        navigationItem.title = "Create Vault"
+        title = "Create Vault"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white
@@ -83,7 +81,7 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
         createButton.translatesAutoresizingMaskIntoConstraints = false
     }
 
-    func didTouchUpInside(sender: UIView) {
+    @objc func didTouchUpInside(sender: UIView) {
         switch sender {
         case createButton:
             create()
@@ -116,7 +114,7 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
         }
     }
 
-    func editingChanged(sender: UIView) {
+    @objc func editingChanged(sender: UIView) {
         switch sender {
         case passwordTextField:
             passwordTextField.isErrorRevealed = false

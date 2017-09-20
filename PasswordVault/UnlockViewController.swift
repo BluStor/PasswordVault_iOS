@@ -20,11 +20,9 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     let chooseCardButton = RaisedButton()
 
     override func viewDidLoad() {
-        super.viewDidLoad()
-
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        navigationItem.title = "Password Vault \(versionString())"
+        title = "Password Vault \(versionString())"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white
@@ -97,7 +95,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         }
     }
 
-    func didTouchUpInside(sender: UIView) {
+    @objc func didTouchUpInside(sender: UIView) {
         switch sender {
         case moreButton:
             let alertController = UIAlertController(title: "Menu", message: nil, preferredStyle: .actionSheet)
