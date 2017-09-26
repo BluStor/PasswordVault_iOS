@@ -4,13 +4,13 @@ target 'PasswordVault' do
   use_frameworks!
 
   pod 'AEXML', '4.1.0'
-  pod 'GzipSwift-beta', '4.0.0-beta.2'
+  pod 'GzipSwift', '4.0.0'
   pod 'HydraAsync', '1.1.0'
-  pod 'IQKeyboardManagerSwift', '4.0.10'
+  pod 'IQKeyboardManagerSwift', '5.0.2'
   pod 'Material', '2.10.2'
   pod 'Signals', '4.0.0'
   pod 'SVProgressHUD', '2.2.1'
-  pod 'SwiftyBluetooth', '0.4.0'
+  pod 'SwiftyBluetooth', '1.0.0'
 
   target 'PasswordVaultTests' do
     inherit! :search_paths
