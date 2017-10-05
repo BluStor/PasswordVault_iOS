@@ -47,7 +47,7 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        title = "Add group"
+        navigationItem.titleLabel.text = "Add group"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white

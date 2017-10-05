@@ -33,7 +33,7 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        title = group.name
+        navigationItem.titleLabel.text = group.name
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white

@@ -31,7 +31,7 @@ class ChooseCardViewController: UITableViewController {
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        title = "Choose your card"
+        navigationItem.titleLabel.text = "Choose your card"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white

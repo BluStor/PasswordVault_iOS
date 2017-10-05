@@ -35,7 +35,7 @@ class PasswordGeneratorViewController: UITableViewController {
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        title = "Generate password"
+        navigationItem.titleLabel.text = "Generate password"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white

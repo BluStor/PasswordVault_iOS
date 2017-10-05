@@ -31,7 +31,7 @@ class IconPickerViewController: UIViewController, UICollectionViewDataSource, UI
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        title = "Icon"
+        navigationItem.titleLabel.text = "Icon"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white

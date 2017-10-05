@@ -13,7 +13,7 @@ class DatabaseSettingsViewController: UITableViewController {
     let transformationRoundsTextField = ErrorTextField()
 
     override func viewDidLoad() {
-        title = "Database Settings"
+        navigationItem.titleLabel.text = "Database Settings"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white

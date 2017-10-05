@@ -35,7 +35,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        title = "Edit entry"
+        navigationItem.titleLabel.text = "Edit entry"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white

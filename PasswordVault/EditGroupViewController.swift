@@ -29,7 +29,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        title = "Edit group"
+        navigationItem.titleLabel.text = "Edit group"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white

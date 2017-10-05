@@ -22,7 +22,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        title = "Password Vault \(versionString())"
+        navigationItem.titleLabel.text = "Password Vault \(versionString())"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white

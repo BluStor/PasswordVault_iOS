@@ -19,7 +19,7 @@ class SearchViewController: UIViewController, SearchBarDelegate, UITableViewData
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        title = "Entry search"
+        navigationItem.titleLabel.text = "Entry search"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white

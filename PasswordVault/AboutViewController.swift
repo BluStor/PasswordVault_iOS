@@ -33,7 +33,7 @@ class AboutViewController: UITableViewController {
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        title = "About"
+        navigationItem.titleLabel.text = "About"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white

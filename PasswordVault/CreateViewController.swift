@@ -21,7 +21,7 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
-        title = "Create Vault"
+        navigationItem.titleLabel.text = "Create Vault"
         navigationItem.backButton.tintColor = .white
         navigationItem.titleLabel.textColor = .white
         navigationItem.detailLabel.textColor = .white
