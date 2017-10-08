@@ -153,27 +153,17 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         default:
             message = "\(error)"
         }
+        
+        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
 
-        DispatchQueue.main.async {
-            HUD.hide()
+        alertController.addAction(UIAlertAction(title: "Okay", style: .default, handler: { _ in
+            alertController.dismiss(animated: true, completion: nil)
+        }))
 
-            let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-
-            alertController.addAction(UIAlertAction(title: "Okay", style: .default, handler: { _ in
-                alertController.dismiss(animated: true, completion: nil)
-            }))
-
-            self.present(alertController, animated: true, completion: nil)
-        }
+        self.present(alertController, animated: true, completion: nil)
     }
 
     func open() {
-        let password = passwordTextField.text ?? ""
-        passwordTextField.text = ""
-        passwordTextField.resignFirstResponder()
-
-        HUD.show(.labeledProgress(title: "Opening", subtitle: "Connecting"))
-
         guard let cardUUID = Vault.cardUUID else {
             return
         }
@@ -181,40 +171,43 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         guard let card = GKCard(uuid: cardUUID) else {
             return
         }
+        
+        let password = passwordTextField.text ?? ""
+        passwordTextField.text = ""
+        passwordTextField.resignFirstResponder()
 
-        card.connect().retry(2)
-        .then {
-            DispatchQueue.main.async {
-                HUD.show(.labeledProgress(title: "Opening", subtitle: "Transferring"))
-            }
-        }
-        .then {
-            card.get(path: Vault.dbPath)
-        }
-        .then { data in
-            DispatchQueue.main.async {
-                HUD.show(.labeledProgress(title: "Opening", subtitle: "Decrypting"))
-            }
-
-            card.disconnect().then {}
-
+        async(in: .background, {
             do {
-                let kdbx = try Vault.open(encryptedData: data, password: password)
-
-                DispatchQueue.main.async {
+                async(in: .main, {
+                    HUD.dimsBackground = false
+                    HUD.show(.labeledProgress(title: "Opening", subtitle: "Connecting"))
+                })
+                
+                try await(in: .background, card.connect().retry(2))
+                async(in: .main, {
+                    HUD.show(.labeledProgress(title: "Opening", subtitle: "Transferring"))
+                })
+                
+                let data = try await(card.get(path: Vault.dbPath))
+                async(in: .main, {
+                    HUD.show(.labeledProgress(title: "Opening", subtitle: "Decrypting"))
+                })
+                
+                let kdbx = try await(in: .background, { resolve, reject, _ in
+                    return resolve(try Vault.open(encryptedData: data, password: password))
+                })
+                
+                try await(card.disconnect())
+                
+                async(in: .main, {
                     HUD.hide()
-
                     let groupViewController = GroupViewController(group: kdbx.database.root.group)
                     self.navigationController?.pushViewController(groupViewController, animated: true)
-                }
+                })
             } catch {
                 self.showError(error)
             }
-        }
-        .catch { error in
-            card.disconnect().then {}
-            self.showError(error)
-        }
+        })
     }
 
     func versionString() -> String {
