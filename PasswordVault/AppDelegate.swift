@@ -5,7 +5,6 @@
 
 import IQKeyboardManagerSwift
 import Material
-import SVProgressHUD
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,13 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().titleTextAttributes = [
             NSAttributedStringKey.foregroundColor: UIColor.white
         ]
-
-        SVProgressHUD.setBackgroundLayerColor(UIColor(white: 0.0, alpha: 0.3))
-        SVProgressHUD.setDefaultAnimationType(.flat)
-        SVProgressHUD.setDefaultMaskType(.custom)
-        SVProgressHUD.setFadeInAnimationDuration(0.0)
-        SVProgressHUD.setMaximumDismissTimeInterval(2.0)
-
+        
         // Keyboard manager
 
         let keyboardManager = IQKeyboardManager.sharedManager()

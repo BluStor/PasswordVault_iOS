@@ -5,7 +5,7 @@
 
 import Hydra
 import Material
-import SVProgressHUD
+import PKHUD
 
 class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
@@ -155,7 +155,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         }
 
         DispatchQueue.main.async {
-            SVProgressHUD.dismiss()
+            HUD.hide()
 
             let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
 
@@ -172,7 +172,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         passwordTextField.text = ""
         passwordTextField.resignFirstResponder()
 
-        SVProgressHUD.show(withStatus: "Connecting")
+        HUD.show(.labeledProgress(title: "Opening", subtitle: "Connecting"))
 
         guard let cardUUID = Vault.cardUUID else {
             return
@@ -185,7 +185,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         card.connect().retry(2)
         .then {
             DispatchQueue.main.async {
-                SVProgressHUD.setStatus("Transferring")
+                HUD.show(.labeledProgress(title: "Opening", subtitle: "Transferring"))
             }
         }
         .then {
@@ -193,7 +193,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         }
         .then { data in
             DispatchQueue.main.async {
-                SVProgressHUD.setStatus("Decrypting")
+                HUD.show(.labeledProgress(title: "Opening", subtitle: "Decrypting"))
             }
 
             card.disconnect().then {}
@@ -202,7 +202,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
                 let kdbx = try Vault.open(encryptedData: data, password: password)
 
                 DispatchQueue.main.async {
-                    SVProgressHUD.dismiss()
+                    HUD.hide()
 
                     let groupViewController = GroupViewController(group: kdbx.database.root.group)
                     self.navigationController?.pushViewController(groupViewController, animated: true)

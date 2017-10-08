@@ -4,7 +4,7 @@
 //
 
 import Material
-import SVProgressHUD
+import PKHUD
 
 class AddEntryViewController: UITableViewController, IconPickerViewControllerDelegate, PasswordGeneratorViewControllerDelegate, UITextViewDelegate {
 
@@ -158,7 +158,8 @@ class AddEntryViewController: UITableViewController, IconPickerViewControllerDel
         switch sender {
         case copyButton:
             UIPasteboard.general.string = passwordTextField.text
-            SVProgressHUD.showSuccess(withStatus: "Password copied")
+            
+            HUD.show(.labeledSuccess(title: "Password copied", subtitle: nil))
         case generateButton:
             let passwordGeneratorViewController = PasswordGeneratorViewController()
             passwordGeneratorViewController.delegate = self

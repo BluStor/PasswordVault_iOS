@@ -6,8 +6,8 @@ PODS:
   - Material (2.10.2):
     - Material/Core (= 2.10.2)
   - Material/Core (2.10.2)
+  - PKHUD (5.0.0)
   - Signals (4.0.0)
-  - SVProgressHUD (2.2.1)
   - SwiftyBluetooth (1.0.0)
 
 DEPENDENCIES:
@@ -16,8 +16,8 @@ DEPENDENCIES:
   - HydraAsync (= 1.1.0)
   - IQKeyboardManagerSwift (= 5.0.2)
   - Material (= 2.10.2)
+  - PKHUD (= 5.0.0)
   - Signals (= 4.0.0)
-  - SVProgressHUD (= 2.2.1)
   - SwiftyBluetooth (= 1.0.0)
 
 SPEC CHECKSUMS:
@@ -26,10 +26,10 @@ SPEC CHECKSUMS:
   HydraAsync: b3d6495b55f845e98ec5b07714da2a6750f6c363
   IQKeyboardManagerSwift: e580da046d804d2836ee84668cc17e43a850a35d
   Material: 8265a77332acfb7872a7fd0f4f2023f080d25d1f
+  PKHUD: 3c001512c6e002091184197a8de7a20420786e3b
   Signals: 6d818e1b7c39f2bf61cfef30bf314329990d1853
-  SVProgressHUD: db27c54e6e18bc903341661fc9feb55e04905cc4
   SwiftyBluetooth: 9e26b1367f56aa60f35713f6d968382144bccfd5
 
-PODFILE CHECKSUM: 9c6f9ac67a37b908c04423b35093c021381e02b8
+PODFILE CHECKSUM: 314405e93034a9aec8503d2df93c7b98ffb8da27
 
 COCOAPODS: 1.4.0.beta.1

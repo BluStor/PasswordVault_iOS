@@ -4,7 +4,6 @@
 //
 
 import Material
-import SVProgressHUD
 
 class CreateViewController: UITableViewController, UITextFieldDelegate {
 
@@ -147,8 +146,6 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
         }
 
         DispatchQueue.main.async {
-            SVProgressHUD.dismiss()
-
             let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
 
             alertController.addAction(UIAlertAction(title: "Okay", style: .default, handler: { _ in
