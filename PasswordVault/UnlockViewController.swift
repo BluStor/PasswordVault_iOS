@@ -17,7 +17,10 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     let vaultImageView = UIImageView(image: UIImage(named: "vault"))
     let passwordTextField = TextField()
     let openButton = RaisedButton()
-    let chooseCardButton = RaisedButton()
+    let savePasswordButton = RaisedButton()
+    let deletePasswordButton = RaisedButton()
+    
+    var hasPassword = false
 
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
@@ -56,30 +59,34 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         passwordTextField.returnKeyType = .done
         passwordTextField.isVisibilityIconButtonEnabled = true
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
-
+        
         // Open button
 
         openButton.setTitle("Open", for: .normal)
         openButton.backgroundColor = Theme.Buttons.normalBackgroundColor
         openButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
         openButton.translatesAutoresizingMaskIntoConstraints = false
-
-        // Choose card button
-
-        chooseCardButton.setTitle("Choose card", for: .normal)
-        chooseCardButton.pulseColor = UIColor.white
-        chooseCardButton.backgroundColor = Theme.Buttons.mutedBackgroundColor
-        chooseCardButton.setTitleColor(Theme.Buttons.mutedTitleColor, for: .normal)
-        chooseCardButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
-        chooseCardButton.translatesAutoresizingMaskIntoConstraints = false
-
-        // Bluetooth check
-
-        bluetoothCheck()
+        
+        // Save password button
+        
+        savePasswordButton.setTitle("Save Password", for: .normal)
+        savePasswordButton.titleColor = Theme.Buttons.mutedTitleColor
+        savePasswordButton.backgroundColor = Theme.Buttons.mutedBackgroundColor
+        savePasswordButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
+        savePasswordButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Delete password button
+        
+        deletePasswordButton.setTitle("Delete Password", for: .normal)
+        deletePasswordButton.titleColor = Theme.Buttons.mutedTitleColor
+        deletePasswordButton.backgroundColor = Theme.Buttons.mutedBackgroundColor
+        deletePasswordButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
+        deletePasswordButton.translatesAutoresizingMaskIntoConstraints = false
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        Vault.close()
+    override func viewWillAppear(_ animated: Bool) {
+        bluetoothCheck()
+        reloadUI()
     }
 
     func bluetoothCheck() {
@@ -94,9 +101,16 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
             self.present(alertController, animated: true, completion: nil)
         }
     }
+    
+    func reloadUI() {
+        hasPassword = Biometrics.hasPassword()
+        tableView.reloadData()
+    }
 
     @objc func didTouchUpInside(sender: UIView) {
         switch sender {
+        case deletePasswordButton:
+            deletePassword()
         case moreButton:
             let alertController = UIAlertController(title: "Menu", message: nil, preferredStyle: .actionSheet)
 
@@ -125,9 +139,8 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
             present(alertController, animated: true, completion: nil)
         case openButton:
             open()
-        case chooseCardButton:
-            let chooseCardViewController = ChooseCardViewController()
-            navigationController?.setViewControllers([chooseCardViewController], animated: true)
+        case savePasswordButton:
+            savePassword()
         default:
             break
         }
@@ -172,10 +185,20 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
             return
         }
         
-        let password = passwordTextField.text ?? ""
-        passwordTextField.text = ""
-        passwordTextField.resignFirstResponder()
-
+        var password = ""
+        
+        if Biometrics.hasPassword() {
+            do {
+                password = try Biometrics.getPassword()
+            } catch {
+                print(error)
+            }
+        }
+        
+        if password.isEmpty {
+            password = getPassword()
+        }
+        
         async(in: .background, {
             do {
                 async(in: .main, {
@@ -197,17 +220,49 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
                     return resolve(try Vault.open(encryptedData: data, password: password))
                 })
                 
-                try await(card.disconnect())
-                
                 async(in: .main, {
                     HUD.hide()
                     let groupViewController = GroupViewController(group: kdbx.database.root.group)
                     self.navigationController?.pushViewController(groupViewController, animated: true)
                 })
             } catch {
-                self.showError(error)
+                async(in: .main, {
+                    HUD.hide()
+                    self.showError(error)
+                })
             }
+            
+            card.disconnect().then {}
         })
+    }
+    
+    func deletePassword() {
+        do {
+            try Biometrics.deletePassword()
+            tableView.reloadData()
+            reloadUI()
+        } catch {
+            print(error)
+        }
+    }
+    
+    func getPassword() -> String {
+        let password = passwordTextField.text ?? ""
+        passwordTextField.text = ""
+        passwordTextField.resignFirstResponder()
+        
+        return password
+    }
+    
+    func savePassword() {
+        let password = getPassword()
+        do {
+            try Biometrics.setPassword(password: password)
+            tableView.reloadData()
+            reloadUI()
+        } catch {
+            print(error)
+        }
     }
 
     func versionString() -> String {
@@ -218,10 +273,32 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     // MARK: UITableViewDataSource
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return 5
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch indexPath.row {
+        case 1:
+            if hasPassword {
+                return 0.0
+            }
+        case 3:
+            if hasPassword {
+                return 0.0
+            }
+        case 4:
+            if !hasPassword {
+                return 0.0
+            }
+        default:
+            break
+        }
+        
+        return UITableViewAutomaticDimension
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = UITableViewCell()
         cell.selectionStyle = .none
 
@@ -236,17 +313,35 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
             NSLayoutConstraint(item: vaultImageView, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
             NSLayoutConstraint(item: vaultImageView, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
         case 1:
-            cell.contentView.addSubview(passwordTextField)
-            NSLayoutConstraint(item: passwordTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 30.0).isActive = true
-            NSLayoutConstraint(item: passwordTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
-            NSLayoutConstraint(item: passwordTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: passwordTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+            if !hasPassword {
+                cell.contentView.addSubview(passwordTextField)
+                NSLayoutConstraint(item: passwordTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 30.0).isActive = true
+                NSLayoutConstraint(item: passwordTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+                NSLayoutConstraint(item: passwordTextField, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+                NSLayoutConstraint(item: passwordTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+            }
         case 2:
             cell.contentView.addSubview(openButton)
             NSLayoutConstraint(item: openButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: openButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: openButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: openButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+        case 3:
+            if !hasPassword {
+                cell.contentView.addSubview(savePasswordButton)
+                NSLayoutConstraint(item: savePasswordButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+                NSLayoutConstraint(item: savePasswordButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+                NSLayoutConstraint(item: savePasswordButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+                NSLayoutConstraint(item: savePasswordButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+            }
+        case 4:
+            if hasPassword {
+                cell.contentView.addSubview(deletePasswordButton)
+                NSLayoutConstraint(item: deletePasswordButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+                NSLayoutConstraint(item: deletePasswordButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+                NSLayoutConstraint(item: deletePasswordButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+                NSLayoutConstraint(item: deletePasswordButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+            }
         default:
             break
         }

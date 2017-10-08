@@ -48,6 +48,7 @@
 		A1E2E7801ED458E2005C2D02 /* AboutTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E2E77F1ED458E2005C2D02 /* AboutTableViewCell.swift */; };
 		A1E2E7821ED467C1005C2D02 /* DatabaseSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E2E7811ED467C1005C2D02 /* DatabaseSettingsViewController.swift */; };
 		A1F1747C1EADC64300FC49BD /* KdbxXml.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F1747B1EADC64300FC49BD /* KdbxXml.swift */; };
+		A1F352E51F8A399500DF556F /* Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F352E41F8A399500DF556F /* Biometrics.swift */; };
 		A1FD86911EA8B368008F382B /* Kdbx3Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FD86901EA8B368008F382B /* Kdbx3Payload.swift */; };
 		B033691603AB183C66F8A278 /* Pods_PasswordVaultTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7308D5E89D596E9CEAA4ECD2 /* Pods_PasswordVaultTests.framework */; };
 		C97F2204F9C13B7B0AF085D4 /* Pods_PasswordVault.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E61E282155225B1C80679A95 /* Pods_PasswordVault.framework */; };
@@ -122,6 +123,7 @@
 		A1E2E77F1ED458E2005C2D02 /* AboutTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutTableViewCell.swift; sourceTree = "<group>"; };
 		A1E2E7811ED467C1005C2D02 /* DatabaseSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseSettingsViewController.swift; sourceTree = "<group>"; };
 		A1F1747B1EADC64300FC49BD /* KdbxXml.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KdbxXml.swift; sourceTree = "<group>"; };
+		A1F352E41F8A399500DF556F /* Biometrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Biometrics.swift; sourceTree = "<group>"; };
 		A1FD86901EA8B368008F382B /* Kdbx3Payload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx3Payload.swift; sourceTree = "<group>"; };
 		A571D4FA530494217C3790B6 /* Pods_PasswordVaultUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PasswordVaultUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A916743BCAF1E736CD018ECA /* Pods-PasswordVaultTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PasswordVaultTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PasswordVaultTests/Pods-PasswordVaultTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 				A10CFD1C1EA89115006EFDB6 /* DataStream.swift */,
 				A15260091EA7398800B580A7 /* PasswordVault-Bridging-Header.h */,
 				A1525FD61EA7387700B580A7 /* AppDelegate.swift */,
+				A1F352E41F8A399500DF556F /* Biometrics.swift */,
 				A15B1A171EB01AED0068328E /* Extensions.swift */,
 				A15B1A191EB01C150068328E /* Theme.swift */,
 				A15B1A471EB07FAB0068328E /* Vault.swift */,
@@ -652,6 +655,7 @@
 				A1DBBA441EDEB89F0099A9B8 /* ChooseCardViewController.swift in Sources */,
 				A15B1A0B1EB002870068328E /* GroupViewController.swift in Sources */,
 				A1DBBA461EDEB9170099A9B8 /* ScannedCardTableViewCell.swift in Sources */,
+				A1F352E51F8A399500DF556F /* Biometrics.swift in Sources */,
 				A175E45F1ECD6EF0002DF419 /* GKCard.swift in Sources */,
 				A1E2E7821ED467C1005C2D02 /* DatabaseSettingsViewController.swift in Sources */,
 				A1525FD71EA7387700B580A7 /* AppDelegate.swift in Sources */,
@@ -756,7 +760,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -808,7 +812,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
