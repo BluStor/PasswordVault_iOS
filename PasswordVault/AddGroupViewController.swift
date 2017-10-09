@@ -97,6 +97,7 @@ class AddGroupViewController: UITableViewController, IconPickerViewControllerDel
     @objc func editingChanged(sender: UIView) {
         switch sender {
         case nameTextField:
+            group.name = nameTextField.text ?? ""
             nameTextField.isErrorRevealed = false
         default:
             break
