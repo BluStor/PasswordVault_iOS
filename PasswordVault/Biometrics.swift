@@ -20,6 +20,12 @@ class Biometrics {
         case SecItemDeleteError
     }
     
+    static func isAvailable() -> Bool {
+        let context = LAContext()
+
+        return context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+    }
+
     static func hasPassword() -> Bool {
         let query = [
             kSecClass: kSecClassGenericPassword,

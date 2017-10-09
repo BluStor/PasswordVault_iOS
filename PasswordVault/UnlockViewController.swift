@@ -20,7 +20,8 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     let savePasswordButton = RaisedButton()
     let deletePasswordButton = RaisedButton()
     
-    var hasPassword = false
+    var biometricsIsAvailable = false
+    var biometricsHasPassword = false
 
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
@@ -86,7 +87,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
         bluetoothCheck()
-        reloadUI()
+        reloadBiometrics()
     }
 
     func bluetoothCheck() {
@@ -102,8 +103,9 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
-    func reloadUI() {
-        hasPassword = Biometrics.hasPassword()
+    func reloadBiometrics() {
+        biometricsIsAvailable = Biometrics.isAvailable()
+        biometricsHasPassword = Biometrics.hasPassword()
         tableView.reloadData()
     }
 
@@ -240,7 +242,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         do {
             try Biometrics.deletePassword()
             tableView.reloadData()
-            reloadUI()
+            reloadBiometrics()
         } catch {
             print(error)
         }
@@ -259,7 +261,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         do {
             try Biometrics.setPassword(password: password)
             tableView.reloadData()
-            reloadUI()
+            reloadBiometrics()
         } catch {
             print(error)
         }
@@ -279,15 +281,15 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.row {
         case 1:
-            if hasPassword {
+            if biometricsHasPassword {
                 return 0.0
             }
         case 3:
-            if hasPassword {
+            if !biometricsIsAvailable || biometricsHasPassword {
                 return 0.0
             }
         case 4:
-            if !hasPassword {
+            if !biometricsHasPassword {
                 return 0.0
             }
         default:
@@ -313,7 +315,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
             NSLayoutConstraint(item: vaultImageView, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
             NSLayoutConstraint(item: vaultImageView, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
         case 1:
-            if !hasPassword {
+            if !biometricsHasPassword {
                 cell.contentView.addSubview(passwordTextField)
                 NSLayoutConstraint(item: passwordTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 30.0).isActive = true
                 NSLayoutConstraint(item: passwordTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
@@ -327,7 +329,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
             NSLayoutConstraint(item: openButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: openButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 3:
-            if !hasPassword {
+            if biometricsIsAvailable && !biometricsHasPassword {
                 cell.contentView.addSubview(savePasswordButton)
                 NSLayoutConstraint(item: savePasswordButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
                 NSLayoutConstraint(item: savePasswordButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
@@ -335,7 +337,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
                 NSLayoutConstraint(item: savePasswordButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
             }
         case 4:
-            if hasPassword {
+            if biometricsHasPassword {
                 cell.contentView.addSubview(deletePasswordButton)
                 NSLayoutConstraint(item: deletePasswordButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
                 NSLayoutConstraint(item: deletePasswordButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
