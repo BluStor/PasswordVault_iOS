@@ -188,7 +188,7 @@ class GroupViewController: UIViewController, UITableViewDataSource, UITableViewD
                         }))
 
                         alertController.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
-                            let deleteAlertController = UIAlertController(title: "Warning", message: "Are you sure you want to delete this group?", preferredStyle: .alert)
+                            let deleteAlertController = UIAlertController(title: "Warning", message: "Are you sure you want to delete this entry?", preferredStyle: .alert)
 
                             deleteAlertController.addAction(UIAlertAction(title: "Delete", style: .default, handler: { _ in
                                 if let kdbx = Vault.kdbx {
