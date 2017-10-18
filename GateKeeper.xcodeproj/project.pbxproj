@@ -14,7 +14,6 @@
 		A12723DF1EB1B9D000247C85 /* IconPickerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12723DE1EB1B9D000247C85 /* IconPickerCollectionViewCell.swift */; };
 		A14F90D91EF97A3300079DAE /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A14F90D81EF97A3300079DAE /* SplashViewController.swift */; };
 		A1525FD71EA7387700B580A7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1525FD61EA7387700B580A7 /* AppDelegate.swift */; };
-		A1525FDE1EA7387700B580A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1525FDD1EA7387700B580A7 /* Assets.xcassets */; };
 		A1525FE11EA7387700B580A7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1525FDF1EA7387700B580A7 /* LaunchScreen.storyboard */; };
 		A1525FEC1EA7387700B580A7 /* GateKeeperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1525FEB1EA7387700B580A7 /* GateKeeperTests.swift */; };
 		A1525FF71EA7387700B580A7 /* GateKeeperUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1525FF61EA7387700B580A7 /* GateKeeperUITests.swift */; };
@@ -42,6 +41,7 @@
 		A1B287F41EAF39EF0006B341 /* Kdbx4Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B287F31EAF39EF0006B341 /* Kdbx4Payload.swift */; };
 		A1BC9E581EB78AF300DF3387 /* KdbxStreamCiphers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BC9E571EB78AF300DF3387 /* KdbxStreamCiphers.swift */; };
 		A1BF3A961EAC443100CB306C /* KdbxExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BF3A951EAC443100CB306C /* KdbxExtensions.swift */; };
+		A1C83AC41F98023E003B79C7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1C83AC31F98023E003B79C7 /* Assets.xcassets */; };
 		A1DBBA441EDEB89F0099A9B8 /* ChooseCardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBBA431EDEB89F0099A9B8 /* ChooseCardViewController.swift */; };
 		A1DBBA461EDEB9170099A9B8 /* ScannedCardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DBBA451EDEB9170099A9B8 /* ScannedCardTableViewCell.swift */; };
 		A1E2E7801ED458E2005C2D02 /* AboutTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E2E77F1ED458E2005C2D02 /* AboutTableViewCell.swift */; };
@@ -79,7 +79,6 @@
 		A14F90D81EF97A3300079DAE /* SplashViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		A1525FD31EA7387700B580A7 /* GateKeeper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GateKeeper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1525FD61EA7387700B580A7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A1525FDD1EA7387700B580A7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1525FE01EA7387700B580A7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A1525FE21EA7387700B580A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1525FE71EA7387700B580A7 /* GateKeeperTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GateKeeperTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,6 +112,7 @@
 		A1B287F31EAF39EF0006B341 /* Kdbx4Payload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx4Payload.swift; sourceTree = "<group>"; };
 		A1BC9E571EB78AF300DF3387 /* KdbxStreamCiphers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KdbxStreamCiphers.swift; sourceTree = "<group>"; };
 		A1BF3A951EAC443100CB306C /* KdbxExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KdbxExtensions.swift; sourceTree = "<group>"; };
+		A1C83AC31F98023E003B79C7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1DBBA431EDEB89F0099A9B8 /* ChooseCardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseCardViewController.swift; sourceTree = "<group>"; };
 		A1DBBA451EDEB9170099A9B8 /* ScannedCardTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannedCardTableViewCell.swift; sourceTree = "<group>"; };
 		A1E2E77F1ED458E2005C2D02 /* AboutTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutTableViewCell.swift; sourceTree = "<group>"; };
@@ -195,6 +195,7 @@
 			isa = PBXGroup;
 			children = (
 				A1525FE21EA7387700B580A7 /* Info.plist */,
+				A1C83AC31F98023E003B79C7 /* Assets.xcassets */,
 				A10CFD1C1EA89115006EFDB6 /* DataStream.swift */,
 				A15260091EA7398800B580A7 /* GateKeeper-Bridging-Header.h */,
 				A1525FD61EA7387700B580A7 /* AppDelegate.swift */,
@@ -208,7 +209,6 @@
 				A18E88D11EB1DCDE004D1E91 /* UITableViewCell */,
 				A18E88D41EB1ECD1004D1E91 /* UIView */,
 				A15B19FB1EAFFD140068328E /* UIViewController */,
-				A1525FDD1EA7387700B580A7 /* Assets.xcassets */,
 				A1525FDF1EA7387700B580A7 /* LaunchScreen.storyboard */,
 			);
 			path = GateKeeper;
@@ -427,8 +427,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1C83AC41F98023E003B79C7 /* Assets.xcassets in Resources */,
 				A1525FE11EA7387700B580A7 /* LaunchScreen.storyboard in Resources */,
-				A1525FDE1EA7387700B580A7 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
