@@ -85,6 +85,9 @@ class SplashViewController: UIViewController {
                 self.loadCreate()
             }
         }
+        .always {
+            card.disconnect().then {}
+        }
         .catch { error in
             print(error)
             self.loadUnlock()
