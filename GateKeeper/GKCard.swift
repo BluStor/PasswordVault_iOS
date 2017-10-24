@@ -31,11 +31,14 @@ class GKCard {
 
     static func checkBluetoothState() -> Promise<Void> {
         return Promise { resolve, reject, _ in
+            print("checkBluetoothState(): \(Thread.isMainThread)")
             SwiftyBluetooth.asyncState(completion: { state in
                 switch state {
                 case .poweredOn:
+                    print("checkBluetoothState(): poweredOn")
                     resolve(())
                 default:
+                    print("checkBluetoothState(): not poweredOn")
                     reject(CardError.bluetoothNotPoweredOn)
                 }
             })
@@ -49,7 +52,7 @@ class GKCard {
             return nil
         }
 
-        print("card init")
+        print("GKCard.init(): \(Thread.isMainThread)")
         self.peripheral = peripheral
 
         NotificationCenter.default.addObserver(forName: Peripheral.PeripheralCharacteristicValueUpdate, object: self.peripheral, queue: nil) { notification in
@@ -88,13 +91,15 @@ class GKCard {
 
     private func fileWrite(data: Data) -> Promise<Void> {
         return Promise { resolve, reject, _ in
+            print("fileWrite(): \(Thread.isMainThread)")
+            var round = 0
             var offset = 0
 
             repeat {
                 let chunkSize = (data.count - offset) > 128 ? 128 : data.count - offset
                 let chunk = data.subdata(in: offset..<offset + chunkSize)
 
-                print("fileWrite <- \(chunk.count) bytes")
+                print("fileWrite <- \(chunk.count) bytes (round \(round))")
 
                 self.peripheral.writeValue(ofCharacWithUUID: GKCard.fileWriteUUID, fromServiceWithUUID: GKCard.serviceUUID, value: chunk, type: .withoutResponse, completion: { result in
                     switch result {
@@ -109,6 +114,7 @@ class GKCard {
 
                 usleep(5000)
 
+                round += 1
                 offset += chunkSize
             } while offset < data.count
 
@@ -118,6 +124,7 @@ class GKCard {
 
     private func waitOnControlPointResult() -> Promise<Data> {
         return Promise { resolve, _, _ in
+            print("waitOnControlPointResult(): \(Thread.isMainThread)")
             var bufferCount = 0
 
             let timer = DispatchSource.makeTimerSource()
@@ -138,7 +145,7 @@ class GKCard {
 
     private func writeToControlPoint(data: Data) -> Promise<Void> {
         return Promise { resolve, reject, _ in
-            print("writeToControlPoint: \([UInt8](data).hexString)")
+            print("writeToControlPoint: \([UInt8](data).hexString): \(Thread.isMainThread)")
             self.peripheral.writeValue(
                 ofCharacWithUUID: GKCard.controlPointUUID,
                 fromServiceWithUUID: GKCard.serviceUUID,
@@ -160,7 +167,7 @@ class GKCard {
 
     func connect(timeout: TimeInterval = 10.0) -> Promise<Void> {
         return Promise(in: .main, { resolve, reject, _ in
-            print("connect()")
+            print("connect(): \(Thread.isMainThread)")
             self.peripheral.connect(withTimeout: timeout, completion: { result in
                 switch result {
                 case .failure(let error):
@@ -197,7 +204,7 @@ class GKCard {
 
     func disconnect() -> Promise<Void> {
         return Promise { resolve, reject, _ in
-            print("disconnect()")
+            print("disconnect(): \(Thread.isMainThread)")
             self.peripheral.disconnect { result in
                 switch result {
                 case .failure(let error):
@@ -214,6 +221,7 @@ class GKCard {
 
     func checksum(data: Data) -> Promise<Void> {
         return Promise { resolve, reject, _ in
+            print("checksum(): \(Thread.isMainThread)")
             let ourChecksum = data.crc16()
             let ourChecksumBytes = [
                 UInt8(truncatingIfNeeded: ourChecksum >> 8),
@@ -245,11 +253,10 @@ class GKCard {
 
     func close(path: String) -> Promise<Void> {
         return Promise { resolve, reject, _ in
-            GKCard.checkBluetoothState()
-            .then {
-                self.makeCommandData(command: 4, string: path)
-            }
+            print("close(): \(Thread.isMainThread)")
+            self.makeCommandData(command: 4, string: path)
             .then(self.writeToControlPoint)
+            .then(self.waitOnControlPointResult)
             .then(resolve)
             .catch(reject)
         }
@@ -257,15 +264,13 @@ class GKCard {
 
     func delete(path: String) -> Promise<Void> {
         return Promise { resolve, reject, _ in
+            print("delete(): \(Thread.isMainThread)")
             guard path.characters.count <= 30 else {
                 reject(CardError.argumentInvalid)
                 return
             }
 
-            GKCard.checkBluetoothState()
-            .then {
-                self.makeCommandData(command: 7, string: path)
-            }
+            self.makeCommandData(command: 7, string: path)
             .then(self.writeToControlPoint)
             .then(resolve)
             .catch(reject)
@@ -274,15 +279,13 @@ class GKCard {
 
     func exists(path: String) -> Promise<Bool> {
         return Promise { resolve, reject, _ in
+            print("exists(): \(Thread.isMainThread)")
             guard path.characters.count <= 30 else {
                 reject(CardError.argumentInvalid)
                 return
             }
 
-            GKCard.checkBluetoothState()
-            .then {
-                self.makeCommandData(command: 10, string: path)
-            }
+            self.makeCommandData(command: 10, string: path)
             .then(self.writeToControlPoint)
             .then(self.waitOnControlPointResult)
             .then { data in
@@ -301,15 +304,14 @@ class GKCard {
 
     func get(path: String) -> Promise<Data> {
         return Promise { resolve, reject, _ in
+            print("get(): \(Thread.isMainThread)")
             guard path.characters.count <= 30 else {
                 reject(CardError.argumentInvalid)
                 return
             }
 
-            GKCard.checkBluetoothState()
-            .then {
-                self.makeCommandData(command: 2, string: path)
-            }
+            
+            self.makeCommandData(command: 2, string: path)
             .then(self.writeToControlPoint)
             .then(self.waitOnControlPointResult)
             .then { data in
@@ -325,15 +327,14 @@ class GKCard {
 
     func rename(name: String) -> Promise<Void> {
         return Promise { resolve, reject, _ in
+            print("rename(): \(Thread.isMainThread)")
             guard name.characters.count <= 11 else {
                 reject(CardError.argumentInvalid)
                 return
             }
 
-            GKCard.checkBluetoothState()
-            .then {
-                self.makeCommandData(command: 8, string: name)
-            }
+            
+            self.makeCommandData(command: 8, string: name)
             .then(self.writeToControlPoint)
             .then(resolve)
             .catch(reject)
@@ -342,10 +343,8 @@ class GKCard {
 
     func put(data: Data) -> Promise<Void> {
         return Promise { resolve, reject, _ in
-            GKCard.checkBluetoothState()
-            .then {
-                self.makeCommandData(command: 3, string: nil)
-            }
+            print("put(): \(Thread.isMainThread)")
+            self.makeCommandData(command: 3, string: nil)
             .then(self.writeToControlPoint)
             .then {
                 self.fileWrite(data: data)
