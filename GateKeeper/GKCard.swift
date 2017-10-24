@@ -257,7 +257,9 @@ class GKCard {
             self.makeCommandData(command: 4, string: path)
             .then(self.writeToControlPoint)
             .then(self.waitOnControlPointResult)
-            .then(resolve)
+            .then({ _ in
+                resolve(())
+            })
             .catch(reject)
         }
     }
@@ -272,7 +274,10 @@ class GKCard {
 
             self.makeCommandData(command: 7, string: path)
             .then(self.writeToControlPoint)
-            .then(resolve)
+            .then(self.waitOnControlPointResult)
+            .then({ _ in
+                resolve(())
+            })
             .catch(reject)
         }
     }
@@ -336,7 +341,10 @@ class GKCard {
             
             self.makeCommandData(command: 8, string: name)
             .then(self.writeToControlPoint)
-            .then(resolve)
+            .then(self.waitOnControlPointResult)
+            .then({ _ in
+                resolve(())
+            })
             .catch(reject)
         }
     }
@@ -346,7 +354,8 @@ class GKCard {
             print("put(): \(Thread.isMainThread)")
             self.makeCommandData(command: 3, string: nil)
             .then(self.writeToControlPoint)
-            .then {
+            .then(self.waitOnControlPointResult)
+            .then { _ in
                 self.fileWrite(data: data)
             }
             .then(resolve)
