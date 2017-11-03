@@ -284,7 +284,7 @@ class GKCard {
 
     func exists(path: String) -> Promise<Bool> {
         return Promise { resolve, reject, _ in
-            print("exists(): \(Thread.isMainThread)")
+            print("exists(): Thread.isMainThread = \(Thread.isMainThread)")
             guard path.characters.count <= 30 else {
                 reject(CardError.argumentInvalid)
                 return
@@ -296,8 +296,10 @@ class GKCard {
             .then { data in
                 if data.count == 1 {
                     if data[0] == 0x06 {
+                        print("exists(): db exists: true")
                         resolve(true)
                     } else {
+                        print("exists(): db exists: false")
                         resolve(false)
                     }
                 } else {

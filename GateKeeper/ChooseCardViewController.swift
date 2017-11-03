@@ -176,11 +176,91 @@ class ChooseCardViewController: UITableViewController {
                 navigationController?.popViewController(animated: true)
             } else {
                 print("push")
-                let unlockViewController = UnlockViewController()
-                navigationController?.setViewControllers([unlockViewController], animated: true)
+                
+                guard let cardUUID = Vault.cardUUID else {
+                    loadChooseCard()
+                    return
+                }
+                
+                guard let card = GKCard(uuid: cardUUID) else {
+                    loadChooseCard()
+                    return
+                }
+                
+                GKCard.checkBluetoothState()
+                    .then {
+                        card.connect(timeout: 5.0)
+                    }
+                    .then {
+                        card.exists(path: Vault.dbPath)
+                    }
+                    .then { pathExists in
+                        if pathExists {
+                            self.loadUnlock()
+                        } else {
+                            self.loadCreate()
+                        }
+                    }
+                    .always {
+                        card.disconnect().then {}
+                    }
+                    .catch { error in
+                        print("ChooseCardViewController.tableView(): " + error.localizedDescription)
+                        // self.loadUnlock()
+                        tableView.deselectRow(at: indexPath, animated: true)
+                        self.showError(error)
+                        self.loadChooseCard()
+                }
+
+                
+                // let unlockViewController = UnlockViewController()
+                //navigationController?.setViewControllers([unlockViewController], animated: true)
             }
         default:
             return
         }
+    }
+    
+    func showError(_ error: Error) {
+        let message: String
+        switch error {
+        case GKCard.CardError.bluetoothNotPoweredOn:
+            message = "Bluetooth is not enabled. Enable it in your device's Settings app."
+        case GKCard.CardError.cardNotPaired:
+            message = "Card is not paired. Please put the card in pairing mode and try again."
+        case GKCard.CardError.connectionTimedOut:
+            message = "Connection timed out. Ensure the card is powered on and nearby."
+        case GKCard.CardError.fileNotFound:
+            message = "No database found on card."
+        case KdbxError.decryptionFailed:
+            message = "Invalid password."
+        case KdbxCrypto.CryptoError.dataError:
+            message = "Data error while decrypting."
+        default:
+            message = "\(error)"
+        }
+        
+        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        
+        alertController.addAction(UIAlertAction(title: "Okay", style: .default, handler: { _ in
+            alertController.dismiss(animated: true, completion: nil)
+        }))
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+
+    
+    func loadChooseCard() {
+        let chooseCardViewController = ChooseCardViewController()
+        navigationController?.setViewControllers([chooseCardViewController], animated: true)
+    }
+    func loadCreate() {
+        let createViewController = CreateViewController()
+        navigationController?.setViewControllers([createViewController], animated: true)
+    }
+    
+    func loadUnlock() {
+        let unlockViewController = UnlockViewController()
+        navigationController?.setViewControllers([unlockViewController], animated: true)
     }
 }

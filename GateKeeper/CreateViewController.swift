@@ -66,8 +66,7 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
 
         openDatabaseButton.setTitle("Open existing database", for: .normal)
         openDatabaseButton.pulseColor = UIColor.white
-        openDatabaseButton.backgroundColor = Theme.Buttons.mutedBackgroundColor
-        openDatabaseButton.setTitleColor(Theme.Buttons.mutedTitleColor, for: .normal)
+        openDatabaseButton.backgroundColor = UIColor(hex: 0x00BCD4)
         openDatabaseButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
         openDatabaseButton.translatesAutoresizingMaskIntoConstraints = false
 

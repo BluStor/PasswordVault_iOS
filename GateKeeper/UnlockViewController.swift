@@ -11,6 +11,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
     enum UnlockError: Error {
         case scanFoundNothing
+        case dbNotFound
     }
 
     let moreButton = IconButton(image: Icon.moreVertical, tintColor: UIColor.white)
@@ -19,6 +20,8 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     let openButton = RaisedButton()
     let savePasswordButton = RaisedButton()
     let deletePasswordButton = RaisedButton()
+    
+    var isUsingBiometrics = false
     
     var biometricsIsAvailable = false
     var biometricsHasPassword = false
@@ -70,9 +73,8 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         
         // Save password button
         
-        savePasswordButton.setTitle("Save Password", for: .normal)
-        savePasswordButton.titleColor = Theme.Buttons.mutedTitleColor
-        savePasswordButton.backgroundColor = Theme.Buttons.mutedBackgroundColor
+        savePasswordButton.setTitle("Use Finger Print", for: .normal)
+        savePasswordButton.backgroundColor = Theme.Buttons.normalBackgroundColor
         savePasswordButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
         savePasswordButton.translatesAutoresizingMaskIntoConstraints = false
         
@@ -153,16 +155,25 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         switch error {
         case GKCard.CardError.bluetoothNotPoweredOn:
             message = "Bluetooth is not enabled. Enable it in your device's Settings app."
+            loadChooseCard()
         case GKCard.CardError.cardNotPaired:
             message = "Card is not paired. Please put the card in pairing mode and try again."
+            loadChooseCard()
         case GKCard.CardError.connectionTimedOut:
             message = "Connection timed out. Ensure the card is powered on and nearby."
-        case GKCard.CardError.fileNotFound:
+            loadChooseCard()
+        case UnlockError.dbNotFound:
             message = "No database found on card."
+            self.loadCreate()
         case UnlockError.scanFoundNothing:
             message = "Unable to find card. Make sure it is turned on."
+            loadChooseCard()
         case KdbxError.decryptionFailed:
-            message = "Invalid password."
+            if isUsingBiometrics {
+                message = "Invalid password.  Biometrics NOT enabled. Please check your password and try again"
+            } else {
+                message = "Invalid password.  Please check your password and try again"
+            }
         case KdbxCrypto.CryptoError.dataError:
             message = "Data error while decrypting."
         default:
@@ -207,13 +218,22 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
                     HUD.dimsBackground = false
                     HUD.show(.labeledProgress(title: "Opening", subtitle: "Connecting"))
                 })
-                
                 try await(in: .background, card.connect().retry(2))
+                
+                async(in: .main, {
+                    HUD.show(.labeledProgress(title: "Opening", subtitle: "Check Db exists"))
+                })
+                let dbExists = try await(card.exists(path: Vault.dbPath))
+
+                if (!dbExists) {
+                    throw UnlockError.dbNotFound
+                }
+                
                 async(in: .main, {
                     HUD.show(.labeledProgress(title: "Opening", subtitle: "Transferring"))
                 })
-                
                 let data = try await(card.get(path: Vault.dbPath))
+                
                 async(in: .main, {
                     HUD.show(.labeledProgress(title: "Opening", subtitle: "Decrypting"))
                 })
@@ -221,6 +241,19 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
                 let kdbx = try await(in: .background, { resolve, reject, _ in
                     return resolve(try Vault.open(encryptedData: data, password: password))
                 })
+                
+                // Let's only save the password
+                // if the user clicked save biometrics button
+                // and it it hasn't already been saved
+                if (self.isUsingBiometrics && Biometrics.isAvailable() && !Biometrics.hasPassword()) {
+                    do {
+                        try Biometrics.setPassword(password: password)
+                        self.tableView.reloadData()
+                        self.reloadBiometrics()
+                    } catch {
+                        print(error)
+                    }
+                }
                 
                 async(in: .main, {
                     HUD.hide()
@@ -239,6 +272,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func deletePassword() {
+        isUsingBiometrics = false
         do {
             try Biometrics.deletePassword()
             tableView.reloadData()
@@ -257,6 +291,10 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func savePassword() {
+        isUsingBiometrics = true
+        
+        open()
+/*
         let password = getPassword()
         do {
             try Biometrics.setPassword(password: password)
@@ -265,6 +303,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         } catch {
             print(error)
         }
+ */
     }
 
     func versionString() -> String {
@@ -360,4 +399,14 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
         return true
     }
+    
+    func loadChooseCard() {
+        let chooseCardViewController = ChooseCardViewController()
+        navigationController?.setViewControllers([chooseCardViewController], animated: true)
+    }
+    func loadCreate() {
+        let createViewController = CreateViewController()
+        navigationController?.setViewControllers([createViewController], animated: true)
+    }
+
 }
