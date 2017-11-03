@@ -294,16 +294,6 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         isUsingBiometrics = true
         
         open()
-/*
-        let password = getPassword()
-        do {
-            try Biometrics.setPassword(password: password)
-            tableView.reloadData()
-            reloadBiometrics()
-        } catch {
-            print(error)
-        }
- */
     }
 
     func versionString() -> String {
