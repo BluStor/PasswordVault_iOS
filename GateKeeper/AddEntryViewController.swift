@@ -222,7 +222,7 @@ class AddEntryViewController: UITableViewController, IconPickerViewControllerDel
     func validate() -> Bool {
         let title = entry.getStr(key: "Title")?.value ?? ""
 
-        let hasTitle = title.characters.count > 0
+        let hasTitle = title.count > 0
 
         if hasTitle {
             titleTextField.isErrorRevealed = false

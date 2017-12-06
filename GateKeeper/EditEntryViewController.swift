@@ -226,7 +226,7 @@ class EditEntryViewController: UITableViewController, IconPickerViewControllerDe
     func validate() -> Bool {
         let title = titleTextField.text ?? ""
 
-        let hasTitle = title.characters.count > 0
+        let hasTitle = title.count > 0
 
         if hasTitle {
             titleTextField.isErrorRevealed = false

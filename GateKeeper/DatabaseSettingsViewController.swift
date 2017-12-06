@@ -88,7 +88,7 @@ class DatabaseSettingsViewController: UITableViewController {
 
                 kdbx.transformationRounds = transformationRounds
 
-                if password.characters.count > 0 {
+                if password.count > 0 {
                     kdbx.setPassword(password)
                 }
 
@@ -129,7 +129,7 @@ class DatabaseSettingsViewController: UITableViewController {
     func hasChanged() -> Bool {
         let password = passwordTextField.text ?? ""
 
-        if password.characters.count > 0 {
+        if password.count > 0 {
             return true
         }
 
@@ -140,7 +140,7 @@ class DatabaseSettingsViewController: UITableViewController {
         let transformationRoundsStr = transformationRoundsTextField.text ?? "80000"
         let transformationRounds = Int(transformationRoundsStr) ?? 80000
 
-        return password.characters.count > 0
+        return password.count > 0
             || transformationRounds != kdbx.transformationRounds
     }
 

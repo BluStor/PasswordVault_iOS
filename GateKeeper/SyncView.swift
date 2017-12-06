@@ -59,7 +59,7 @@ class SyncView: UIView {
 
         // Signals
 
-        Vault.syncStatus.subscribePast(on: self) { status in
+        Vault.syncStatus.subscribePast(with: self) { status in
             DispatchQueue.main.async {
                 switch status {
                 case .complete:

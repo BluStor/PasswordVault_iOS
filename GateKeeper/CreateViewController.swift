@@ -190,7 +190,7 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
         let password = passwordTextField.text ?? ""
         let passwordRepeat = passwordRepeatTextField.text ?? ""
 
-        if password.characters.count == 0 {
+        if password.count == 0 {
             passwordTextField.detail = "This field is required."
             passwordTextField.isErrorRevealed = true
             return false

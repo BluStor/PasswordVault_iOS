@@ -129,7 +129,7 @@ class EditGroupViewController: UITableViewController, IconPickerViewControllerDe
 
         var hasError = false
 
-        if name.characters.count == 0 {
+        if name.count == 0 {
             nameTextField.detail = "This field is required."
             nameTextField.isErrorRevealed = true
             hasError = true

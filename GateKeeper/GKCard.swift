@@ -75,7 +75,7 @@ class GKCard {
                 try dataWriteStream.write(command)
 
                 if let string = string {
-                    try dataWriteStream.write(UInt8(truncatingIfNeeded: string.characters.count))
+                    try dataWriteStream.write(UInt8(truncatingIfNeeded: string.count))
                     for byte in [UInt8](string.utf8) {
                         try dataWriteStream.write(byte)
                     }
@@ -267,7 +267,7 @@ class GKCard {
     func delete(path: String) -> Promise<Void> {
         return Promise { resolve, reject, _ in
             print("delete(): \(Thread.isMainThread)")
-            guard path.characters.count <= 30 else {
+            guard path.count <= 30 else {
                 reject(CardError.argumentInvalid)
                 return
             }
@@ -285,7 +285,7 @@ class GKCard {
     func exists(path: String) -> Promise<Bool> {
         return Promise { resolve, reject, _ in
             print("exists(): Thread.isMainThread = \(Thread.isMainThread)")
-            guard path.characters.count <= 30 else {
+            guard path.count <= 30 else {
                 reject(CardError.argumentInvalid)
                 return
             }
@@ -312,7 +312,7 @@ class GKCard {
     func get(path: String) -> Promise<Data> {
         return Promise { resolve, reject, _ in
             print("get(): \(Thread.isMainThread)")
-            guard path.characters.count <= 30 else {
+            guard path.count <= 30 else {
                 reject(CardError.argumentInvalid)
                 return
             }
@@ -335,7 +335,7 @@ class GKCard {
     func rename(name: String) -> Promise<Void> {
         return Promise { resolve, reject, _ in
             print("rename(): \(Thread.isMainThread)")
-            guard name.characters.count <= 11 else {
+            guard name.count <= 11 else {
                 reject(CardError.argumentInvalid)
                 return
             }
