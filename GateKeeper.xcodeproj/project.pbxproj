@@ -13,6 +13,8 @@
 		A10CFD181EA890FE006EFDB6 /* Kdbx3Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10CFD131EA890FE006EFDB6 /* Kdbx3Header.swift */; };
 		A10CFD1E1EA89115006EFDB6 /* DataStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10CFD1C1EA89115006EFDB6 /* DataStream.swift */; };
 		A115AADC1EAC6E85006F2675 /* KdbxCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = A115AADB1EAC6E85006F2675 /* KdbxCrypto.swift */; };
+		A126888E1FDDDFAA005B4FAF /* PalmAPI.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A19ADEAE1FD8576400E1ED3A /* PalmAPI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A126888F1FDDDFAB005B4FAF /* RRBPalmSDK.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = A19ADEAF1FD8576400E1ED3A /* RRBPalmSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A12723DF1EB1B9D000247C85 /* IconPickerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12723DE1EB1B9D000247C85 /* IconPickerCollectionViewCell.swift */; };
 		A14F90D91EF97A3300079DAE /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A14F90D81EF97A3300079DAE /* SplashViewController.swift */; };
 		A1525FD71EA7387700B580A7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1525FD61EA7387700B580A7 /* AppDelegate.swift */; };
@@ -37,6 +39,7 @@
 		A18E88D61EB1ECDE004D1E91 /* SyncView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18E88D51EB1ECDE004D1E91 /* SyncView.swift */; };
 		A18E88D81EB1F0E2004D1E91 /* EntryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18E88D71EB1F0E2004D1E91 /* EntryTableViewCell.swift */; };
 		A190D8F31EEB1EFB006D6E34 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A190D8F21EEB1EFB006D6E34 /* SearchViewController.swift */; };
+		A19ADEB11FD8576400E1ED3A /* RRBPalmSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A19ADEAF1FD8576400E1ED3A /* RRBPalmSDK.framework */; };
 		A1B287EE1EAF357F0006B341 /* Kdbx.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B287ED1EAF357F0006B341 /* Kdbx.swift */; };
 		A1B287F11EAF39010006B341 /* Kdbx4.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B287EF1EAF39010006B341 /* Kdbx4.swift */; };
 		A1B287F21EAF39010006B341 /* Kdbx4Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B287F01EAF39010006B341 /* Kdbx4Header.swift */; };
@@ -70,6 +73,21 @@
 			remoteInfo = PasswordVault;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A126888D1FDDDF91005B4FAF /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A126888E1FDDDFAA005B4FAF /* PalmAPI.framework in Copy Frameworks */,
+				A126888F1FDDDFAB005B4FAF /* RRBPalmSDK.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		00D8044D28868EF80D3AAF11 /* Pods-GateKeeperUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GateKeeperUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GateKeeperUITests/Pods-GateKeeperUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -112,6 +130,8 @@
 		A18E88D51EB1ECDE004D1E91 /* SyncView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncView.swift; sourceTree = "<group>"; };
 		A18E88D71EB1F0E2004D1E91 /* EntryTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntryTableViewCell.swift; sourceTree = "<group>"; };
 		A190D8F21EEB1EFB006D6E34 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		A19ADEAE1FD8576400E1ED3A /* PalmAPI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PalmAPI.framework; sourceTree = "<group>"; };
+		A19ADEAF1FD8576400E1ED3A /* RRBPalmSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RRBPalmSDK.framework; sourceTree = "<group>"; };
 		A1B287ED1EAF357F0006B341 /* Kdbx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx.swift; sourceTree = "<group>"; };
 		A1B287EF1EAF39010006B341 /* Kdbx4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx4.swift; sourceTree = "<group>"; };
 		A1B287F01EAF39010006B341 /* Kdbx4Header.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Kdbx4Header.swift; sourceTree = "<group>"; };
@@ -138,6 +158,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F86B45045A5BCA2473B60285 /* Pods_GateKeeper.framework in Frameworks */,
+				A19ADEB11FD8576400E1ED3A /* RRBPalmSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,7 +226,6 @@
 			children = (
 				A1525FE21EA7387700B580A7 /* Info.plist */,
 				A1C83AC31F98023E003B79C7 /* Assets.xcassets */,
-				A10CFD1C1EA89115006EFDB6 /* DataStream.swift */,
 				A15260091EA7398800B580A7 /* GateKeeper-Bridging-Header.h */,
 				A1525FD61EA7387700B580A7 /* AppDelegate.swift */,
 				A1F352E41F8A399500DF556F /* Biometrics.swift */,
@@ -244,6 +264,8 @@
 		A15260041EA738BD00B580A7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A19ADEAE1FD8576400E1ED3A /* PalmAPI.framework */,
+				A19ADEAF1FD8576400E1ED3A /* RRBPalmSDK.framework */,
 				22A9C02D2A71501F48C5D957 /* Pods_GateKeeper.framework */,
 				9D94A4907B995846598A21BE /* Pods_GateKeeperTests.framework */,
 				12DBD6084CBC0B0944EF5CD9 /* Pods_GateKeeperUITests.framework */,
@@ -259,6 +281,7 @@
 				A15B1A021EB002280068328E /* AddGroupViewController.swift */,
 				A1DBBA431EDEB89F0099A9B8 /* ChooseCardViewController.swift */,
 				A15B1A041EB0023C0068328E /* CreateViewController.swift */,
+				A10CFD1C1EA89115006EFDB6 /* DataStream.swift */,
 				A1E2E7811ED467C1005C2D02 /* DatabaseSettingsViewController.swift */,
 				A15B1A061EB002520068328E /* EditEntryViewController.swift */,
 				A15B1A081EB0026E0068328E /* EditGroupViewController.swift */,
@@ -331,6 +354,7 @@
 				A1525FCF1EA7387700B580A7 /* Sources */,
 				A1525FD01EA7387700B580A7 /* Frameworks */,
 				A1525FD11EA7387700B580A7 /* Resources */,
+				A126888D1FDDDF91005B4FAF /* Copy Frameworks */,
 				BAE40CD887DD639F22558488 /* [CP] Embed Pods Frameworks */,
 				15C495C7E90E1D46E4C15E98 /* [CP] Copy Pods Resources */,
 			);
@@ -762,7 +786,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -814,7 +838,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -830,9 +854,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = ZW2TP8ZGB7;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = GateKeeper/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = co.blustor.passwordvault;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -847,9 +875,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = ZW2TP8ZGB7;
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = GateKeeper/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = co.blustor.passwordvault;
 				PRODUCT_NAME = "$(TARGET_NAME)";

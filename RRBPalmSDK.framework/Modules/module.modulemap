@@ -1,0 +1,6 @@
+framework module RRBPalmSDK {
+  umbrella header "RRBPalmSDK.h"
+
+  export *
+  module * { export * }
+}

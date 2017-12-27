@@ -90,7 +90,6 @@ class SplashViewController: UIViewController {
         }
         .catch { error in
             print(error)
-            // self.loadUnlock()
             self.loadChooseCard()
         }
     }

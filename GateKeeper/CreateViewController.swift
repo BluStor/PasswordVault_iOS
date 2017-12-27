@@ -15,7 +15,7 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
     let passwordTextField = ErrorTextField()
     let passwordRepeatTextField = ErrorTextField()
     let createButton = RaisedButton()
-    let openDatabaseButton = RaisedButton()
+    let cancelButton = RaisedButton()
 
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
@@ -62,13 +62,13 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
         passwordRepeatTextField.isVisibilityIconButtonEnabled = true
         passwordRepeatTextField.translatesAutoresizingMaskIntoConstraints = false
 
-        // New database button
+        // Cancel button
 
-        openDatabaseButton.setTitle("Open existing database", for: .normal)
-        openDatabaseButton.pulseColor = UIColor.white
-        openDatabaseButton.backgroundColor = UIColor(hex: 0x00BCD4)
-        openDatabaseButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
-        openDatabaseButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.setTitle("Cancel", for: .normal)
+        cancelButton.pulseColor = UIColor.white
+        cancelButton.backgroundColor = UIColor(hex: 0x00BCD4)
+        cancelButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
 
         // Create button
 
@@ -104,7 +104,7 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
             alertController.popoverPresentationController?.sourceRect = moreButton.bounds
 
             present(alertController, animated: true, completion: nil)
-        case openDatabaseButton:
+        case cancelButton:
             let unlockViewController = UnlockViewController()
             navigationController?.setViewControllers([unlockViewController], animated: true)
         default:
@@ -239,11 +239,11 @@ class CreateViewController: UITableViewController, UITextFieldDelegate {
             NSLayoutConstraint(item: createButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: createButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         case 3:
-            cell.contentView.addSubview(openDatabaseButton)
-            NSLayoutConstraint(item: openDatabaseButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: openDatabaseButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
-            NSLayoutConstraint(item: openDatabaseButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-            NSLayoutConstraint(item: openDatabaseButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+            cell.contentView.addSubview(cancelButton)
+            NSLayoutConstraint(item: cancelButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: cancelButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: cancelButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: cancelButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
         default:
             break
         }

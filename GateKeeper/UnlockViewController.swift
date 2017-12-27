@@ -11,21 +11,18 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
     enum UnlockError: Error {
         case scanFoundNothing
-        case dbNotFound
+        case databaseNotFound
     }
 
     let moreButton = IconButton(image: Icon.moreVertical, tintColor: UIColor.white)
     let vaultImageView = UIImageView(image: UIImage(named: "vault"))
     let passwordTextField = TextField()
+    let fingerprintSwitch = UISwitch()
+    let fingerprintLabel = UILabel()
+    let palmSwitch = UISwitch()
+    let palmLabel = UILabel()
     let openButton = RaisedButton()
-    let savePasswordButton = RaisedButton()
-    let deletePasswordButton = RaisedButton()
     
-    var isUsingBiometrics = false
-    
-    var biometricsIsAvailable = false
-    var biometricsHasPassword = false
-
     override func viewDidLoad() {
         view.backgroundColor = Theme.Base.viewBackgroundColor
 
@@ -64,57 +61,207 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         passwordTextField.isVisibilityIconButtonEnabled = true
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
         
+        // Fingerprint switch
+        
+        fingerprintSwitch.addTarget(self, action: #selector(didValueChange(sender:)), for: .valueChanged)
+        fingerprintSwitch.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Fingerprint label
+        
+        fingerprintLabel.text = "Fingerprint"
+        fingerprintLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Palm switch
+        
+        palmSwitch.addTarget(self, action: #selector(didValueChange(sender:)), for: .valueChanged)
+        palmSwitch.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Palm label
+        
+        palmLabel.text = "Palm"
+        palmLabel.translatesAutoresizingMaskIntoConstraints = false
+        
         // Open button
 
         openButton.setTitle("Open", for: .normal)
         openButton.backgroundColor = Theme.Buttons.normalBackgroundColor
         openButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
         openButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Save password button
-        
-        savePasswordButton.setTitle("Use Finger Print", for: .normal)
-        savePasswordButton.backgroundColor = Theme.Buttons.normalBackgroundColor
-        savePasswordButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
-        savePasswordButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Delete password button
-        
-        deletePasswordButton.setTitle("Delete Password", for: .normal)
-        deletePasswordButton.titleColor = Theme.Buttons.mutedTitleColor
-        deletePasswordButton.backgroundColor = Theme.Buttons.mutedBackgroundColor
-        deletePasswordButton.addTarget(self, action: #selector(didTouchUpInside(sender:)), for: .touchUpInside)
-        deletePasswordButton.translatesAutoresizingMaskIntoConstraints = false
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         bluetoothCheck()
-        reloadBiometrics()
+        reloadUI()
     }
 
     func bluetoothCheck() {
         GKCard.checkBluetoothState()
         .catch { _ in
-            let alertController = UIAlertController(title: "Bluetooth", message: "Bluetooth is not enabled. Enable it in your device's Settings app.", preferredStyle: .alert)
-
-            alertController.addAction(UIAlertAction(title: "Okay", style: .default, handler: { _ in
-                alertController.dismiss(animated: true, completion: nil)
-            }))
-
+            let alertController = UIAlertController.makeSimple(title: "Bluetooth", message: "Bluetooth is not enabled. Enable it in your device's Settings app.")
+            
             self.present(alertController, animated: true, completion: nil)
         }
     }
     
-    func reloadBiometrics() {
-        biometricsIsAvailable = Biometrics.isAvailable()
-        biometricsHasPassword = Biometrics.hasPassword()
-        tableView.reloadData()
+    func clearPassword() {
+        passwordTextField.text = ""
+    }
+    
+    func fingerprintEnable(password: String) {
+        let alertController = UIAlertController(title: "Enable fingerprint?", message: "The password entered will be stored encrypted on your phone and will be accessible only with your fingerprint.", preferredStyle: .alert)
+        
+        alertController.addAction(UIAlertAction(title: "Enable", style: .default, handler: { action in
+            do {
+                try Biometrics.setFingerprint(password: password)
+                _ = Biometrics.deletePalm()
+            } catch {
+                self.showError(error)
+            }
+            
+            self.reloadUI()
+            self.clearPassword()
+        }))
+        
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { action in
+            self.reloadUI()
+            alertController.dismiss(animated: true, completion: nil)
+        }))
+        
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    func fingerprintDisable() {
+        let alertController = UIAlertController(title: "Disable fingerprint?", message: "This will disable fingerprint authentication.", preferredStyle: .alert)
+        
+        alertController.addAction(UIAlertAction(title: "Disable", style: .default, handler: { action in
+            _ = Biometrics.deleteFingerprint()
+            
+            self.reloadUI()
+            self.clearPassword()
+        }))
+        
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { action in
+            alertController.dismiss(animated: true, completion: {
+                self.reloadUI()
+            })
+        }))
+        
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    func palmEnable(password: String) {
+        let alertController = UIAlertController(title: "Enable palm?", message: "The password entered will be stored encrypted on your phone and will be accessible only with your palm.", preferredStyle: .alert)
+        
+        alertController.addAction(UIAlertAction(title: "Enable", style: .default, handler: { action in
+            Biometrics.setPalm(viewController: self, password: password, completion: { error in
+                self.reloadUI()
+                if let error = error {
+                    self.showError(error)
+                } else {
+                    _ = Biometrics.deleteFingerprint()
+                    self.clearPassword()
+                }
+            })
+        }))
+        
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { action in
+            alertController.dismiss(animated: true, completion: nil)
+            self.reloadUI()
+        }))
+        
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    func palmDisable() {
+        let alertController = UIAlertController(title: "Disable palm?", message: "This will disable palm authentication.", preferredStyle: .alert)
+        
+        alertController.addAction(UIAlertAction(title: "Disable", style: .default, handler: { action in
+            _ = Biometrics.deletePalm()
+            
+            self.reloadUI()
+        }))
+        
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { action in
+            self.reloadUI()
+            alertController.dismiss(animated: true, completion: nil)
+        }))
+        
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    func reloadUI() {
+        fingerprintSwitch.isOn = Biometrics.hasFingerprint()
+        palmSwitch.isOn = Biometrics.hasPalm()
+        
+        tableView.reloadRows(at: [IndexPath(item: 1, section: 0), IndexPath(item: 2, section: 0), IndexPath(item: 3, section: 0)], with: UITableViewRowAnimation.automatic)
+    }
+    
+    @objc func didValueChange(sender: UIView) {
+        switch sender {
+        case fingerprintSwitch:
+            if fingerprintSwitch.isOn {
+                fingerprintSwitch.setOn(false, animated: true)
+                
+                if Biometrics.isFingerprintAvailable() {
+                    if Biometrics.hasPalm() {
+                        let alertController = UIAlertController.makeSimple(title: "Error", message: "Please disable palm before enabling fingerprint.")
+                        
+                        present(alertController, animated: true, completion: nil)
+                    } else {
+                        let password = passwordTextField.text ?? ""
+                        
+                        if password.count > 0 {
+                            fingerprintEnable(password: password)
+                        } else {
+                            let alertController = UIAlertController.makeSimple(title: "No password", message: "You must enter a password.")
+                            
+                            present(alertController, animated: true, completion: nil)
+                        }
+                    }
+                } else {
+                    let alertController = UIAlertController.makeSimple(title: "Error", message: "Unfortunately your device does not support fingerprint authentication.")
+                    
+                    present(alertController, animated: true, completion: nil)
+                }
+                
+                reloadUI()
+            } else {
+                fingerprintSwitch.setOn(true, animated: true)
+                
+                fingerprintDisable()
+                reloadUI()
+            }
+        case palmSwitch:
+            if palmSwitch.isOn {
+                palmSwitch.setOn(false, animated: true)
+                
+                if Biometrics.hasFingerprint() {
+                    let alertController = UIAlertController.makeSimple(title: "Error", message: "Please disable fingerprint before enabling palm.")
+                    
+                    present(alertController, animated: true, completion: nil)
+                } else {
+                    let password = passwordTextField.text ?? ""
+                    if password.count > 0 {
+                        palmEnable(password: password)
+                    } else {
+                        let alertController = UIAlertController.makeSimple(title: "No password", message: "You must enter a password.")
+                        
+                        present(alertController, animated: true, completion: nil)
+                    }
+                }
+            } else {
+                palmSwitch.setOn(true, animated: true)
+                
+                palmDisable()
+                reloadUI()
+            }
+        default:
+            break
+        }
     }
 
     @objc func didTouchUpInside(sender: UIView) {
         switch sender {
-        case deletePasswordButton:
-            deletePassword()
         case moreButton:
             let alertController = UIAlertController(title: "Menu", message: nil, preferredStyle: .actionSheet)
 
@@ -142,9 +289,30 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
             present(alertController, animated: true, completion: nil)
         case openButton:
-            open()
-        case savePasswordButton:
-            savePassword()
+            if fingerprintSwitch.isOn {
+                do {
+                    let password = try Biometrics.getFingerprint()
+                    open(password: password)
+                } catch {
+                    showError(error)
+                }
+            } else if palmSwitch.isOn {
+                Biometrics.getPalm(viewController: self, completion: { (password, error) in
+                    if let error = error {
+                        switch error {
+                        case Biometrics.PalmError.PalmFailure:
+                            break
+                        default:
+                            self.showError(error)
+                        }
+                    } else {
+                        self.open(password: password)
+                    }
+                })
+            } else {
+                let password = getPassword()
+                open(password: password)
+            }
         default:
             break
         }
@@ -162,54 +330,32 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         case GKCard.CardError.connectionTimedOut:
             message = "Connection timed out. Ensure the card is powered on and nearby."
             loadChooseCard()
-        case UnlockError.dbNotFound:
+        case UnlockError.databaseNotFound:
             message = "No database found on card."
             self.loadCreate()
         case UnlockError.scanFoundNothing:
             message = "Unable to find card. Make sure it is turned on."
             loadChooseCard()
         case KdbxError.decryptionFailed:
-            if isUsingBiometrics {
-                message = "Invalid password.  Biometrics NOT enabled. Please check your password and try again"
-            } else {
-                message = "Invalid password.  Please check your password and try again"
-            }
+            message = "Invalid password.  If you're using fingerprint or palm, disable and try again."
         case KdbxCrypto.CryptoError.dataError:
             message = "Data error while decrypting."
         default:
             message = "\(error)"
         }
         
-        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-
-        alertController.addAction(UIAlertAction(title: "Okay", style: .default, handler: { _ in
-            alertController.dismiss(animated: true, completion: nil)
-        }))
-
-        self.present(alertController, animated: true, completion: nil)
+        let alertController = UIAlertController.makeSimple(title: "Error", message: message)
+        
+        present(alertController, animated: true, completion: nil)
     }
 
-    func open() {
+    func open(password: String) {
         guard let cardUUID = Vault.cardUUID else {
             return
         }
 
         guard let card = GKCard(uuid: cardUUID) else {
             return
-        }
-        
-        var password = ""
-        
-        if Biometrics.hasPassword() {
-            do {
-                password = try Biometrics.getPassword()
-            } catch {
-                print(error)
-            }
-        }
-        
-        if password.isEmpty {
-            password = getPassword()
         }
         
         async(in: .background, {
@@ -221,17 +367,19 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
                 try await(in: .background, card.connect().retry(2))
                 
                 async(in: .main, {
-                    HUD.show(.labeledProgress(title: "Opening", subtitle: "Check Db exists"))
+                    HUD.show(.labeledProgress(title: "Opening", subtitle: "Database exists?"))
                 })
-                let dbExists = try await(card.exists(path: Vault.dbPath))
+                
+                let databaseExists = try await(card.exists(path: Vault.dbPath))
 
-                if (!dbExists) {
-                    throw UnlockError.dbNotFound
+                if (!databaseExists) {
+                    throw UnlockError.databaseNotFound
                 }
                 
                 async(in: .main, {
                     HUD.show(.labeledProgress(title: "Opening", subtitle: "Transferring"))
                 })
+                
                 let data = try await(card.get(path: Vault.dbPath))
                 
                 async(in: .main, {
@@ -241,19 +389,6 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
                 let kdbx = try await(in: .background, { resolve, reject, _ in
                     return resolve(try Vault.open(encryptedData: data, password: password))
                 })
-                
-                // Let's only save the password
-                // if the user clicked save biometrics button
-                // and it it hasn't already been saved
-                if (self.isUsingBiometrics && Biometrics.isAvailable() && !Biometrics.hasPassword()) {
-                    do {
-                        try Biometrics.setPassword(password: password)
-                        self.tableView.reloadData()
-                        self.reloadBiometrics()
-                    } catch {
-                        print(error)
-                    }
-                }
                 
                 async(in: .main, {
                     HUD.hide()
@@ -271,29 +406,12 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         })
     }
     
-    func deletePassword() {
-        isUsingBiometrics = false
-        do {
-            try Biometrics.deletePassword()
-            tableView.reloadData()
-            reloadBiometrics()
-        } catch {
-            print(error)
-        }
-    }
-    
     func getPassword() -> String {
         let password = passwordTextField.text ?? ""
         passwordTextField.text = ""
         passwordTextField.resignFirstResponder()
         
         return password
-    }
-    
-    func savePassword() {
-        isUsingBiometrics = true
-        
-        open()
     }
 
     func versionString() -> String {
@@ -310,15 +428,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.row {
         case 1:
-            if biometricsHasPassword {
-                return 0.0
-            }
-        case 3:
-            if !biometricsIsAvailable || biometricsHasPassword {
-                return 0.0
-            }
-        case 4:
-            if !biometricsHasPassword {
+            if Biometrics.hasFingerprint() || Biometrics.hasPalm() {
                 return 0.0
             }
         default:
@@ -329,7 +439,6 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let cell = UITableViewCell()
         cell.selectionStyle = .none
 
@@ -344,7 +453,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
             NSLayoutConstraint(item: vaultImageView, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 0.0).isActive = true
             NSLayoutConstraint(item: vaultImageView, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: 0.0).isActive = true
         case 1:
-            if !biometricsHasPassword {
+            if !Biometrics.hasFingerprint() && !Biometrics.hasPalm() {
                 cell.contentView.addSubview(passwordTextField)
                 NSLayoutConstraint(item: passwordTextField, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 30.0).isActive = true
                 NSLayoutConstraint(item: passwordTextField, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
@@ -352,27 +461,33 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
                 NSLayoutConstraint(item: passwordTextField, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
             }
         case 2:
+            cell.contentView.addSubview(fingerprintSwitch)
+            NSLayoutConstraint(item: fingerprintSwitch, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: fingerprintSwitch, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: fingerprintSwitch, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            
+            cell.contentView.addSubview(fingerprintLabel)
+            NSLayoutConstraint(item: fingerprintLabel, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: fingerprintLabel, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: fingerprintLabel, attribute: .left, relatedBy: .equal, toItem: fingerprintSwitch, attribute: .right, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: fingerprintLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+        case 3:
+            cell.contentView.addSubview(palmSwitch)
+            NSLayoutConstraint(item: palmSwitch, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: palmSwitch, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: palmSwitch, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
+            
+            cell.contentView.addSubview(palmLabel)
+            NSLayoutConstraint(item: palmLabel, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: palmLabel, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
+            NSLayoutConstraint(item: palmLabel, attribute: .left, relatedBy: .equal, toItem: palmSwitch, attribute: .right, multiplier: 1.0, constant: 10.0).isActive = true
+            NSLayoutConstraint(item: palmLabel, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
+        case 4:
             cell.contentView.addSubview(openButton)
             NSLayoutConstraint(item: openButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: openButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
             NSLayoutConstraint(item: openButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
             NSLayoutConstraint(item: openButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-        case 3:
-            if biometricsIsAvailable && !biometricsHasPassword {
-                cell.contentView.addSubview(savePasswordButton)
-                NSLayoutConstraint(item: savePasswordButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
-                NSLayoutConstraint(item: savePasswordButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
-                NSLayoutConstraint(item: savePasswordButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-                NSLayoutConstraint(item: savePasswordButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-            }
-        case 4:
-            if biometricsHasPassword {
-                cell.contentView.addSubview(deletePasswordButton)
-                NSLayoutConstraint(item: deletePasswordButton, attribute: .top, relatedBy: .equal, toItem: cell.contentView, attribute: .top, multiplier: 1.0, constant: 10.0).isActive = true
-                NSLayoutConstraint(item: deletePasswordButton, attribute: .bottom, relatedBy: .equal, toItem: cell.contentView, attribute: .bottom, multiplier: 1.0, constant: -10.0).isActive = true
-                NSLayoutConstraint(item: deletePasswordButton, attribute: .left, relatedBy: .equal, toItem: cell.contentView, attribute: .left, multiplier: 1.0, constant: 10.0).isActive = true
-                NSLayoutConstraint(item: deletePasswordButton, attribute: .right, relatedBy: .equal, toItem: cell.contentView, attribute: .right, multiplier: 1.0, constant: -10.0).isActive = true
-            }
         default:
             break
         }
@@ -384,7 +499,7 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == passwordTextField {
-            open()
+            passwordTextField.resignFirstResponder()
         }
 
         return true
@@ -398,5 +513,4 @@ class UnlockViewController: UITableViewController, UITextFieldDelegate {
         let createViewController = CreateViewController()
         navigationController?.setViewControllers([createViewController], animated: true)
     }
-
 }

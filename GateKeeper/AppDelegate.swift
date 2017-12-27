@@ -5,6 +5,7 @@
 
 import IQKeyboardManagerSwift
 import Material
+import RRBPalmSDK
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -24,6 +25,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let keyboardManager = IQKeyboardManager.sharedManager()
         keyboardManager.enable = true
         keyboardManager.toolbarDoneBarButtonItemText = "Hide"
+        
+        // PalmSDK
+        
+        RRBPalmSDK.setLicenseID("sdk@blustor.com")
+        RRBPalmSDK.setErrorHandler { error in
+            print(error)
+        }
 
         // Window
 

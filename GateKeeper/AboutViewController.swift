@@ -72,7 +72,7 @@ class AboutViewController: UITableViewController {
         let item = items[indexPath.row]
 
         if let url = URL(string: item.url) {
-            UIApplication.shared.openURL(url)
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
 
         tableView.deselectRow(at: indexPath, animated: true)

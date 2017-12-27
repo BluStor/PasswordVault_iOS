@@ -77,6 +77,19 @@ extension Data {
     }
 }
 
+extension UIAlertController {
+    
+    static func makeSimple(title: String, message: String) -> UIAlertController {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        alertController.addAction(UIAlertAction(title: "Okay", style: .default, handler: { action in
+            alertController.dismiss(animated: true, completion: nil)
+        }))
+        
+        return alertController
+    }
+}
+
 extension UIColor {
 
     convenience init(red: Int, green: Int, blue: Int) {

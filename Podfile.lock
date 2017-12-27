@@ -1,11 +1,11 @@
 PODS:
   - AEXML (4.2.2)
   - GzipSwift (4.0.4)
-  - HydraAsync (1.2.0)
-  - IQKeyboardManagerSwift (5.0.6)
-  - Material (2.12.18):
-    - Material/Core (= 2.12.18)
-  - Material/Core (2.12.18):
+  - HydraAsync (1.2.1)
+  - IQKeyboardManagerSwift (5.0.7)
+  - Material (2.12.19):
+    - Material/Core (= 2.12.19)
+  - Material/Core (2.12.19):
     - Motion (~> 1.2.5)
   - Motion (1.2.5):
     - Motion/Core (= 1.2.5)
@@ -17,9 +17,9 @@ PODS:
 DEPENDENCIES:
   - AEXML (= 4.2.2)
   - GzipSwift (= 4.0.4)
-  - HydraAsync (= 1.2.0)
-  - IQKeyboardManagerSwift (= 5.0.6)
-  - Material (= 2.12.18)
+  - HydraAsync (= 1.2.1)
+  - IQKeyboardManagerSwift (= 5.0.7)
+  - Material (= 2.12.19)
   - PKHUD (= 5.0.0)
   - Signals (= 5.0.0)
   - SwiftyBluetooth (= 1.0.0)
@@ -27,14 +27,14 @@ DEPENDENCIES:
 SPEC CHECKSUMS:
   AEXML: 5ebafc1b75e0bcf0f1b09b8ca8fed2d5a199479b
   GzipSwift: 1a5bc5f7827e09846b0635b5079f1224bc3b1c3a
-  HydraAsync: b586f145f8582ef4c06e96102ec61f094077b41b
-  IQKeyboardManagerSwift: 02bfbb0dff71c66d0ab77d80d25dfce0c3717735
-  Material: ffd690a7d57352b108955a4367fb39de92ea8030
+  HydraAsync: 8f2ab62d57e140b4ca587ae0f66e1eb04e8e6965
+  IQKeyboardManagerSwift: 30fb3a61de1af53a95e02b80fb54ed0a19d5ede5
+  Material: c6f99fe1af9b47af5567ebd9578a30f60525f287
   Motion: 88a8bee21926af792333f4b9e7170f710e9e48f3
   PKHUD: 3c001512c6e002091184197a8de7a20420786e3b
   Signals: 6c41253cc172e4251d6064341bbc555a589c8d9f
   SwiftyBluetooth: 9e26b1367f56aa60f35713f6d968382144bccfd5
 
-PODFILE CHECKSUM: 0655b18f5acbf95de9ffd4c54069480e6842d2f8
+PODFILE CHECKSUM: 4299eb9bd26afecb564ba31deae75c721622b9c3
 
 COCOAPODS: 1.4.0.beta.2
